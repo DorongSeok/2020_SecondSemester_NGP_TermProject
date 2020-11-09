@@ -4,13 +4,15 @@
 #include "Table.h"
 #include "Hero.h"
 #include "resource.h"
+#include "Framework.h"
 
-static HINSTANCE g_hInst;						// 현재 인스턴스
-static LPCTSTR lpszTitle = TEXT("EVAID TITLE");
-static LPCTSTR lpszClass = TEXT("EVAID CLASS");
+HINSTANCE g_hInst;						// 현재 인스턴스
+LPCTSTR lpszClass = TEXT("EVAID CLASS");
+LPCTSTR lpszTitle = TEXT("EVAID TITLE");
+
+CFramework framework;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-
 void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT_PTR idEvent, DWORD dwTime);
 
 // 폰트함수
@@ -38,26 +40,17 @@ vector<BYTE> ReadFontOutputFile(LPCTSTR path)
 }
 
 CTable board_1(1);
-CTable board_2(2);
 
 CHero Hero1P(Global::getInstance()->Player1HeroKind, 1);
-CHero Hero2P(Global::getInstance()->Player2HeroKind, 2);
 
 int Hero1Score = 0;
-int Hero2Score = 0;
 
 CImage doublebuffer;
 CImage doublebuffer_Stage_1;
-CImage doublebuffer_Stage_2;
 
 bool ShakeWindow = true;
 
 HWND Stage_1_hWnd;
-HWND Stage_2_hWnd;
-
-LRESULT CALLBACK Stage_1_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-LRESULT CALLBACK Stage_2_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 	DWORD dwStyle =
@@ -101,11 +94,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 	//윈도우 표시
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
+	framework.init(hWnd);
 
 	return true;
 }
 
-void MyRegisterClass(HINSTANCE hInstance) {
+ATOM MyRegisterClass(HINSTANCE hInstance) {
 	WNDCLASSEX WndClass;
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style =
@@ -121,29 +115,15 @@ void MyRegisterClass(HINSTANCE hInstance) {
 	WndClass.hIcon = LoadIcon(g_hInst, (LPCTSTR)IDI_ICON1);
 	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	WndClass.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
+	WndClass.lpszMenuName = lpszTitle;
 	WndClass.lpszClassName = lpszClass;
 	WndClass.hIconSm = LoadIcon(g_hInst, (LPCTSTR)IDI_ICON1);
-	RegisterClassEx(&WndClass);
-
-	//----------------------------P1
-	WndClass.hCursor = LoadCursor(NULL, IDI_APPLICATION);
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
-	WndClass.lpszClassName = TEXT("Stage_1");
-	WndClass.lpfnWndProc = Stage_1_Proc;
-	RegisterClassEx(&WndClass);
-
-	//----------------------------P2
-	WndClass.hCursor = LoadCursor(NULL, IDI_APPLICATION);
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
-	WndClass.lpszClassName = TEXT("Stage_2");
-	WndClass.lpfnWndProc = Stage_2_Proc;
-	RegisterClassEx(&WndClass);
+	return RegisterClassEx(&WndClass);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow) {
-	g_hInst = hInstance;
 	srand(static_cast<unsigned>(time(NULL)));
+	g_hInst = hInstance;
 	MyRegisterClass(hInstance);
 	if (!InitInstance(hInstance, nCmdShow)) return false;
 	HACCEL hAccelTable = LoadAccelerators(hInstance, lpszTitle);
@@ -165,30 +145,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 #pragma region 초기화
 	case WM_CREATE:
+		//framework.init(hWnd);
 		Global::getInstance()->rankMng.load();
-		Stage_1_hWnd = CreateWindowEx(
-			WS_EX_CLIENTEDGE
-			, TEXT("Stage_1")
-			, NULL
-			, WS_CHILD | WS_VISIBLE | WS_BORDER
-			, 0, 0, STAGE_WIDTH, STAGE_HEIGHT
-			, hWnd
-			, NULL
-			, g_hInst
-			, NULL);
-
-		Stage_2_hWnd = CreateWindowEx(
-			WS_EX_CLIENTEDGE
-			, TEXT("Stage_2")
-			, NULL
-			, WS_CHILD | WS_VISIBLE | WS_BORDER
-			, STAGE_WIDTH, 0, CLIENT_WIDTH, STAGE_HEIGHT
-			, hWnd
-			, NULL
-			, g_hInst
-			, NULL);
-
-		doublebuffer.Create(CLIENT_WIDTH, CLIENT_HEIGHT, 24);
 		ShakeWindow = true;
 		// 폰트 설정
 		{
@@ -196,56 +154,76 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			static DWORD fi;
 			AddFontMemResourceEx(&(vFont[0]), vFont.size(), 0, &fi);
 		}
-
 		// 배경음
 		ResorceTable::getInstance()->m_Sound.PlayBGM(0);
-
 		break;
 #pragma endregion
-
-	case WM_COMMAND:
-	{
-		switch (LOWORD(wParam)) {
-		case ID_PLAYER01_1:
-			Global::getInstance()->Player1HeroKind = HERO::Hero1;
-			break;
-		case ID_PLAYER01_2:
-			Global::getInstance()->Player1HeroKind = HERO::Hero2;
-			break;
-
-		case ID_PLAYER02_1:
-			Global::getInstance()->Player2HeroKind = HERO::Hero1;
-			break;
-		case ID_PLAYER02_2:
-			Global::getInstance()->Player2HeroKind = HERO::Hero2;
-			break;
-		}
-	}
-
+	//case WM_COMMAND:
+	//{
+	//	switch (LOWORD(wParam)) {
+	//	case ID_PLAYER01_1:
+	//		Global::getInstance()->Player1HeroKind = HERO::Hero1;
+	//		break;
+	//	case ID_PLAYER01_2:
+	//		Global::getInstance()->Player1HeroKind = HERO::Hero2;
+	//		break;
+	//	case ID_PLAYER02_1:
+	//		Global::getInstance()->Player2HeroKind = HERO::Hero1;
+	//		break;
+	//	case ID_PLAYER02_2:
+	//		Global::getInstance()->Player2HeroKind = HERO::Hero2;
+	//		break;
+	//	}
+	//}
 #pragma region 그리기
 	case WM_PAINT:
 	{
 		HDC hdc = BeginPaint(hWnd, &ps);
-
+		framework.draw(hdc);
 		EndPaint(hWnd, &ps);
+	}
+	break;
+#pragma endregion
+
+#pragma region 그리기
+	case WM_SIZE:
+	{
+		framework.Resize();
+		framework.CreateBackBuffer();
 	}
 	break;
 #pragma endregion
 
 #pragma region 키보드 I/0 인자는 wParam
 	case WM_KEYDOWN:
-		GetKeyDown(wParam);
-		break;
 	case WM_KEYUP:
-		GetKeyUp(wParam);
+		framework.KeyBoard(iMessage, wParam, lParam);
 		break;
 	case WM_CHAR:		break;
 #pragma endregion
 
+#pragma region 마우스
+	case WM_LBUTTONUP:
+	case WM_LBUTTONDOWN:
+	case WM_MOUSEMOVE:
+		framework.Mouse(iMessage, wParam, lParam);
+		break;
+#pragma endregion
+
+#pragma region 타이머
+	case WM_TIMER:
+		switch (wParam) {
+		case timer_Main:
+			framework.run();
+			break;
+		}
+		break;
+#pragma endregion
+
 #pragma region 종료 시 호출.		윈도우를 소멸시키고 싶으면 DestoryWindow(hWnd)
 	case WM_DESTROY:
+		framework.ReleaseObject();
 		Global::getInstance()->rankMng.save(Hero1Score);
-		Global::getInstance()->rankMng.save(Hero2Score);
 		PostQuitMessage(0);
 		return 0;
 #pragma endregion
@@ -257,213 +235,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-void OnDraw_1(HDC hDC)
-{
-	if (!Global::getInstance()->isStart)
-	{
-		ResorceTable::getInstance()->img_main_bg_1.Draw(hDC, 0, 0);
-	}
-	if (Global::getInstance()->isStart)
-	{
-		RECT temp{ 0,0,STAGE_WIDTH,CLIENT_HEIGHT };
-		FillRect(hDC, &temp, (HBRUSH)GetStockObject(WHITE_BRUSH));
-
-		board_1.draw(hDC);
-		if (!Global::getInstance()->Gameover_1)
-		{
-			Hero1P.draw(hDC);
-		}
-
-		// 스코어
-		{
-			HFONT hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0
-				, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
-				, TEXT("ArcadeClassic"));
-
-			HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
-
-			SetBkMode(hDC, TRANSPARENT);
-			SetTextColor(hDC, RGB(255, 255, 255));
-
-			TCHAR ScorePrint[100];
-			RECT textRect;
-			textRect.left = PTStartX;
-			textRect.right = CLIENT_WIDTH / 2 - PTStartX;
-			textRect.top = 0;
-			textRect.bottom = PTStartY;
-
-			if (!Global::getInstance()->Gameover_1)
-			{
-				Hero1Score = Global::getInstance()->TimerTick;
-			}
-
-			// 출력할 텍스트 입력
-			wsprintf(ScorePrint, L"Score: %d", Hero1Score);
-			DrawText(hDC, ScorePrint, lstrlen(ScorePrint), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-			SelectObject(hDC, oldFont);
-			DeleteObject(hFont);
-		}
-
-		if (Global::getInstance()->Gameover_1)
-		{
-			HFONT hFont = CreateFont(75, 0, 0, 0, 0, 0, 0, 0
-				, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
-				, TEXT("ArcadeClassic"));
-
-			HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
-
-			SetBkMode(hDC, TRANSPARENT);
-			SetTextColor(hDC, RGB(255, 255, 255));
-
-			RECT textRect;
-			textRect.left = 20;
-			textRect.right = CLIENT_WIDTH / 2;
-			textRect.top = 0;
-			textRect.bottom = CLIENT_HEIGHT;
-
-			// 출력할 텍스트 입력
-			DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-			SelectObject(hDC, oldFont);
-			DeleteObject(hFont);
-		}
-	}
-}
-
-void OnDraw_2(HDC hDC)
-{
-	if (!Global::getInstance()->isStart)
-	{
-		ResorceTable::getInstance()->img_main_bg_2.Draw(hDC, 0, 0);
-	}
-	if (Global::getInstance()->isStart)
-	{
-		RECT temp{ 0, 0, STAGE_WIDTH,CLIENT_HEIGHT };
-		FillRect(hDC, &temp, (HBRUSH)GetStockObject(WHITE_BRUSH));
-
-		board_2.draw(hDC);
-		if (!Global::getInstance()->Gameover_2)
-		{
-			Hero2P.draw(hDC);
-		}
-
-		// 스코어
-		{
-			HFONT hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0
-				, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
-				, TEXT("ArcadeClassic"));
-
-			HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
-
-			SetBkMode(hDC, TRANSPARENT);
-			SetTextColor(hDC, RGB(255, 255, 255));
-
-			TCHAR ScorePrint[100];
-			RECT textRect;
-			textRect.left = PTStartX;
-			textRect.right = CLIENT_WIDTH / 2 - PTStartX;
-			textRect.top = 0;
-			textRect.bottom = PTStartY;
-
-			if (!Global::getInstance()->Gameover_2)
-			{
-				Hero2Score = Global::getInstance()->TimerTick;
-			}
-
-			// 출력할 텍스트 입력
-			wsprintf(ScorePrint, L"Score: %d", Hero2Score);
-			DrawText(hDC, ScorePrint, lstrlen(ScorePrint), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-			SelectObject(hDC, oldFont);
-			DeleteObject(hFont);
-		}
-
-		if (Global::getInstance()->Gameover_2)
-		{
-			HFONT hFont = CreateFont(75, 0, 0, 0, 0, 0, 0, 0
-				, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
-				, TEXT("ArcadeClassic"));
-
-			HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
-
-			SetBkMode(hDC, TRANSPARENT);
-			SetTextColor(hDC, RGB(255, 255, 255));
-
-			RECT textRect;
-			textRect.left = 20;
-			textRect.right = CLIENT_WIDTH / 2;
-			textRect.top = 0;
-			textRect.bottom = CLIENT_HEIGHT;
-
-			// 출력할 텍스트 입력
-			DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-			SelectObject(hDC, oldFont);
-			DeleteObject(hFont);
-		}
-	}
-}
-
-void GetKeyDown(WPARAM w) {
-	switch (w) {
-		// Player1
-	case 'Z':
-		Hero1P.state = STATE::LEFT;
-		break;
-	case 'X':
-		Hero1P.state = STATE::RIGHT;
-		break;
-	case 'C':
-		Hero1P.herojump();
-		break;
-	case 'V':
-		Hero1P.SkillOn(Hero2P);
-		break;
-
-		// Player2
-	case 'H':
-		Hero2P.state = STATE::LEFT;
-		break;
-	case 'J':
-		Hero2P.state = STATE::RIGHT;
-		break;
-	case 'K':
-		Hero2P.herojump();
-		break;
-	case 'L':
-		Hero2P.SkillOn(Hero1P);
-		break;
-	}
-}
-
-void GetKeyUp(WPARAM w) {
-	switch (w) {
-		// P1ayer1
-	case 'Z':
-		if(Hero1P.state == STATE::LEFT) Hero1P.state = STATE::NORMAL;
-		break;
-	case 'X':
-		if (Hero1P.state == STATE::RIGHT) Hero1P.state = STATE::NORMAL;
-		break;
-
-		// P1ayer2
-	case 'H':
-		if(Hero2P.state == STATE::LEFT) Hero2P.state = STATE::NORMAL;
-		break;
-	case 'J':
-		if(Hero2P.state == STATE::RIGHT) Hero2P.state = STATE::NORMAL;
-		break;
-	}
-}
-
 void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT_PTR idEvent, DWORD dwTime) {
 
 	Global::getInstance()->TimerTick += 1;
 
 	if (board_1.ShakeDegree < 480) board_1.ShakeDegree += 60;
-
-	if (board_2.ShakeDegree < 480) board_2.ShakeDegree += 60;
 
 	if (board_1.isShadowOn) {
 		Global::getInstance()->ShadowTick_1 += 0.1f;
@@ -471,15 +247,6 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT_PTR idEvent, DWORD dwTime
 			board_1.effect_shadow();
 			Global::getInstance()->ShadowTick_1 = 0;
 			board_1.isShadowOn = false;
-		}
-	}
-
-	if (board_2.isShadowOn) {
-		Global::getInstance()->ShadowTick_2 += 0.1f;
-		if (Global::getInstance()->ShadowTick_2 > shadowDelay) {
-			board_2.effect_shadow();
-			Global::getInstance()->ShadowTick_2 = 0;
-			board_2.isShadowOn = false;
 		}
 	}
 
@@ -496,161 +263,12 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT_PTR idEvent, DWORD dwTime
 			board_1.spawn(board_1.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
 		}
 	}
-	if (Global::getInstance()->TimerTick % Global::getInstance()->tick_spawn == 0
-		|| Global::getInstance()->Gameover_2) {
-		bool FullBoard_2 = true;
-		for (int i = 0; i < table_WIDTH; ++i) {
-			if (board_2.Val[i][0] != BLOCK_TYPE::STACK && board_2.Val[i][0] != BLOCK_TYPE::SHADOW) {
-				FullBoard_2 = false;
-				break;
-			}
-		}
-		if (!FullBoard_2) {
-			board_2.spawn(board_2.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
-		}
-	}
-
 
 	if (Global::getInstance()->TimerTick % tick_block == 0) {
 		board_1.drop();
-		board_2.drop();
 	}
 
-	if (Global::getInstance()->TimerTick % tick_skill == 0) {
-		Hero1P.skillGaugeUp(Hero2P);
-		Hero2P.skillGaugeUp(Hero1P);
-	}
 	Hero1P.move(board_1);
-	Hero2P.move(board_2);
 
 	InvalidateRect(Stage_1_hWnd, NULL, FALSE);
-	InvalidateRect(Stage_2_hWnd, NULL, FALSE);
-
-}
-
-LRESULT CALLBACK Stage_1_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	HDC hDC;
-	PAINTSTRUCT ps;
-
-	switch (uMsg) {
-#pragma region 초기화
-	case WM_CREATE:
-		doublebuffer_Stage_1.Create(STAGE_WIDTH, STAGE_HEIGHT, 24);
-		break;
-#pragma endregion
-
-#pragma region 마우스 I/O 인자는 lParam HIWORD/LOWORD
-	case WM_LBUTTONDOWN:	break;
-	case WM_LBUTTONUP:		break;
-	case WM_RBUTTONDOWN:	break;
-	case WM_RBUTTONUP:		break;
-	case WM_MOUSEMOVE:		break;
-#pragma endregion
-
-#pragma region 키보드 I/0 인자는 wParam
-	case WM_KEYDOWN:	break;
-	case WM_KEYUP:		break;
-	case WM_CHAR:		break;
-#pragma endregion
-
-#pragma region 그리기
-	case WM_PAINT:
-	{
-		HDC hdc = BeginPaint(hWnd, &ps);
-		HDC memDC = doublebuffer_Stage_1.GetDC();
-
-		OnDraw_1(memDC);
-		doublebuffer_Stage_1.Draw(hdc, sin(board_1.ShakeDegree*Radian) * 10, cos(board_1.ShakeDegree*Radian) * 10);
-		doublebuffer_Stage_1.ReleaseDC();
-		EndPaint(hWnd, &ps);
-	}
-	break;
-#pragma endregion
-
-	default:
-		return DefWindowProc(hWnd, uMsg, wParam, lParam);
-	}
-
-	return 0;
-}
-
-LRESULT CALLBACK Stage_2_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	HDC hDC;
-	PAINTSTRUCT ps;
-	switch (uMsg) {
-#pragma region 초기화
-	case WM_CREATE:
-		doublebuffer_Stage_2.Create(STAGE_WIDTH, STAGE_HEIGHT, 24);
-		break;
-#pragma endregion
-
-#pragma region 마우스 I/O 인자는 lParam HIWORD/LOWORD
-	case WM_LBUTTONDOWN:	break;
-	case WM_LBUTTONUP:
-	{
-		if (!Global::getInstance()->isStart)
-		{
-
-			POINT M;
-			M.x = LOWORD(lParam);
-			M.y = HIWORD(lParam);
-
-			ResorceTable::getInstance()->m_Sound.PlayEffect(2);
-			//startbtn
-			if (M.x > 100 && M.x < 500 && M.y > 126 && M.y < 234) {
-				Hero1P = CHero{ Global::getInstance()->Player1HeroKind, 1 };
-				Hero2P = CHero{ Global::getInstance()->Player2HeroKind, 2 };
-				Global::getInstance()->isStart = true;
-				SetTimer(hWnd, timer_Main, tick_Main, TimerProc);
-			}
-
-			//rank
-			if (M.x > 100 && M.x < 500 && M.y > 306 && M.y < 414) {
-				ShellExecute(NULL, TEXT("open"), TEXT("notepad"), TEXT("RANK.txt"), NULL, SW_SHOW);
-			}
-
-			//help
-			if (M.x > 100 && M.x < 500 && M.y > 486 && M.y < 594) {
-				ShellExecute(NULL, TEXT("open"), TEXT("notepad"), TEXT("HELP.txt"), NULL, SW_SHOW);
-			}
-
-			//exit
-			if (M.x > 100 && M.x < 500 && M.y > 666 && M.y < 774) {
-				PostQuitMessage(0);
-			}
-		}
-	}
-	break;
-	case WM_RBUTTONDOWN:	break;
-	case WM_RBUTTONUP:		break;
-	case WM_MOUSEMOVE:		break;
-#pragma endregion
-
-#pragma region 키보드 I/0 인자는 wParam
-	case WM_KEYDOWN:	break;
-	case WM_KEYUP:		break;
-	case WM_CHAR:		break;
-#pragma endregion
-
-#pragma region 그리기
-	case WM_PAINT:
-	{
-		HDC hdc = BeginPaint(hWnd, &ps);
-		HDC memDC = doublebuffer_Stage_2.GetDC();
-
-		OnDraw_2(memDC);
-		doublebuffer_Stage_2.Draw(hdc, sin(board_2.ShakeDegree*Radian) * 10, cos(board_2.ShakeDegree*Radian) * 10);
-		doublebuffer_Stage_2.ReleaseDC();
-		EndPaint(hWnd, &ps);
-	}
-	break;
-#pragma endregion
-
-	default:
-		return DefWindowProc(hWnd, uMsg, wParam, lParam);
-	}
-
-	return 0;
 }
