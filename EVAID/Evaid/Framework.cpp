@@ -29,19 +29,29 @@ bool CFramework::init(HWND hWnd) {
 	m_hWnd = hWnd;
 	::GetClientRect(hWnd, &m_rcClient);
 	SetTimer(hWnd, timer_Main, FPS, NULL);
+
 	return AddScene(hWnd);
 }
 
 bool CFramework::AddScene(const HWND& hWnd) {
 	//////////////////////////////////////////////
-	auto pScene = new CLogoScene{};
-	if (!pScene->init(this, hWnd)) {
-		delete pScene;
+	auto pLobby = new CLobbyScene{};
+	if (!pLobby->init(this, hWnd)) {
+		delete pLobby;
 		return false;
 	}
-	m_Scenes[m_nCurrentScene++] = pScene;
-	m_pCurrentScene = pScene;
+	m_Scenes[m_nCurrentScene++] = pLobby;
+	m_pCurrentScene = pLobby;
 	//////////////////////////////////////////////
+	auto pLogo = new CLogoScene{};
+	if (!pLogo->init(this, hWnd)) {
+		delete pLogo;
+		return false;
+	}
+	m_Scenes[m_nCurrentScene++] = pLogo;
+	m_pCurrentScene = pLogo;
+	//////////////////////////////////////////////
+	m_nCurrentScene--;
 	return true;
 }
 

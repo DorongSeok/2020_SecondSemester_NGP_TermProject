@@ -34,6 +34,8 @@ public:
 
 	HERO	Player1HeroKind;
 	HERO	Player2HeroKind;
+	
+	char* ServerIP;
 };
 
 static int GetPosInValX(int x) { return (x - PTStartX) / BLOCK_SIZE; }

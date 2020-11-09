@@ -6,9 +6,6 @@
 CLogoScene::CLogoScene() {}
 CLogoScene::~CLogoScene() {}
 void CLogoScene::update() {
-
-	//todo: 다음 화면으로 넘기는 트리거
-	//m_Framework->PopScene();
 }
 
 void CLogoScene::draw(HDC hDC) {
@@ -19,6 +16,7 @@ void CLogoScene::draw(HDC hDC) {
 
 bool CLogoScene::init(CFramework* pFramework, HWND hWnd) {
 	if (!CScene::init(pFramework, hWnd)) return false;
+	cout << "LOGO SCENE" << endl;
 	return true;
 }
 
@@ -27,28 +25,37 @@ bool CLogoScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
 }
 
 bool CLogoScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
-	POINT M;
-	M.x = LOWORD(l);
-	M.y = HIWORD(l);
+	switch (msg) {
+	case WM_LBUTTONDOWN:
+		break;
+	case WM_MOUSEMOVE:
+		break;
+	case WM_LBUTTONUP:
+		POINT M;
+		M.x = LOWORD(l);
+		M.y = HIWORD(l);
+		if (!(M.x > 700 && M.x < 1100)) return false;
 
-	if (!(M.x > 700 && M.x < 1100)) return false;
-
-	if (M.y > 126 && M.y < 234) {
 		//start btn
-		return true;
-	}
-	if (M.y > 306 && M.y < 414) {
+		if (M.y > 126 && M.y < 234) {
+			m_Framework->PopScene();
+			return true;
+		}
 		//rank btn
-		return true;
-	}
-	if (M.y > 486 && M.y < 594) {
+		if (M.y > 306 && M.y < 414) {
+			return true;
+		}
 		//help btn
-		return true;
+		if (M.y > 486 && M.y < 594) {
+			return true;
+		}
+		if (M.y > 666 && M.y < 774) {
+			PostQuitMessage(0);
+			return true; // 영원히 호출 안됨
+		}
+		break;
 	}
-	if (M.y > 666 && M.y < 774) {
-		PostQuitMessage(0);
-		return true; // 영원히 호출 안됨
-	}
+
 }
 
 void CLogoScene::ReleaseObjects() {}

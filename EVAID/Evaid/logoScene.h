@@ -14,6 +14,5 @@ public:
 	void ReleaseObjects() override;
 
 private:
-	float m_fFade{ 0.f };
-	float m_fMaxFade{ 2.f };
+
 };

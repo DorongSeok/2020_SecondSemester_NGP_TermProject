@@ -27,11 +27,10 @@ private:
 	HWND m_hWnd{ NULL };
 	RECT m_rcClient{ NULL };
 
-	CScene* m_Scenes[4];
+	CScene* m_Scenes[2];
 	int m_nCurrentScene{ 0 };
 	CScene* m_pCurrentScene{ nullptr };
 	HDC m_hDCBackBuffer{ nullptr };
 	HBITMAP m_hbmpBackBuffer{ nullptr };
 	COLORREF m_hColorBackground{ RGB(255,255,255) };
-
 };
