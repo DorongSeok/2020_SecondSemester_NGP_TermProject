@@ -27,7 +27,7 @@ private:
 	HWND m_hWnd{ NULL };
 	RECT m_rcClient{ NULL };
 
-	CScene* m_Scenes[2];
+	CScene* m_Scenes[3];
 	int m_nCurrentScene{ 0 };
 	CScene* m_pCurrentScene{ nullptr };
 	HDC m_hDCBackBuffer{ nullptr };

@@ -10,7 +10,7 @@ CTable::CTable(int Player) {
 		for (int i = 0; i < table_WIDTH; ++i) {
 			Val[i][j] = BLOCK_TYPE::NONE;
 			rcVal[i][j] = RECT{
-				 (i + 0) * BLOCK_SIZE+ ptstart.x
+				 (i + 0) * BLOCK_SIZE + ptstart.x
 				,(j + 0) * BLOCK_SIZE + ptstart.y
 				,(i + 1) * BLOCK_SIZE + ptstart.x
 				,(j + 1) * BLOCK_SIZE + ptstart.y };

@@ -39,18 +39,12 @@ vector<BYTE> ReadFontOutputFile(LPCTSTR path)
 	return vbFont;
 }
 
-CTable board_1(1);
-
-CHero Hero1P(Global::getInstance()->Player1HeroKind, 1);
-
-int Hero1Score = 0;
-
 CImage doublebuffer;
 CImage doublebuffer_Stage_1;
 
 bool ShakeWindow = true;
 
-HWND Stage_1_hWnd;
+HWND Stage_hWnd;
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 	DWORD dwStyle =
@@ -223,7 +217,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 #pragma region 종료 시 호출.		윈도우를 소멸시키고 싶으면 DestoryWindow(hWnd)
 	case WM_DESTROY:
 		framework.ReleaseObject();
-		Global::getInstance()->rankMng.save(Hero1Score);
 		PostQuitMessage(0);
 		return 0;
 #pragma endregion
@@ -238,37 +231,5 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT_PTR idEvent, DWORD dwTime) {
 
 	Global::getInstance()->TimerTick += 1;
-
-	if (board_1.ShakeDegree < 480) board_1.ShakeDegree += 60;
-
-	if (board_1.isShadowOn) {
-		Global::getInstance()->ShadowTick_1 += 0.1f;
-		if (Global::getInstance()->ShadowTick_1 > shadowDelay) {
-			board_1.effect_shadow();
-			Global::getInstance()->ShadowTick_1 = 0;
-			board_1.isShadowOn = false;
-		}
-	}
-
-	if (Global::getInstance()->TimerTick % Global::getInstance()->tick_spawn == 0
-		|| Global::getInstance()->Gameover_1) {
-		bool FullBoard_1 = true;
-		for (int i = 0; i < table_WIDTH; ++i) {
-			if (board_1.Val[i][0] != BLOCK_TYPE::STACK && board_1.Val[i][0] != BLOCK_TYPE::SHADOW) {
-				FullBoard_1 = false;
-				break;
-			}
-		}
-		if (!FullBoard_1) {
-			board_1.spawn(board_1.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
-		}
-	}
-
-	if (Global::getInstance()->TimerTick % tick_block == 0) {
-		board_1.drop();
-	}
-
-	Hero1P.move(board_1);
-
-	InvalidateRect(Stage_1_hWnd, NULL, FALSE);
+	InvalidateRect(Stage_hWnd, NULL, TRUE);
 }

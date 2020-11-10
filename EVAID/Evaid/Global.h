@@ -22,8 +22,8 @@ public:
 
 	int tick_spawn;
 
-	bool Gameover_1;
-	bool Gameover_2;
+	bool Gameover_1 = false;
+	bool Gameover_2 = false;
 
 	JPoint Player1Center;
 	JPoint Player2Center;

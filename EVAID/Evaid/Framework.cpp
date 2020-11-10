@@ -35,22 +35,29 @@ bool CFramework::init(HWND hWnd) {
 
 bool CFramework::AddScene(const HWND& hWnd) {
 	//////////////////////////////////////////////
-	auto pLobby = new CLobbyScene{};
-	if (!pLobby->init(this, hWnd)) {
-		delete pLobby;
+	auto pGame = new CGameScene{};
+	if (!pGame->init(this, hWnd)) {
+		delete pGame;
 		return false;
 	}
-	m_Scenes[m_nCurrentScene++] = pLobby;
-	m_pCurrentScene = pLobby;
-	//////////////////////////////////////////////
-	auto pLogo = new CLogoScene{};
-	if (!pLogo->init(this, hWnd)) {
-		delete pLogo;
-		return false;
-	}
-	m_Scenes[m_nCurrentScene++] = pLogo;
-	m_pCurrentScene = pLogo;
-	//////////////////////////////////////////////
+	m_Scenes[m_nCurrentScene++] = pGame;
+	m_pCurrentScene = pGame;
+	////////////////////////////////////////////////
+	//auto pLobby = new CLobbyScene{};
+	//if (!pLobby->init(this, hWnd)) {
+	//	delete pLobby;
+	//	return false;
+	//}
+	//m_Scenes[m_nCurrentScene++] = pLobby;
+	//m_pCurrentScene = pLobby;
+	////////////////////////////////////////////////
+	//auto pLogo = new CLogoScene{};
+	//if (!pLogo->init(this, hWnd)) {
+	//	delete pLogo;
+	//	return false;
+	//}
+	//m_Scenes[m_nCurrentScene++] = pLogo;
+	//m_pCurrentScene = pLogo;
 	m_nCurrentScene--;
 	return true;
 }
