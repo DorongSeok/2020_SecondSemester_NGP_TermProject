@@ -17,18 +17,10 @@ CGameScene::~CGameScene()
 
 void CGameScene::update()
 {
-	if (board_1.ShakeDegree < 480)
-	{
-		board_1.ShakeDegree += 60;
-	}
+	if (board_1.ShakeDegree < 480) board_1.ShakeDegree += 60;
+	if (board_2.ShakeDegree < 480) board_2.ShakeDegree += 60;
 
-	if (board_2.ShakeDegree < 480)
-	{
-		board_2.ShakeDegree += 60;
-	}
-
-	if (board_1.isShadowOn)
-	{
+	if (board_1.isShadowOn) {
 		Global::getInstance()->ShadowTick_1 += 0.1f;
 		if (Global::getInstance()->ShadowTick_1 > shadowDelay)
 		{
