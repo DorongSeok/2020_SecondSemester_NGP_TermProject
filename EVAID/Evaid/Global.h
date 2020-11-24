@@ -38,5 +38,5 @@ public:
 	char* ServerIP;
 };
 
-static int GetPosInValX(int x) { return (x - PTStartX) / BLOCK_SIZE; }
-static int GetPosInValY(int y) { return (y - PTStartY) / BLOCK_SIZE; }
+static int GetPosInValX(int x) { return ((x - PTStartX) / BLOCK_SIZE); }
+static int GetPosInValY(int y) { return ((y - PTStartY) / BLOCK_SIZE); }

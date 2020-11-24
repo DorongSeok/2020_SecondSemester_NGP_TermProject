@@ -257,7 +257,8 @@ void CTable::effect(POINT _pt, BLOCK_TYPE type)
 	GameOverCheck(PlayerNum);
 }
 
-void CTable::effect_shadow() {
+void CTable::effect_shadow()
+{
 	for (int j = 0; j < table_HEIGHT; ++j) {
 		for (int i = 0; i < table_WIDTH; ++i) {
 			if (Val[i][j] == BLOCK_TYPE::SHADOW) {
@@ -283,12 +284,6 @@ void CTable::spawn(int _spawnXpos, BLOCK_TYPE _spawnType)
 	safeChange(POINT{ _spawnXpos, 0 }, nextBlock);
 
 	nextBlock = _spawnType;
-}
-
-void CTable::spawn1x1block(int TargetPos)
-{
-	if (TargetPos != -1)
-		Val[TargetPos][0] = BLOCK_TYPE::A;
 }
 
 bool CTable::check(int _standard, int _delete)
@@ -341,20 +336,20 @@ void CTable::GameOverCheck(int Player)
 	int HeroHalfSize = HERO_SIZE / 2;
 	if (Player == 1)
 	{
-		if (!((Val[GetPosInValX(Global::getInstance()->Player1Center.x - HeroHalfSize)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::NONE &&
-			Val[GetPosInValX(Global::getInstance()->Player1Center.x - HeroHalfSize)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::SHADOW)
-			|| (Val[GetPosInValX(Global::getInstance()->Player1Center.x + HeroHalfSize)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::NONE &&
-				Val[GetPosInValX(Global::getInstance()->Player1Center.x + HeroHalfSize)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::SHADOW)))
+		if ((Val[GetPosInValX(Global::getInstance()->Player1Center.x - 17)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::NONE &&
+			Val[GetPosInValX(Global::getInstance()->Player1Center.x - 17)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::SHADOW)
+			|| (Val[GetPosInValX(Global::getInstance()->Player1Center.x + 17)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::NONE &&
+				Val[GetPosInValX(Global::getInstance()->Player1Center.x + 17)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::SHADOW))
 		{
-			//Global::getInstance()->Gameover_1 = true;
+			Global::getInstance()->Gameover_1 = true;
 		}
 	}
 	else if (Player == 2)
 	{
-		if (!((Val[GetPosInValX(Global::getInstance()->Player2Center.x - HeroHalfSize)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::NONE &&
-			Val[GetPosInValX(Global::getInstance()->Player2Center.x - HeroHalfSize)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::SHADOW)
-			|| (Val[GetPosInValX(Global::getInstance()->Player2Center.x + HeroHalfSize)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::NONE &&
-				Val[GetPosInValX(Global::getInstance()->Player2Center.x + HeroHalfSize)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::SHADOW)))
+		if (!((Val[GetPosInValX(Global::getInstance()->Player2Center.x - 17)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::NONE &&
+			Val[GetPosInValX(Global::getInstance()->Player2Center.x - 17)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::SHADOW)
+			|| (Val[GetPosInValX(Global::getInstance()->Player2Center.x + 17)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::NONE &&
+				Val[GetPosInValX(Global::getInstance()->Player2Center.x + 17)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::SHADOW)))
 		{
 			Global::getInstance()->Gameover_2 = true;
 		}

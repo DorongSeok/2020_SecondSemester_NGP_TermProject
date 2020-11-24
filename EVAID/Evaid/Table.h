@@ -30,8 +30,7 @@ public:
 	bool isShadowOn = false;
 	BLOCK_TYPE	Val[table_WIDTH][table_HEIGHT] = { BLOCK_TYPE::NONE };
 
-	// 플레이어에 따른 x축 그리기 시작 좌표 격차(플레이어 1 = 0, 플레이어 2 = CLIENT_WIDTH / 2)
-	int iDrawGapX;
+	int iDrawGapX;		// 플레이어에 따른 x축 그리기 시작 좌표 격차(플레이어 1 = 0, 플레이어 2 = CLIENT_WIDTH / 2)
 
 	//boder이 그려지기 시작하는 pt
 	POINT	ptstart;
@@ -87,7 +86,6 @@ public:
 	///<param name = "_spawnXpos"> 생성되는 X위치 (Y는 0으로 고정) </param>
 	///<param name = "_spawnType"> 생성하고 싶은 블럭 종류</param>
 	void spawn(int _spawnXpos, BLOCK_TYPE _spawnType);
-	void spawn1x1block(int);
 
 	///<summary>
 	/// 채워진 줄이 기준 줄보다 길 경우 _delete만큼 지움

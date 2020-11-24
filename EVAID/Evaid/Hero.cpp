@@ -5,14 +5,21 @@ CHero::CHero(HERO KindOfHero, int Player) {
 
 	HeroType = KindOfHero;
 	pPosition = JPoint(HeroStartPosX, HeroStartPosY);
-	SetHeroRect();
 	state = STATE::NORMAL;
 	NowSkillGauge = 0;
 	jumpCnt = 0;
 	skillCnt = 0;
 	IsSkillOn = false;
 	Debuff = 0;
+
 	PlayerNum = Player;
+	if (PlayerNum == 1)
+		iDrawGapX = 0;
+	else
+		iDrawGapX = DrawGapX;
+
+	SetHeroRect();
+
 	switch (KindOfHero)
 	{
 	case HERO::Hero1:
@@ -120,16 +127,20 @@ void CHero::move(CTable Target) {
 void CHero::draw(HDC hDC) {
 	int motionTick = (Global::getInstance()->TimerTick / 10) % 2;
 
+	RECT temprect = rect;
+	temprect.left += iDrawGapX;
+	temprect.right += iDrawGapX;
+
 	// 히어로
 	if (IsSkillOn) {
 		switch (HeroType) {
 		case HERO::Hero1:
-			if (motionTick) ResorceTable::getInstance()->img_Hero1_S1.Draw(hDC, rect);
-			else ResorceTable::getInstance()->img_Hero1_S2.Draw(hDC, rect);
+			if (motionTick) ResorceTable::getInstance()->img_Hero1_S1.Draw(hDC, temprect);
+			else ResorceTable::getInstance()->img_Hero1_S2.Draw(hDC, temprect);
 			break;
 		case HERO::Hero2:
-			if (motionTick) ResorceTable::getInstance()->img_Hero2_S1.Draw(hDC, rect);
-			else ResorceTable::getInstance()->img_Hero2_S2.Draw(hDC, rect);
+			if (motionTick) ResorceTable::getInstance()->img_Hero2_S1.Draw(hDC, temprect);
+			else ResorceTable::getInstance()->img_Hero2_S2.Draw(hDC, temprect);
 			break;
 		}
 	} else {
@@ -137,30 +148,30 @@ void CHero::draw(HDC hDC) {
 		case HERO::Hero1:
 			switch (state) {
 			case STATE::NORMAL:
-				ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, rect);
+				ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, temprect);
 				break;
 			case STATE::LEFT:
-				if(motionTick) ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, rect);
-				else ResorceTable::getInstance()->img_Hero1_L2.Draw(hDC, rect);
+				if(motionTick) ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, temprect);
+				else ResorceTable::getInstance()->img_Hero1_L2.Draw(hDC, temprect);
 				break;
 			case STATE::RIGHT:
-				if (motionTick) ResorceTable::getInstance()->img_Hero1_R1.Draw(hDC, rect);
-				else ResorceTable::getInstance()->img_Hero1_R2.Draw(hDC, rect);
+				if (motionTick) ResorceTable::getInstance()->img_Hero1_R1.Draw(hDC, temprect);
+				else ResorceTable::getInstance()->img_Hero1_R2.Draw(hDC, temprect);
 				break;
 			}
 			break;
 		case HERO::Hero2:
 			switch (state) {
 			case STATE::NORMAL:
-				ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, rect);
+				ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, temprect);
 				break;
 			case STATE::LEFT:
-				if (motionTick) ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, rect);
-				else ResorceTable::getInstance()->img_Hero2_L2.Draw(hDC, rect);
+				if (motionTick) ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, temprect);
+				else ResorceTable::getInstance()->img_Hero2_L2.Draw(hDC, temprect);
 				break;
 			case STATE::RIGHT:
-				if (motionTick) ResorceTable::getInstance()->img_Hero2_R1.Draw(hDC, rect);
-				else ResorceTable::getInstance()->img_Hero2_R2.Draw(hDC, rect);
+				if (motionTick) ResorceTable::getInstance()->img_Hero2_R1.Draw(hDC, temprect);
+				else ResorceTable::getInstance()->img_Hero2_R2.Draw(hDC, temprect);
 				break;
 			}
 			break;
@@ -170,18 +181,22 @@ void CHero::draw(HDC hDC) {
 	// 디버프 상태
 	switch (Debuff) {
 	case 1:
-		ResorceTable::getInstance()->img_Debuff_H1.Draw(hDC, rect);
+		ResorceTable::getInstance()->img_Debuff_H1.Draw(hDC, temprect);
 		break;
 	case 2:
-		ResorceTable::getInstance()->img_Debuff_H2.Draw(hDC, rect);
+		ResorceTable::getInstance()->img_Debuff_H2.Draw(hDC, temprect);
 		break;
 	}
 
 	// 스킬 게이지
 	RECT SkillBarRect{ 530,545,570,755 };
+	SkillBarRect.left += iDrawGapX;
+	SkillBarRect.right += iDrawGapX;
 	ResorceTable::getInstance()->img_SkillBar.Draw(hDC, SkillBarRect);
 	for (int i = 9; i >= 10 - NowSkillGauge; --i) {
 		RECT SkillGaugeRect{ 530,550 + (i * 20), 570, 550 + ((i + 1) * 20) };
+		SkillGaugeRect.left += iDrawGapX;
+		SkillGaugeRect.right += iDrawGapX;
 		ResorceTable::getInstance()->img_SkillGauge.Draw(hDC, SkillGaugeRect);
 	}
 }

@@ -207,8 +207,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		switch (wParam) {
 		case timer_Main:
-			framework.run();
 			Global::getInstance()->TimerTick += 1;
+			framework.run();
 			break;
 		}
 		break;
