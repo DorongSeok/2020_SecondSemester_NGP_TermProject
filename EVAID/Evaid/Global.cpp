@@ -5,7 +5,7 @@ Global::Global() {
 	TimerTick = 0;
 	ShadowTick_1 = 0;
 	ShadowTick_2 = 0;
-	tick_spawn = 80;
+	tick_spawn = 250;
 	Gameover_1 = false;
 	Gameover_2 = false;
 	isStart = false;

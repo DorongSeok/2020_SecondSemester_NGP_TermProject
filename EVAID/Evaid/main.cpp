@@ -13,7 +13,6 @@ LPCTSTR lpszTitle = TEXT("EVAID TITLE");
 CFramework framework;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT_PTR idEvent, DWORD dwTime);
 
 // 폰트함수
 vector<BYTE> ReadFontOutputFile(LPCTSTR path)
@@ -209,6 +208,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		switch (wParam) {
 		case timer_Main:
 			framework.run();
+			Global::getInstance()->TimerTick += 1;
 			break;
 		}
 		break;
@@ -226,10 +226,4 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
-}
-
-void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT_PTR idEvent, DWORD dwTime) {
-
-	Global::getInstance()->TimerTick += 1;
-	InvalidateRect(Stage_hWnd, NULL, TRUE);
 }
