@@ -41,8 +41,6 @@ vector<BYTE> ReadFontOutputFile(LPCTSTR path)
 CImage doublebuffer;
 CImage doublebuffer_Stage_1;
 
-bool ShakeWindow = true;
-
 HWND Stage_hWnd;
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
@@ -140,7 +138,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		//framework.init(hWnd);
 		Global::getInstance()->rankMng.load();
-		ShakeWindow = true;
 		// 폰트 설정
 		{
 			static auto vFont = ReadFontOutputFile(L"Font/ARCADECLASSIC.TTF");

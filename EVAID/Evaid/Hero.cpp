@@ -54,24 +54,26 @@ void CHero::move(CTable Target) {
 			|| (Target.Val[leftX][bottomY] == BLOCK_TYPE::SHADOW && Target.Val[rightX][bottomY] == BLOCK_TYPE::SHADOW))
 			|| (rect.bottom - PTStartY) % BLOCK_SIZE > 0) pPosition.y += Gravity;
 		else Isjump = false;
-	} else {
+	}
+	else {
 		pPosition.y -= Gravity;
 		jumpCnt--;
 	}
 
-
-	int PosL = GetPosInValX(rect.left + 1);
-	int PosR = GetPosInValX(rect.right - 1);
-	int PosT = GetPosInValY(rect.top);
-	int PosB = GetPosInValY(rect.bottom);
-	if ((Target.Val[PosL][PosT] != BLOCK_TYPE::NONE && Target.Val[PosL][PosT] != BLOCK_TYPE::SHADOW)
-		|| (Target.Val[PosR][PosT] != BLOCK_TYPE::NONE && Target.Val[PosR][PosT] != BLOCK_TYPE::SHADOW)) {
-		jumpCnt = 0;
-		if (!((Target.Val[PosL][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosL][PosB + 1] != BLOCK_TYPE::SHADOW)
-			|| (Target.Val[PosR][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosR][PosB + 1] != BLOCK_TYPE::SHADOW)))
-			pPosition.y = PTStartY + (PosT + 1) * BLOCK_SIZE + BLOCK_SIZE / 2;
+	// 떨어지는 블록과 충돌체크
+	if (!Invincible) {
+		int PosL = GetPosInValX(rect.left + 1);
+		int PosR = GetPosInValX(rect.right - 1);
+		int PosT = GetPosInValY(rect.top);
+		int PosB = GetPosInValY(rect.bottom);
+		if ((Target.Val[PosL][PosT] != BLOCK_TYPE::NONE && Target.Val[PosL][PosT] != BLOCK_TYPE::SHADOW)
+			|| (Target.Val[PosR][PosT] != BLOCK_TYPE::NONE && Target.Val[PosR][PosT] != BLOCK_TYPE::SHADOW)) {
+			jumpCnt = 0;
+			if (!((Target.Val[PosL][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosL][PosB + 1] != BLOCK_TYPE::SHADOW)
+				|| (Target.Val[PosR][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosR][PosB + 1] != BLOCK_TYPE::SHADOW)))
+				pPosition.y = PTStartY + (PosT + 1) * BLOCK_SIZE + BLOCK_SIZE / 2;
+		}
 	}
-
 	// 이동 관련
 	if (state == STATE::LEFT) {
 		if (speed >= 0) {
@@ -82,7 +84,8 @@ void CHero::move(CTable Target) {
 				|| (Target.Val[PosL][PosT] == BLOCK_TYPE::SHADOW && Target.Val[PosL][PosB] == BLOCK_TYPE::SHADOW))
 				&& rect.left - speed >= PTStartX) pPosition.x -= speed;
 			else pPosition.x = (rect.left / BLOCK_SIZE) * BLOCK_SIZE + BLOCK_SIZE;
-		} else {
+		}
+		else {
 			int reverseSpeed = speed * -1;
 			int topY = GetPosInValY(rect.top);
 			int bottomY = GetPosInValY(rect.bottom - 1);
@@ -106,7 +109,8 @@ void CHero::move(CTable Target) {
 				|| (Target.Val[rightX][topY] == BLOCK_TYPE::SHADOW && Target.Val[rightX][bottomY] == BLOCK_TYPE::SHADOW))
 				&& rect.right + speed <= PTStartX + table_WIDTH * BLOCK_SIZE) pPosition.x += speed;
 			else pPosition.x = (rect.right / BLOCK_SIZE) * BLOCK_SIZE;
-		} else {
+		}
+		else {
 			int reverseSpeed = speed * -1;
 			int topY = GetPosInValY(rect.top);
 			int bottomY = GetPosInValY(rect.bottom - 1);
@@ -120,6 +124,8 @@ void CHero::move(CTable Target) {
 
 	if (PlayerNum == 1) Global::getInstance()->Player1Center = pPosition;
 	else if (PlayerNum == 2) Global::getInstance()->Player2Center = pPosition;
+
+	cout << jumpCnt << "  " << jumpHeight << "  " << Isjump << endl;
 
 	SetHeroRect();
 }
@@ -189,7 +195,7 @@ void CHero::draw(HDC hDC) {
 	}
 
 	// 스킬 게이지
-	RECT SkillBarRect{ 530,545,570,755 };
+	RECT SkillBarRect{ 530, 545, 570, 755 };
 	SkillBarRect.left += iDrawGapX;
 	SkillBarRect.right += iDrawGapX;
 	ResorceTable::getInstance()->img_SkillBar.Draw(hDC, SkillBarRect);

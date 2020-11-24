@@ -35,9 +35,6 @@ public:
 	//boder이 그려지기 시작하는 pt
 	POINT	ptstart;
 
-	// 흔들리는 정도
-	int ShakeDegree;
-
 	CTable(int);
 	~CTable();
 

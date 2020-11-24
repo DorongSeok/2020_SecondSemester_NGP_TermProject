@@ -38,8 +38,7 @@ void CGameScene::update()
 		}
 	}
 
-	if (Global::getInstance()->TimerTick % Global::getInstance()->tick_spawn == 0
-		|| Global::getInstance()->Gameover_1)
+	if (Global::getInstance()->Gameover_1)
 	{
 		bool FullBoard_1 = true;
 		for (int i = 0; i < table_WIDTH; ++i)
@@ -55,8 +54,7 @@ void CGameScene::update()
 			board_1.spawn(board_1.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
 		}
 	}
-	if (Global::getInstance()->TimerTick % Global::getInstance()->tick_spawn == 0
-		|| Global::getInstance()->Gameover_2)
+	if (Global::getInstance()->Gameover_2)
 	{
 		bool FullBoard_2 = true;
 		for (int i = 0; i < table_WIDTH; ++i)
@@ -107,10 +105,10 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 	case WM_KEYUP:
 		switch (w) {
 			// P1ayer1
-		case 'Z':
+		case 'A':
 			if (Hero1P.state == STATE::LEFT) Hero1P.state = STATE::NORMAL;
 			break;
-		case 'X':
+		case 'S':
 			if (Hero1P.state == STATE::RIGHT) Hero1P.state = STATE::NORMAL;
 			break;
 
@@ -125,16 +123,16 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 	case WM_KEYDOWN:
 		switch (w) {
 			// Player1
-		case 'Z':
+		case 'A':
 			Hero1P.state = STATE::LEFT;
 			break;
-		case 'X':
+		case 'S':
 			Hero1P.state = STATE::RIGHT;
 			break;
-		case 'C':
+		case 'D':
 			Hero1P.herojump();
 			break;
-		case 'V':
+		case 'F':
 			Hero1P.SkillOn(Hero2P);
 			break;
 

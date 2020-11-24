@@ -129,12 +129,3 @@ inline bool SafeRelease(gdiobj& target) {
 	target = NULL;
 	return true;
 }
-
-
-void GetKeyDown(WPARAM w);
-
-void GetKeyUp(WPARAM w);
-
-void OnDraw_1(HDC hDC);
-
-void OnDraw_2(HDC hDC);
