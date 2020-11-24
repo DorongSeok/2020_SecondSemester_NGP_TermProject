@@ -91,7 +91,7 @@ void CGameScene::draw(HDC hDC)
 	RECT rc = m_Framework->getClientRect();
 
 	DrawGameScene1(hDC);
-	//DrawGameScene2(hDC);
+//	DrawGameScene2(hDC);
 }
 
 bool CGameScene::init(CFramework* pFramework, HWND hWnd)
@@ -181,14 +181,11 @@ void CGameScene::DrawGameScene1(HDC hDC)
 	}
 	if (Global::getInstance()->isStart)
 	{
-		RECT temp{ 0,0,STAGE_WIDTH,CLIENT_HEIGHT };
+		RECT temp{ 0, 0, CLIENT_WIDTH, CLIENT_HEIGHT };
 		FillRect(hDC, &temp, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
 		board_1.draw(hDC);
-		if (!Global::getInstance()->Gameover_1)
-		{
-			Hero1P.draw(hDC);
-		}
+		if (!Global::getInstance()->Gameover_1)	Hero1P.draw(hDC);
 
 		// ½ºÄÚ¾î
 		{
@@ -251,7 +248,7 @@ void CGameScene::DrawGameScene2(HDC hDC)
 {
 	if (!Global::getInstance()->isStart)
 	{
-		ResorceTable::getInstance()->img_ingame_bg.Draw(hDC, CLIENT_WIDTH / 2, 0);
+		ResorceTable::getInstance()->img_ingame_bg.Draw(hDC, 0, 0);
 	}
 	if (Global::getInstance()->isStart)
 	{
@@ -277,8 +274,8 @@ void CGameScene::DrawGameScene2(HDC hDC)
 
 			TCHAR ScorePrint[100];
 			RECT textRect;
-			textRect.left = PTStartX + STAGE_WIDTH;
-			textRect.right = CLIENT_WIDTH / 2 - PTStartX + STAGE_WIDTH;
+			textRect.left = PTStartX;
+			textRect.right = CLIENT_WIDTH / 2 - PTStartX;
 			textRect.top = 0;
 			textRect.bottom = PTStartY;
 
@@ -307,8 +304,8 @@ void CGameScene::DrawGameScene2(HDC hDC)
 			SetTextColor(hDC, RGB(255, 255, 255));
 
 			RECT textRect;
-			textRect.left = 20 + STAGE_WIDTH;
-			textRect.right = CLIENT_WIDTH / 2 + STAGE_WIDTH;
+			textRect.left = 20;
+			textRect.right = CLIENT_WIDTH / 2;
 			textRect.top = 0;
 			textRect.bottom = CLIENT_HEIGHT;
 

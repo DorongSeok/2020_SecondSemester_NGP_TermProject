@@ -17,7 +17,7 @@ CHero::CHero(HERO KindOfHero, int Player) {
 	{
 	case HERO::Hero1:
 		speed = 9;
-		jumpHeight = 20;		// jumpHeighy / 5 가 점프하는 칸수
+		jumpHeight = 15;		// jumpHeighy / 5 가 점프하는 칸수
 		SkillCostGauge = 4;		// SkillCostGauge / 20 이 스킬 사용하는데 필요한 칸수
 		break;
 	case HERO::Hero2:

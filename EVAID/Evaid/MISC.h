@@ -23,6 +23,9 @@ constexpr auto CLIENT_HEIGHT = 900;		// 높이
 constexpr auto STAGE_WIDTH = 600;
 constexpr auto STAGE_HEIGHT = 900;
 
+// 플레이어에 따른 x축 그리기 시작 좌표 격차(플레이어 1 = 0, 플레이어 2 = CLIENT_WIDTH / 2)
+constexpr auto DrawGapX = CLIENT_WIDTH / 2;
+
 // 표 시작 포인트
 constexpr auto  PTStartX = 100;
 constexpr auto  PTStartY = 50;

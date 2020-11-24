@@ -12,6 +12,7 @@ public:
 	CGameScene();
 	~CGameScene() override;
 
+
 	void update() override;
 	void draw(HDC hDC) override;
 	bool init(CFramework* pFramework, HWND hWnd) override;
