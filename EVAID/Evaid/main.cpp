@@ -1,4 +1,3 @@
-#include "MISC.h"
 #include "ResorceTable.h"
 #include "Global.h"
 #include "Table.h"

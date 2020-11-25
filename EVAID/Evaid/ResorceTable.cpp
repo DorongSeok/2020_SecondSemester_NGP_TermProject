@@ -58,6 +58,19 @@ ResorceTable::~ResorceTable() {
 	img_main_btn_start.Destroy();
 	img_main_btn_rank.Destroy();
 	img_main_btn_exit.Destroy();
+
+	//6
+	img_lobby_bg.Destroy();
+	img_lobby_hero_border.Destroy();
+	img_lobby_hero1_ready.Destroy();
+	img_lobby_hero1_unready.Destroy();
+	img_lobby_hero2_ready.Destroy();
+	img_lobby_hero2_unready.Destroy();
+
+	//3
+	img_lobby_connect_bnt.Destroy();
+	img_lobby_ready_bnt.Destroy();
+	img_lobby_ready_disabled_bnt.Destroy();
 }
 
 bool ResorceTable::loadCheck()
@@ -105,6 +118,19 @@ bool ResorceTable::loadCheck()
 	if (img_main_btn_start.IsNull()) return false;
 	if (img_main_btn_rank.IsNull()) return false;
 	if (img_main_btn_exit.IsNull()) return false;
+
+	//6
+	if (img_lobby_bg.IsNull()) return false;
+	if (img_lobby_hero_border.IsNull()) return false;
+	if (img_lobby_hero1_ready.IsNull()) return false;
+	if (img_lobby_hero1_unready.IsNull()) return false;
+	if (img_lobby_hero2_ready.IsNull()) return false;
+	if (img_lobby_hero2_unready.IsNull()) return false;
+
+	//3
+	if (img_lobby_connect_bnt.IsNull()) return false;
+	if (img_lobby_ready_bnt.IsNull()) return false;
+	if (img_lobby_ready_disabled_bnt.IsNull()) return false;
 
 	return true;
 }
@@ -154,6 +180,19 @@ void ResorceTable::loadImg()
 	img_main_btn_start.Load(TEXT("Image/main_start_bnt.png"));
 	img_main_btn_rank.Load(TEXT("Image/main_rank_bnt.png"));
 	img_main_btn_exit.Load(TEXT("Image/main_exit_bnt.png"));
+
+	//6
+	img_lobby_bg.Load(TEXT("Image/lobby_bg.png"));
+	img_lobby_hero_border.Load(TEXT("Image/lobby_hero_border.png"));
+	img_lobby_hero1_ready.Load(TEXT("Image/lobby_hero1_ready.png"));
+	img_lobby_hero1_unready.Load(TEXT("Image/lobby_hero1_unready.png"));
+	img_lobby_hero2_ready.Load(TEXT("Image/lobby_hero2_ready.png"));
+	img_lobby_hero2_unready.Load(TEXT("Image/lobby_hero2_unready.png"));
+
+	//3
+	img_lobby_connect_bnt.Load(TEXT("Image/lobby_connect_bnt.png"));
+	img_lobby_ready_bnt.Load(TEXT("Image/lobby_ready_bnt.png"));
+	img_lobby_ready_disabled_bnt.Load(TEXT("Image/lobby_ready_disabled_bnt.png"));
 }
 
 ResorceTable* ResorceTable::inst = nullptr;

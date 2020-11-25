@@ -1,5 +1,5 @@
 #pragma once
-#include "MISC.h"
+#include "Global.h"
 
 constexpr int SERVER_PORT = 3500;
 

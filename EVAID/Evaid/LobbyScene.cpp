@@ -1,7 +1,11 @@
 #include "LobbyScene.h"
 #include "Framework.h"
+#include "Global.h"
+#include "ResorceTable.h"
 
-CLobbyScene::CLobbyScene() {}
+CLobbyScene::CLobbyScene() 
+{
+}
 
 CLobbyScene::~CLobbyScene() {}
 
@@ -9,7 +13,28 @@ void CLobbyScene::update() {
 
 }
 
-void CLobbyScene::draw(HDC hDC) {
+
+void CLobbyScene::draw(HDC hDC) 
+{
+	// backgroud----------------
+	ResorceTable::getInstance()->img_lobby_bg.Draw(hDC, 0, 0);
+	// -------------------------
+
+	// player border------------
+	if(bPlayer1Ready)					ResorceTable::getInstance()->img_lobby_hero1_ready.Draw(hDC, 85, 50);
+	else if(bPlayer1Connected)			ResorceTable::getInstance()->img_lobby_hero1_unready.Draw(hDC, 85, 50);
+	else								ResorceTable::getInstance()->img_lobby_hero_border.Draw(hDC, 85, 50);
+
+	if (bPlayer2Ready)					ResorceTable::getInstance()->img_lobby_hero2_ready.Draw(hDC, 641, 50);
+	else if (bPlayer2Connected)			ResorceTable::getInstance()->img_lobby_hero2_unready.Draw(hDC, 641, 50);
+	else								ResorceTable::getInstance()->img_lobby_hero_border.Draw(hDC, 641, 50);
+	// -------------------------
+
+	// button-------------------
+	if (bImConnected && bImReady)		ResorceTable::getInstance()->img_lobby_ready_disabled_bnt.Draw(hDC, 676, 753);
+	else if(bImConnected && !bImReady)	ResorceTable::getInstance()->img_lobby_ready_bnt.Draw(hDC, 676, 753);
+	else								ResorceTable::getInstance()->img_lobby_connect_bnt.Draw(hDC, 676, 753);
+	// -------------------------
 }
 
 bool CLobbyScene::init(CFramework* pFramework, HWND hWnd) {
@@ -76,8 +101,6 @@ bool CLobbyScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
 			strcat(input, ".");
 			break;
 		case VK_RETURN:
-			cout << endl << "IP: " << input << endl;
-			m_Framework->PopScene();
 			break;
 		}
 		break;
@@ -88,6 +111,47 @@ bool CLobbyScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
 }
 
 bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
+	switch (msg) {
+	case WM_LBUTTONDOWN:
+		break;
+	case WM_MOUSEMOVE:
+		break;
+	case WM_LBUTTONUP:
+		POINT M;
+		M.x = LOWORD(l);
+		M.y = HIWORD(l);
+		if (!(M.x > 676 && M.x < 1076)) return false;
+
+		if (M.y > 753 && M.y < 861) 
+		{
+			if (!bImConnected)
+			{
+				if (iMyPlayerNum == 1)
+					bPlayer1Connected = true;
+				else
+					bPlayer2Connected = true;
+
+				bImConnected = true;
+				cout << "Connected" << endl;
+
+				cout << endl << "IP: " << input << endl;
+				break;
+			}
+			if (!bImReady)
+			{
+				if (iMyPlayerNum == 1)
+					bPlayer1Ready = true;
+				else
+					bPlayer2Ready = true;
+
+				bImReady = true;
+				cout << "Ready" << endl;
+				break;
+			}
+			return true;
+		}
+		break;
+	}
 	return true;
 }
 

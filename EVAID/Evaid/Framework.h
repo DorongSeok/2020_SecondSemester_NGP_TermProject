@@ -1,5 +1,5 @@
 #pragma once
-#include "MISC.h"
+#include "Global.h"
 #include "Scene.h"
 
 class CFramework {
@@ -23,6 +23,15 @@ public:
 	bool Mouse(UINT msg, WPARAM wParam, LPARAM lParam);
 	bool KeyBoard(UINT msg, WPARAM wParam, LPARAM lParam);
 	RECT getClientRect() const { return m_rcClient; }
+
+//public:
+//	SOCKET		m_sock;
+//	int			m_retval;
+//	char SERVERIP[20];
+//
+//	int recvn(SOCKET s, char* buf, int len, int flags);
+//	void err_display(const char* msg);
+
 private:
 	HWND m_hWnd{ NULL };
 	RECT m_rcClient{ NULL };

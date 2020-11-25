@@ -1,5 +1,6 @@
 #pragma once
-#include "MISC.h"
+#include "Global.h"
+
 class CFramework;
 
 class CScene {

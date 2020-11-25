@@ -1,4 +1,4 @@
-#include "MISC.h"
+#include "Global.h"
 #include "SoundManager.h"
 
 #pragma comment(lib,"FMOD/lib/fmod64_vc.lib")
