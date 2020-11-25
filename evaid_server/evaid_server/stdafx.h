@@ -4,6 +4,3 @@
 #include <WinSock2.h>
 #include <iostream>
 #include <fstream>
-
-#define SERVERPORT 9000
-#define BUFSIZE 1024

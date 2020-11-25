@@ -3,9 +3,32 @@
 
 using namespace std;
 
-enum { THREADLIMIT = 4 };
-static DWORD dwThreadID[THREADLIMIT];
-int threadCnt = 0;
+enum eTHREAD { SEND = 0, RECV = 1, MAX = 2 };
+constexpr int CLIENT_LIMITE = 2;
+class hClientInfo {
+public:
+	int id;
+	SOCKET s;
+	SOCKADDR_IN addr;
+	int addrlen;
+	HANDLE hEvent[eTHREAD::MAX];
+	DWORD dwThreadID[eTHREAD::MAX];
+
+public:
+	void close() {
+		closesocket(s);
+		s = NULL;
+		ZeroMemory(&addr, sizeof(addr));
+		CloseHandle(hEvent[eTHREAD::SEND]);
+		CloseHandle(hEvent[eTHREAD::RECV]);
+		dwThreadID[eTHREAD::SEND] = NULL;
+		dwThreadID[eTHREAD::RECV] = NULL;
+	}
+};
+hClientInfo cInfo[CLIENT_LIMITE];
+int client_cur = 0;
+
+int type;
 
 void err_display(const string& msg) {
 	LPVOID lpMsgBuf;
@@ -31,55 +54,77 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
 	return (len - left);
 }
 
-int recvp(SOCKET s, char* buf, int flags) {
-	int packetsize;
-	char* ptr = buf;
-	packetsize = recvn(s, ptr, sizeof(short), flags);
-	return recvn(s, ptr + sizeof(short), packetsize, flags);
-}
-
 DWORD WINAPI SendThread(LPVOID arg) {
-	SOCKET sock_client = (SOCKET)arg;
-	SOCKADDR_IN addr_client;
+	
 	DWORD retval;
-	int addrlen = sizeof(addr_client);
-	getpeername(sock_client, (sockaddr*)&addr_client, &addrlen);
+	char buffer = ' ';
+	auto threadID = GetCurrentThreadId();
+	hClientInfo* client = static_cast<hClientInfo*>(arg);
 
-	char buffer[MAXBUFFER];
-
+	cout << "SENDTHREAD" << threadID << endl;
+	while (1) {
+		WaitForSingleObject(client->hEvent[eTHREAD::RECV], INFINITE);
+		switch (type) {
+		case CS_1:
+			cout << threadID << "send - cs1" << endl;
+			buffer = '1';
+			break;
+		case CS_2:
+			cout << threadID << "send - cs2" << endl;
+			buffer = '2';
+			break;
+		case CS_3:
+			cout << threadID << "send - cs3" << endl;
+			buffer = '3';
+			break;
+		case CS_4:
+			cout << threadID << "send - cs4" << endl;
+			buffer = '4';
+			break;
+		}
+		retval = send(client->s, &buffer, sizeof(buffer), 0);
+		SetEvent(client->hEvent[eTHREAD::SEND]);
+	}
+	client->close();
+	return 0;
 }
 
 DWORD WINAPI RecvThread(LPVOID arg) {
-	SOCKET sock_client = (SOCKET)arg;
-	SOCKADDR_IN addr_client;
+
 	DWORD retval;
-	int addrlen = sizeof(addr_client);
-	getpeername(sock_client, (sockaddr*)&addr_client, &addrlen);
 	char buffer[MAXBUFFER];
 	auto threadID = GetCurrentThreadId();
+	hClientInfo* client = static_cast<hClientInfo*>(arg);
 
+	cout << "RECVTHREAD" << threadID << endl;
 	while (1) {
-		retval = recvp(sock_client, buffer, 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("recv()");
-			break;
-		} else if (retval == 0) break;
-
+		WaitForSingleObject(client->hEvent[eTHREAD::SEND], INFINITE);
+		ZeroMemory(&buffer, sizeof(buffer));
+		retval = recv(client->s, buffer, 10, 0);
+		if (retval == SOCKET_ERROR)  err_display("recv()");
+		else if (retval == 0) return 0;
 		switch (buffer[1]) {
 		case CS_1:
-			cout << "get packet - CS1" << endl;
+			type = CS_1;
+			cout << threadID << "get packet - CS1" << endl;
 			break;
 		case CS_2:
-			cout << "get packet - CS2" << endl;
+			type = CS_2;
+			cout << threadID << "get packet - CS2" << endl;
 			break;
 		case CS_3:
-			cout << "get packet - CS3" << endl;
+			type = CS_3;
+			cout << threadID << "get packet - CS3" << endl;
 			break;
 		case CS_4:
-			cout << "get packet - CS4" << endl;
+			type = CS_4;
+			cout << threadID << "get packet - CS4" << endl;
 			break;
 		}
+		SetEvent(client->hEvent[eTHREAD::RECV]);
 	}
+	client->close();
+	return 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -94,41 +139,44 @@ int main(int argc, char* argv[]) {
 	ZeroMemory(&addr_server, sizeof(addr_server));
 	addr_server.sin_family = AF_INET;
 	addr_server.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
-	addr_server.sin_port = htonl(SERVERPORT);
+	addr_server.sin_port = htons(SERVERPORT);
 	retval = bind(sock_listen, (sockaddr*)&addr_server, sizeof(addr_server));
 	if (retval == SOCKET_ERROR) err_display("bind()");
 
 	retval = listen(sock_listen, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_display("listen()");
-
-	SOCKET sock_client;
-	SOCKADDR_IN addr_client;
-	int addrlen;
+	int sockopt = true;
+	setsockopt(sock_listen, IPPROTO_TCP, TCP_NODELAY, (const char*)&sockopt, sizeof(sockopt));
 	
 	HANDLE hThread;
-
+	
 	while (true) {
-		addrlen = sizeof(addr_client);
-		sock_client = accept(sock_listen, (sockaddr*)&addr_client, &addrlen);
-		if (sock_client == INVALID_SOCKET) {
+		cInfo[client_cur].id = client_cur;
+		cInfo[client_cur].addrlen = sizeof(cInfo[client_cur].addr);
+		cInfo[client_cur].s = accept(sock_listen, (sockaddr*)&cInfo[client_cur].addr, &cInfo[client_cur].addrlen);
+		if (cInfo[client_cur].s == INVALID_SOCKET) {
 			err_display("accept()");
 			break;
 		}
-		cout << inet_ntoa(addr_client.sin_addr) << ntohs(addr_client.sin_port) << endl;
-		hThread = CreateThread(NULL, 0, SendThread, (LPVOID)sock_client, 0, &dwThreadID[threadCnt]);
-		if (hThread == NULL) { closesocket(sock_client); }
+		cInfo[client_cur].hEvent[eTHREAD::RECV]= CreateEvent(NULL, false, false, NULL);
+		cInfo[client_cur].hEvent[eTHREAD::SEND]= CreateEvent(NULL, false, true, NULL);
+
+		cout << inet_ntoa(cInfo[client_cur].addr.sin_addr) << " " << ntohs(cInfo[client_cur].addr.sin_port) << endl;
+
+		hThread = CreateThread(NULL, 0, SendThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::SEND]);
+		if (hThread == NULL) { closesocket(cInfo[client_cur].s); }
 		else {
 			SetThreadPriority(hThread, THREAD_PRIORITY_TIME_CRITICAL);
 			CloseHandle(hThread);
 		}
-		threadCnt = (threadCnt + 1) % THREADLIMIT;
-		hThread = CreateThread(NULL, 0, RecvThread, (LPVOID)sock_client, 0, &dwThreadID[threadCnt]);
-		if (hThread == NULL) { closesocket(sock_client); }
+		hThread = CreateThread(NULL, 0, RecvThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::RECV]);
+		if (hThread == NULL) { closesocket(cInfo[client_cur].s); }
 		else {
 			SetThreadPriority(hThread, THREAD_PRIORITY_TIME_CRITICAL);
 			CloseHandle(hThread);
 		}
-		threadCnt = (threadCnt + 1) % THREADLIMIT;
+
+		client_cur = (++client_cur) % CLIENT_LIMITE;
 	}
 
 	closesocket(sock_listen);
