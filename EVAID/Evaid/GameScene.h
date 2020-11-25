@@ -20,8 +20,7 @@ public:
 	bool Mouse(UINT msg, WPARAM w, LPARAM l) override;
 	void ReleaseObjects() override;
 
-	void DrawGameScene1(HDC hDC);
-	void DrawGameScene2(HDC hDC);
+	void DrawGameScene(HDC hDC);
 
 private:
 	int Hero1Score = 0;

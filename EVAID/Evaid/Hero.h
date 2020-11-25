@@ -27,11 +27,14 @@ private:
 	bool IsSkillOn;		// 스킬 체크
 	int SkillCostGauge;	// 스킬을 사용하기 위한 게이지
 	int NowSkillGauge;	// 현재 스킬 게이지
+	bool Invincible = false;	// 무적
 
 	int PlayerNum;		// 플레이어 구분
 	int Debuff;			// 디버프상태
 public:
 	STATE state;		// 상태
+
+	int iDrawGapX;		// 플레이어에 따른 x축 그리기 시작 좌표 격차(플레이어 1 = 0, 플레이어 2 = CLIENT_WIDTH / 2)
 
 	CHero(HERO, int);		// 인자 = 히어로 종류, 플레이어구분
 	~CHero();

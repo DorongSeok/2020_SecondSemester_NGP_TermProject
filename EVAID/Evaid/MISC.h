@@ -33,9 +33,8 @@ constexpr auto  PTStartY = 50;
 //timer
 constexpr auto timer_Main = 1;
 constexpr auto tick_Main = 10;		//(ms)
-constexpr auto tick_block = 2;
+constexpr auto tick_block = 4;
 constexpr auto tick_skill = 5;
-constexpr auto tick_targeting = 10;
 
 //Table Size setting
 constexpr auto table_WIDTH = 10;
@@ -130,12 +129,3 @@ inline bool SafeRelease(gdiobj& target) {
 	target = NULL;
 	return true;
 }
-
-
-void GetKeyDown(WPARAM w);
-
-void GetKeyUp(WPARAM w);
-
-void OnDraw_1(HDC hDC);
-
-void OnDraw_2(HDC hDC);

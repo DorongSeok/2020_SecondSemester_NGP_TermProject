@@ -17,10 +17,8 @@ CGameScene::~CGameScene()
 
 void CGameScene::update()
 {
-	if (board_1.ShakeDegree < 480) board_1.ShakeDegree += 60;
-	if (board_2.ShakeDegree < 480) board_2.ShakeDegree += 60;
-
-	if (board_1.isShadowOn) {
+	if (board_1.isShadowOn)
+	{
 		Global::getInstance()->ShadowTick_1 += 0.1f;
 		if (Global::getInstance()->ShadowTick_1 > shadowDelay)
 		{
@@ -29,7 +27,6 @@ void CGameScene::update()
 			board_1.isShadowOn = false;
 		}
 	}
-
 	if (board_2.isShadowOn)
 	{
 		Global::getInstance()->ShadowTick_2 += 0.1f;
@@ -41,8 +38,7 @@ void CGameScene::update()
 		}
 	}
 
-	if (Global::getInstance()->TimerTick % Global::getInstance()->tick_spawn == 0
-		|| Global::getInstance()->Gameover_1)
+	if (Global::getInstance()->Gameover_1)
 	{
 		bool FullBoard_1 = true;
 		for (int i = 0; i < table_WIDTH; ++i)
@@ -58,8 +54,7 @@ void CGameScene::update()
 			board_1.spawn(board_1.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
 		}
 	}
-	if (Global::getInstance()->TimerTick % Global::getInstance()->tick_spawn == 0
-		|| Global::getInstance()->Gameover_2)
+	if (Global::getInstance()->Gameover_2)
 	{
 		bool FullBoard_2 = true;
 		for (int i = 0; i < table_WIDTH; ++i)
@@ -82,16 +77,19 @@ void CGameScene::update()
 		board_2.drop();
 	}
 
+	if (Global::getInstance()->TimerTick % tick_skill == 0)
+	{
+		Hero1P.skillGaugeUp(Hero2P);
+		Hero2P.skillGaugeUp(Hero1P);
+	}
+
 	Hero1P.move(board_1);
 	Hero2P.move(board_2);
 }
 
 void CGameScene::draw(HDC hDC)
 {
-	RECT rc = m_Framework->getClientRect();
-
-	DrawGameScene1(hDC);
-//	DrawGameScene2(hDC);
+	DrawGameScene(hDC);
 }
 
 bool CGameScene::init(CFramework* pFramework, HWND hWnd)
@@ -107,10 +105,10 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 	case WM_KEYUP:
 		switch (w) {
 			// P1ayer1
-		case 'Z':
+		case 'A':
 			if (Hero1P.state == STATE::LEFT) Hero1P.state = STATE::NORMAL;
 			break;
-		case 'X':
+		case 'S':
 			if (Hero1P.state == STATE::RIGHT) Hero1P.state = STATE::NORMAL;
 			break;
 
@@ -125,16 +123,16 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 	case WM_KEYDOWN:
 		switch (w) {
 			// Player1
-		case 'Z':
+		case 'A':
 			Hero1P.state = STATE::LEFT;
 			break;
-		case 'X':
+		case 'S':
 			Hero1P.state = STATE::RIGHT;
 			break;
-		case 'C':
+		case 'D':
 			Hero1P.herojump();
 			break;
-		case 'V':
+		case 'F':
 			Hero1P.SkillOn(Hero2P);
 			break;
 
@@ -173,147 +171,75 @@ void CGameScene::ReleaseObjects()
 {
 }
 
-void CGameScene::DrawGameScene1(HDC hDC)
+void CGameScene::DrawGameScene(HDC hDC)
 {
-	if (!Global::getInstance()->isStart)
+	RECT temp{ 0,0,CLIENT_WIDTH,CLIENT_HEIGHT };
+	FillRect(hDC, &temp, (HBRUSH)GetStockObject(WHITE_BRUSH));
+
+	board_1.draw(hDC);
+	board_2.draw(hDC);
+
+	if (!Global::getInstance()->Gameover_1)	Hero1P.draw(hDC);
+	if (!Global::getInstance()->Gameover_2)	Hero2P.draw(hDC);
+
+	// 스코어 그리기
 	{
-		ResorceTable::getInstance()->img_ingame_bg.Draw(hDC, 0, 0);
+		HFONT hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0
+			, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
+			, TEXT("ArcadeClassic"));
+
+		HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
+
+		SetBkMode(hDC, TRANSPARENT);
+		SetTextColor(hDC, RGB(255, 255, 255));
+
+		TCHAR ScorePrint[100];
+		RECT textRect;
+		textRect.left = PTStartX;
+		textRect.right = CLIENT_WIDTH / 2 - PTStartX;
+		textRect.top = 0;
+		textRect.bottom = PTStartY;
+
+		if (!Global::getInstance()->Gameover_1)	Hero1Score = Global::getInstance()->TimerTick;
+		if (!Global::getInstance()->Gameover_2)	Hero2Score = Global::getInstance()->TimerTick;
+
+		// 출력할 텍스트 입력
+		wsprintf(ScorePrint, L"Score: %d", Hero1Score);
+		DrawText(hDC, ScorePrint, lstrlen(ScorePrint), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
+		textRect.left += DrawGapX;
+		textRect.right += DrawGapX;
+		wsprintf(ScorePrint, L"Score: %d", Hero2Score);
+		DrawText(hDC, ScorePrint, lstrlen(ScorePrint), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
+		SelectObject(hDC, oldFont);
+		DeleteObject(hFont);
 	}
-	if (Global::getInstance()->isStart)
+
+	// 게임오버 그리기
 	{
-		RECT temp{ 0, 0, CLIENT_WIDTH, CLIENT_HEIGHT };
-		FillRect(hDC, &temp, (HBRUSH)GetStockObject(WHITE_BRUSH));
+		HFONT hFont = CreateFont(75, 0, 0, 0, 0, 0, 0, 0
+			, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
+			, TEXT("ArcadeClassic"));
 
-		board_1.draw(hDC);
-		if (!Global::getInstance()->Gameover_1)	Hero1P.draw(hDC);
+		HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
 
-		// 스코어
-		{
-			HFONT hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0
-				, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
-				, TEXT("ArcadeClassic"));
+		SetBkMode(hDC, TRANSPARENT);
+		SetTextColor(hDC, RGB(255, 255, 255));
 
-			HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
+		RECT textRect;
+		textRect.left = 20;
+		textRect.right = CLIENT_WIDTH / 2;
+		textRect.top = 0;
+		textRect.bottom = CLIENT_HEIGHT;
 
-			SetBkMode(hDC, TRANSPARENT);
-			SetTextColor(hDC, RGB(255, 255, 255));
+		if (Global::getInstance()->Gameover_1)	DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
-			TCHAR ScorePrint[100];
-			RECT textRect;
-			textRect.left = PTStartX;
-			textRect.right = CLIENT_WIDTH / 2 - PTStartX;
-			textRect.top = 0;
-			textRect.bottom = PTStartY;
+		textRect.left += DrawGapX;
+		textRect.right += DrawGapX;
+		if (Global::getInstance()->Gameover_2)	DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
-			if (!Global::getInstance()->Gameover_1)
-			{
-				Hero1Score = Global::getInstance()->TimerTick;
-			}
-
-			// 출력할 텍스트 입력
-			wsprintf(ScorePrint, L"Score: %d", Hero1Score);
-			DrawText(hDC, ScorePrint, lstrlen(ScorePrint), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-			SelectObject(hDC, oldFont);
-			DeleteObject(hFont);
-		}
-
-		if (Global::getInstance()->Gameover_1)
-		{
-			HFONT hFont = CreateFont(75, 0, 0, 0, 0, 0, 0, 0
-				, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
-				, TEXT("ArcadeClassic"));
-
-			HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
-
-			SetBkMode(hDC, TRANSPARENT);
-			SetTextColor(hDC, RGB(255, 255, 255));
-
-			RECT textRect;
-			textRect.left = 20;
-			textRect.right = CLIENT_WIDTH / 2;
-			textRect.top = 0;
-			textRect.bottom = CLIENT_HEIGHT;
-
-			// 출력할 텍스트 입력
-			DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-			SelectObject(hDC, oldFont);
-			DeleteObject(hFont);
-		}
-	}
-}
-
-void CGameScene::DrawGameScene2(HDC hDC)
-{
-	if (!Global::getInstance()->isStart)
-	{
-		ResorceTable::getInstance()->img_ingame_bg.Draw(hDC, 0, 0);
-	}
-	if (Global::getInstance()->isStart)
-	{
-		RECT temp{ 0, 0, STAGE_WIDTH,CLIENT_HEIGHT };
-		FillRect(hDC, &temp, (HBRUSH)GetStockObject(WHITE_BRUSH));
-
-		board_2.draw(hDC);
-		if (!Global::getInstance()->Gameover_2)
-		{
-			Hero2P.draw(hDC);
-		}
-
-		// 스코어
-		{
-			HFONT hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0
-				, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
-				, TEXT("ArcadeClassic"));
-
-			HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
-
-			SetBkMode(hDC, TRANSPARENT);
-			SetTextColor(hDC, RGB(255, 255, 255));
-
-			TCHAR ScorePrint[100];
-			RECT textRect;
-			textRect.left = PTStartX;
-			textRect.right = CLIENT_WIDTH / 2 - PTStartX;
-			textRect.top = 0;
-			textRect.bottom = PTStartY;
-
-			if (!Global::getInstance()->Gameover_2)
-			{
-				Hero2Score = Global::getInstance()->TimerTick;
-			}
-
-			// 출력할 텍스트 입력
-			wsprintf(ScorePrint, L"Score: %d", Hero2Score);
-			DrawText(hDC, ScorePrint, lstrlen(ScorePrint), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-			SelectObject(hDC, oldFont);
-			DeleteObject(hFont);
-		}
-
-		if (Global::getInstance()->Gameover_2)
-		{
-			HFONT hFont = CreateFont(75, 0, 0, 0, 0, 0, 0, 0
-				, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
-				, TEXT("ArcadeClassic"));
-
-			HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
-
-			SetBkMode(hDC, TRANSPARENT);
-			SetTextColor(hDC, RGB(255, 255, 255));
-
-			RECT textRect;
-			textRect.left = 20;
-			textRect.right = CLIENT_WIDTH / 2;
-			textRect.top = 0;
-			textRect.bottom = CLIENT_HEIGHT;
-
-			// 출력할 텍스트 입력
-			DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-			SelectObject(hDC, oldFont);
-			DeleteObject(hFont);
-		}
+		SelectObject(hDC, oldFont);
+		DeleteObject(hFont);
 	}
 }

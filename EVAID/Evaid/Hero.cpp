@@ -5,14 +5,21 @@ CHero::CHero(HERO KindOfHero, int Player) {
 
 	HeroType = KindOfHero;
 	pPosition = JPoint(HeroStartPosX, HeroStartPosY);
-	SetHeroRect();
 	state = STATE::NORMAL;
 	NowSkillGauge = 0;
 	jumpCnt = 0;
 	skillCnt = 0;
 	IsSkillOn = false;
 	Debuff = 0;
+
 	PlayerNum = Player;
+	if (PlayerNum == 1)
+		iDrawGapX = 0;
+	else
+		iDrawGapX = DrawGapX;
+
+	SetHeroRect();
+
 	switch (KindOfHero)
 	{
 	case HERO::Hero1:
@@ -47,24 +54,26 @@ void CHero::move(CTable Target) {
 			|| (Target.Val[leftX][bottomY] == BLOCK_TYPE::SHADOW && Target.Val[rightX][bottomY] == BLOCK_TYPE::SHADOW))
 			|| (rect.bottom - PTStartY) % BLOCK_SIZE > 0) pPosition.y += Gravity;
 		else Isjump = false;
-	} else {
+	}
+	else {
 		pPosition.y -= Gravity;
 		jumpCnt--;
 	}
 
-
-	int PosL = GetPosInValX(rect.left + 1);
-	int PosR = GetPosInValX(rect.right - 1);
-	int PosT = GetPosInValY(rect.top);
-	int PosB = GetPosInValY(rect.bottom);
-	if ((Target.Val[PosL][PosT] != BLOCK_TYPE::NONE && Target.Val[PosL][PosT] != BLOCK_TYPE::SHADOW)
-		|| (Target.Val[PosR][PosT] != BLOCK_TYPE::NONE && Target.Val[PosR][PosT] != BLOCK_TYPE::SHADOW)) {
-		jumpCnt = 0;
-		if (!((Target.Val[PosL][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosL][PosB + 1] != BLOCK_TYPE::SHADOW)
-			|| (Target.Val[PosR][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosR][PosB + 1] != BLOCK_TYPE::SHADOW)))
-			pPosition.y = PTStartY + (PosT + 1) * BLOCK_SIZE + BLOCK_SIZE / 2;
+	// 떨어지는 블록과 충돌체크
+	if (!Invincible) {
+		int PosL = GetPosInValX(rect.left + 1);
+		int PosR = GetPosInValX(rect.right - 1);
+		int PosT = GetPosInValY(rect.top);
+		int PosB = GetPosInValY(rect.bottom);
+		if ((Target.Val[PosL][PosT] != BLOCK_TYPE::NONE && Target.Val[PosL][PosT] != BLOCK_TYPE::SHADOW)
+			|| (Target.Val[PosR][PosT] != BLOCK_TYPE::NONE && Target.Val[PosR][PosT] != BLOCK_TYPE::SHADOW)) {
+			jumpCnt = 0;
+			if (!((Target.Val[PosL][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosL][PosB + 1] != BLOCK_TYPE::SHADOW)
+				|| (Target.Val[PosR][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosR][PosB + 1] != BLOCK_TYPE::SHADOW)))
+				pPosition.y = PTStartY + (PosT + 1) * BLOCK_SIZE + BLOCK_SIZE / 2;
+		}
 	}
-
 	// 이동 관련
 	if (state == STATE::LEFT) {
 		if (speed >= 0) {
@@ -75,7 +84,8 @@ void CHero::move(CTable Target) {
 				|| (Target.Val[PosL][PosT] == BLOCK_TYPE::SHADOW && Target.Val[PosL][PosB] == BLOCK_TYPE::SHADOW))
 				&& rect.left - speed >= PTStartX) pPosition.x -= speed;
 			else pPosition.x = (rect.left / BLOCK_SIZE) * BLOCK_SIZE + BLOCK_SIZE;
-		} else {
+		}
+		else {
 			int reverseSpeed = speed * -1;
 			int topY = GetPosInValY(rect.top);
 			int bottomY = GetPosInValY(rect.bottom - 1);
@@ -99,7 +109,8 @@ void CHero::move(CTable Target) {
 				|| (Target.Val[rightX][topY] == BLOCK_TYPE::SHADOW && Target.Val[rightX][bottomY] == BLOCK_TYPE::SHADOW))
 				&& rect.right + speed <= PTStartX + table_WIDTH * BLOCK_SIZE) pPosition.x += speed;
 			else pPosition.x = (rect.right / BLOCK_SIZE) * BLOCK_SIZE;
-		} else {
+		}
+		else {
 			int reverseSpeed = speed * -1;
 			int topY = GetPosInValY(rect.top);
 			int bottomY = GetPosInValY(rect.bottom - 1);
@@ -114,22 +125,28 @@ void CHero::move(CTable Target) {
 	if (PlayerNum == 1) Global::getInstance()->Player1Center = pPosition;
 	else if (PlayerNum == 2) Global::getInstance()->Player2Center = pPosition;
 
+	cout << jumpCnt << "  " << jumpHeight << "  " << Isjump << endl;
+
 	SetHeroRect();
 }
 
 void CHero::draw(HDC hDC) {
 	int motionTick = (Global::getInstance()->TimerTick / 10) % 2;
 
+	RECT temprect = rect;
+	temprect.left += iDrawGapX;
+	temprect.right += iDrawGapX;
+
 	// 히어로
 	if (IsSkillOn) {
 		switch (HeroType) {
 		case HERO::Hero1:
-			if (motionTick) ResorceTable::getInstance()->img_Hero1_S1.Draw(hDC, rect);
-			else ResorceTable::getInstance()->img_Hero1_S2.Draw(hDC, rect);
+			if (motionTick) ResorceTable::getInstance()->img_Hero1_S1.Draw(hDC, temprect);
+			else ResorceTable::getInstance()->img_Hero1_S2.Draw(hDC, temprect);
 			break;
 		case HERO::Hero2:
-			if (motionTick) ResorceTable::getInstance()->img_Hero2_S1.Draw(hDC, rect);
-			else ResorceTable::getInstance()->img_Hero2_S2.Draw(hDC, rect);
+			if (motionTick) ResorceTable::getInstance()->img_Hero2_S1.Draw(hDC, temprect);
+			else ResorceTable::getInstance()->img_Hero2_S2.Draw(hDC, temprect);
 			break;
 		}
 	} else {
@@ -137,30 +154,30 @@ void CHero::draw(HDC hDC) {
 		case HERO::Hero1:
 			switch (state) {
 			case STATE::NORMAL:
-				ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, rect);
+				ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, temprect);
 				break;
 			case STATE::LEFT:
-				if(motionTick) ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, rect);
-				else ResorceTable::getInstance()->img_Hero1_L2.Draw(hDC, rect);
+				if(motionTick) ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, temprect);
+				else ResorceTable::getInstance()->img_Hero1_L2.Draw(hDC, temprect);
 				break;
 			case STATE::RIGHT:
-				if (motionTick) ResorceTable::getInstance()->img_Hero1_R1.Draw(hDC, rect);
-				else ResorceTable::getInstance()->img_Hero1_R2.Draw(hDC, rect);
+				if (motionTick) ResorceTable::getInstance()->img_Hero1_R1.Draw(hDC, temprect);
+				else ResorceTable::getInstance()->img_Hero1_R2.Draw(hDC, temprect);
 				break;
 			}
 			break;
 		case HERO::Hero2:
 			switch (state) {
 			case STATE::NORMAL:
-				ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, rect);
+				ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, temprect);
 				break;
 			case STATE::LEFT:
-				if (motionTick) ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, rect);
-				else ResorceTable::getInstance()->img_Hero2_L2.Draw(hDC, rect);
+				if (motionTick) ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, temprect);
+				else ResorceTable::getInstance()->img_Hero2_L2.Draw(hDC, temprect);
 				break;
 			case STATE::RIGHT:
-				if (motionTick) ResorceTable::getInstance()->img_Hero2_R1.Draw(hDC, rect);
-				else ResorceTable::getInstance()->img_Hero2_R2.Draw(hDC, rect);
+				if (motionTick) ResorceTable::getInstance()->img_Hero2_R1.Draw(hDC, temprect);
+				else ResorceTable::getInstance()->img_Hero2_R2.Draw(hDC, temprect);
 				break;
 			}
 			break;
@@ -170,18 +187,22 @@ void CHero::draw(HDC hDC) {
 	// 디버프 상태
 	switch (Debuff) {
 	case 1:
-		ResorceTable::getInstance()->img_Debuff_H1.Draw(hDC, rect);
+		ResorceTable::getInstance()->img_Debuff_H1.Draw(hDC, temprect);
 		break;
 	case 2:
-		ResorceTable::getInstance()->img_Debuff_H2.Draw(hDC, rect);
+		ResorceTable::getInstance()->img_Debuff_H2.Draw(hDC, temprect);
 		break;
 	}
 
 	// 스킬 게이지
-	RECT SkillBarRect{ 530,545,570,755 };
+	RECT SkillBarRect{ 530, 545, 570, 755 };
+	SkillBarRect.left += iDrawGapX;
+	SkillBarRect.right += iDrawGapX;
 	ResorceTable::getInstance()->img_SkillBar.Draw(hDC, SkillBarRect);
 	for (int i = 9; i >= 10 - NowSkillGauge; --i) {
 		RECT SkillGaugeRect{ 530,550 + (i * 20), 570, 550 + ((i + 1) * 20) };
+		SkillGaugeRect.left += iDrawGapX;
+		SkillGaugeRect.right += iDrawGapX;
 		ResorceTable::getInstance()->img_SkillGauge.Draw(hDC, SkillGaugeRect);
 	}
 }
