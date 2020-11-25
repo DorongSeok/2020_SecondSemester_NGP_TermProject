@@ -1,4 +1,4 @@
-#include "MISC.h"
+#include "Global.h"
 #include "ResorceTable.h"
 #include "Framework.h"
 #include "logoScene.h"
@@ -55,7 +55,6 @@ bool CLogoScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
 		}
 		break;
 	}
-
 }
 
 void CLogoScene::ReleaseObjects() {}

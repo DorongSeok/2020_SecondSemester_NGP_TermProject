@@ -1,5 +1,5 @@
 #pragma once
-#include "MISC.h"
+#include "Global.h"
 
 class ResorceTable {
 private:
@@ -53,6 +53,19 @@ public:
 	CImage		img_main_btn_start;
 	CImage		img_main_btn_rank;
 	CImage		img_main_btn_exit;
+	/////////////////////////////
+
+	/////////////////////////////
+	CImage		img_lobby_bg;
+	CImage		img_lobby_hero_border;
+	CImage		img_lobby_hero1_ready;
+	CImage		img_lobby_hero1_unready;
+	CImage		img_lobby_hero2_ready;
+	CImage		img_lobby_hero2_unready;
+
+	CImage		img_lobby_connect_bnt;
+	CImage		img_lobby_ready_bnt;
+	CImage		img_lobby_ready_disabled_bnt;
 	/////////////////////////////
 
 
