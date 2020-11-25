@@ -4,7 +4,10 @@
 using namespace std;
 
 enum eTHREAD { SEND = 0, RECV = 1, MAX = 2 };
+enum eSCENE { LOBBY = 0, GAME = 1 };
 constexpr int CLIENT_LIMITE = 2;
+
+int client_table[2];
 class hClientInfo {
 public:
 	int id;
@@ -13,6 +16,8 @@ public:
 	int addrlen;
 	HANDLE hEvent[eTHREAD::MAX];
 	DWORD dwThreadID[eTHREAD::MAX];
+	eSCENE Scene = eSCENE::LOBBY;
+	int lastpacket;
 
 public:
 	void close() {
@@ -23,6 +28,7 @@ public:
 		CloseHandle(hEvent[eTHREAD::RECV]);
 		dwThreadID[eTHREAD::SEND] = NULL;
 		dwThreadID[eTHREAD::RECV] = NULL;
+		client_table[id] = NULL;
 	}
 };
 hClientInfo cInfo[CLIENT_LIMITE];
@@ -64,10 +70,13 @@ DWORD WINAPI SendThread(LPVOID arg) {
 	cout << "SENDTHREAD" << threadID << endl;
 	while (1) {
 		WaitForSingleObject(client->hEvent[eTHREAD::RECV], INFINITE);
-		switch (type) {
-		case CS_1:
-			cout << threadID << "send - cs1" << endl;
-			buffer = '1';
+		switch (client->lastpacket) {
+		case cs_login:
+			sc_packet_login scpl;
+			scpl.id = client->id;
+			scpl.size = sizeof(scpl);
+			scpl.type = sc_login;
+			retval = send(client->s, reinterpret_cast<char*>(&scpl), sizeof(scpl), 0);
 			break;
 		case CS_2:
 			cout << threadID << "send - cs2" << endl;
@@ -82,7 +91,6 @@ DWORD WINAPI SendThread(LPVOID arg) {
 			buffer = '4';
 			break;
 		}
-		retval = send(client->s, &buffer, sizeof(buffer), 0);
 		SetEvent(client->hEvent[eTHREAD::SEND]);
 	}
 	client->close();
@@ -94,9 +102,9 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 	DWORD retval;
 	char buffer[MAXBUFFER];
 	auto threadID = GetCurrentThreadId();
-	hClientInfo* client = static_cast<hClientInfo*>(arg);
 
 	cout << "RECVTHREAD" << threadID << endl;
+	hClientInfo* client = static_cast<hClientInfo*>(arg);
 	while (1) {
 		WaitForSingleObject(client->hEvent[eTHREAD::SEND], INFINITE);
 		ZeroMemory(&buffer, sizeof(buffer));
@@ -104,21 +112,32 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 		if (retval == SOCKET_ERROR)  err_display("recv()");
 		else if (retval == 0) return 0;
 		switch (buffer[1]) {
-		case CS_1:
-			type = CS_1;
-			cout << threadID << "get packet - CS1" << endl;
+		case cs_login:
+			client->lastpacket = cs_login;
 			break;
 		case CS_2:
 			type = CS_2;
 			cout << threadID << "get packet - CS2" << endl;
+			cout << buffer[0] << endl;
+			cout << buffer[1] << endl;
+			cout << buffer[2] << endl;
+			cout << buffer[3] << endl;
 			break;
 		case CS_3:
 			type = CS_3;
 			cout << threadID << "get packet - CS3" << endl;
+			cout << buffer[0] << endl;
+			cout << buffer[1] << endl;
+			cout << buffer[2] << endl;
+			cout << buffer[3] << endl;
 			break;
 		case CS_4:
 			type = CS_4;
 			cout << threadID << "get packet - CS4" << endl;
+			cout << buffer[0] << endl;
+			cout << buffer[1] << endl;
+			cout << buffer[2] << endl;
+			cout << buffer[3] << endl;
 			break;
 		}
 		SetEvent(client->hEvent[eTHREAD::RECV]);
@@ -128,6 +147,7 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 }
 
 int main(int argc, char* argv[]) {
+	memset(&client_table, 0, sizeof(client_table));
 	int retval;
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa)) return -1;
@@ -151,9 +171,15 @@ int main(int argc, char* argv[]) {
 	HANDLE hThread;
 	
 	while (true) {
-		cInfo[client_cur].id = client_cur;
+		if (client_table[0] == NULL) client_cur = 0;
+		else if (client_table[1] == NULL) client_cur = 1;
+		else continue;
+
 		cInfo[client_cur].addrlen = sizeof(cInfo[client_cur].addr);
 		cInfo[client_cur].s = accept(sock_listen, (sockaddr*)&cInfo[client_cur].addr, &cInfo[client_cur].addrlen);
+
+		cInfo[client_cur].id = client_cur;
+		client_table[client_cur] = 1;
 		if (cInfo[client_cur].s == INVALID_SOCKET) {
 			err_display("accept()");
 			break;
@@ -176,7 +202,6 @@ int main(int argc, char* argv[]) {
 			CloseHandle(hThread);
 		}
 
-		client_cur = (++client_cur) % CLIENT_LIMITE;
 	}
 
 	closesocket(sock_listen);
