@@ -3,6 +3,8 @@
 #include "ResorceTable.h"
 #include "Table.h"
 
+int tick_block = 4;
+
 CGameScene::CGameScene()
 {
 	Hero1Score = 0;
@@ -17,6 +19,9 @@ CGameScene::~CGameScene()
 
 void CGameScene::update()
 {
+	if (Global::getInstance()->TimerTick % 1500 == 0 && tick_block > 1)
+		tick_block -= 1;
+
 	if (board_1.isShadowOn)
 	{
 		Global::getInstance()->ShadowTick_1 += 0.1f;
@@ -120,6 +125,7 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 			if (Hero2P.state == STATE::RIGHT) Hero2P.state = STATE::NORMAL;
 			break;
 		}
+		break;
 	case WM_KEYDOWN:
 		switch (w) {
 			// Player1
@@ -150,6 +156,7 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 			Hero2P.SkillOn(Hero1P);
 			break;
 		}
+		break;
 	}
 	return true;
 }

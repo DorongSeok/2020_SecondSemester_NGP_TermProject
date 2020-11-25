@@ -33,7 +33,6 @@ constexpr auto  PTStartY = 50;
 //timer
 constexpr auto timer_Main = 1;
 constexpr auto tick_Main = 10;		//(ms)
-constexpr auto tick_block = 4;
 constexpr auto tick_skill = 5;
 
 //Table Size setting

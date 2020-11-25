@@ -146,6 +146,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 		// 배경음
 		ResorceTable::getInstance()->m_Sound.PlayBGM(0);
+		
+		// 타이머
+		SetTimer(hWnd, 1, 16, NULL);
+		Global::getInstance()->TimerTick = 0;
 		break;
 #pragma endregion
 	//case WM_COMMAND:
@@ -214,6 +218,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 #pragma region 종료 시 호출.		윈도우를 소멸시키고 싶으면 DestoryWindow(hWnd)
 	case WM_DESTROY:
 		framework.ReleaseObject();
+		KillTimer(hWnd, 1);
 		PostQuitMessage(0);
 		return 0;
 #pragma endregion

@@ -76,50 +76,24 @@ void CHero::move(CTable Target) {
 	}
 	// 이동 관련
 	if (state == STATE::LEFT) {
-		if (speed >= 0) {
-			int PosT = GetPosInValY(rect.top);
-			int PosB = GetPosInValY(rect.bottom - 1);
-			int PosL = GetPosInValX(rect.left - speed);
-			if (((Target.Val[PosL][PosT] == BLOCK_TYPE::NONE && Target.Val[PosL][PosB] == BLOCK_TYPE::NONE)
-				|| (Target.Val[PosL][PosT] == BLOCK_TYPE::SHADOW && Target.Val[PosL][PosB] == BLOCK_TYPE::SHADOW))
-				&& rect.left - speed >= PTStartX) pPosition.x -= speed;
-			else pPosition.x = (rect.left / BLOCK_SIZE) * BLOCK_SIZE + BLOCK_SIZE;
-		}
-		else {
-			int reverseSpeed = speed * -1;
-			int topY = GetPosInValY(rect.top);
-			int bottomY = GetPosInValY(rect.bottom - 1);
-			int rightX = GetPosInValX(rect.right + reverseSpeed);
-			if (rightX == table_WIDTH)
-				rightX -= 1;
-			if (((Target.Val[rightX][topY] == BLOCK_TYPE::NONE && Target.Val[rightX][bottomY] == BLOCK_TYPE::NONE)
-				|| (Target.Val[rightX][topY] == BLOCK_TYPE::SHADOW && Target.Val[rightX][bottomY] == BLOCK_TYPE::SHADOW))
-				&& rect.right + reverseSpeed <= PTStartX + table_WIDTH * BLOCK_SIZE) pPosition.x += reverseSpeed;
-			else pPosition.x = (rect.right / BLOCK_SIZE) * BLOCK_SIZE;
-		}
+		int PosT = GetPosInValY(rect.top);
+		int PosB = GetPosInValY(rect.bottom - 1);
+		int PosL = GetPosInValX(rect.left - speed);
+		if (((Target.Val[PosL][PosT] == BLOCK_TYPE::NONE && Target.Val[PosL][PosB] == BLOCK_TYPE::NONE)
+			|| (Target.Val[PosL][PosT] == BLOCK_TYPE::SHADOW && Target.Val[PosL][PosB] == BLOCK_TYPE::SHADOW))
+			&& rect.left - speed >= PTStartX) pPosition.x -= speed;
+		else pPosition.x = (rect.left / BLOCK_SIZE) * BLOCK_SIZE + BLOCK_SIZE;
 	}
 	else if (state == STATE::RIGHT) {
-		if (speed >= 0) {
-			int topY = GetPosInValY(rect.top);
-			int bottomY = GetPosInValY(rect.bottom - 1);
-			int rightX = GetPosInValX(rect.right + speed);
-			if (rightX == table_WIDTH)
-				rightX -= 1;
-			if (((Target.Val[rightX][topY] == BLOCK_TYPE::NONE && Target.Val[rightX][bottomY] == BLOCK_TYPE::NONE)
-				|| (Target.Val[rightX][topY] == BLOCK_TYPE::SHADOW && Target.Val[rightX][bottomY] == BLOCK_TYPE::SHADOW))
-				&& rect.right + speed <= PTStartX + table_WIDTH * BLOCK_SIZE) pPosition.x += speed;
-			else pPosition.x = (rect.right / BLOCK_SIZE) * BLOCK_SIZE;
-		}
-		else {
-			int reverseSpeed = speed * -1;
-			int topY = GetPosInValY(rect.top);
-			int bottomY = GetPosInValY(rect.bottom - 1);
-			int leftX = GetPosInValX(rect.left - reverseSpeed);
-			if (((Target.Val[leftX][topY] == BLOCK_TYPE::NONE && Target.Val[leftX][bottomY] == BLOCK_TYPE::NONE)
-				|| (Target.Val[leftX][topY] == BLOCK_TYPE::SHADOW && Target.Val[leftX][bottomY] == BLOCK_TYPE::SHADOW))
-				&& rect.left - reverseSpeed >= PTStartX) pPosition.x -= reverseSpeed;
-			else pPosition.x = (rect.left / BLOCK_SIZE) * BLOCK_SIZE + BLOCK_SIZE;
-		}
+		int topY = GetPosInValY(rect.top);
+		int bottomY = GetPosInValY(rect.bottom - 1);
+		int rightX = GetPosInValX(rect.right + speed);
+		if (rightX == table_WIDTH)
+			rightX -= 1;
+		if (((Target.Val[rightX][topY] == BLOCK_TYPE::NONE && Target.Val[rightX][bottomY] == BLOCK_TYPE::NONE)
+			|| (Target.Val[rightX][topY] == BLOCK_TYPE::SHADOW && Target.Val[rightX][bottomY] == BLOCK_TYPE::SHADOW))
+			&& rect.right + speed <= PTStartX + table_WIDTH * BLOCK_SIZE) pPosition.x += speed;
+		else pPosition.x = (rect.right / BLOCK_SIZE) * BLOCK_SIZE;
 	}
 
 	if (PlayerNum == 1) Global::getInstance()->Player1Center = pPosition;
@@ -222,7 +196,7 @@ void CHero::skillGaugeUp(CHero& enemyHero) {
 		else SkillOff(enemyHero);
 	}
 	// 스킬 게이지
-	if (Global::getInstance()->TimerTick % 50 == 0) if (NowSkillGauge + NormalSkillGaugeIncrement < MaxSkillGauge)	NowSkillGauge += NormalSkillGaugeIncrement;
+	if (Global::getInstance()->TimerTick % 50 == 0) if (NowSkillGauge + NormalSkillGaugeIncrement <= MaxSkillGauge)	NowSkillGauge += NormalSkillGaugeIncrement;
 }
 
 void CHero::SkillOn(CHero& enemyHero) {
