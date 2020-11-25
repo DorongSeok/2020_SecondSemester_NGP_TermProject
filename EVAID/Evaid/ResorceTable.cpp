@@ -4,12 +4,12 @@ ResorceTable::ResorceTable() {
 	loadImg();
 	if (!loadCheck()) cout << "file load resource" << endl;
 
-	m_Sound.AddSound(0, "Sound/MainBGM.mp3"/*, true*/);			// 배경음일때는 뒤에 true
-	m_Sound.AddSound(1, "Sound/JumpSound.mp3");	
-	m_Sound.AddSound(2, "Sound/ClickSound.mp3");
-	m_Sound.AddSound(3, "Sound/DropSound.mp3");	
-	m_Sound.AddSound(4, "Sound/SkillSound.mp3");
-	m_Sound.AddSound(5, "Sound/DeadBlockSound.mp3");
+	//m_Sound.AddSound(0, "Sound/MainBGM.mp3"/*, true*/);			// 배경음일때는 뒤에 true
+	//m_Sound.AddSound(1, "Sound/JumpSound.mp3");	
+	//m_Sound.AddSound(2, "Sound/ClickSound.mp3");
+	//m_Sound.AddSound(3, "Sound/DropSound.mp3");	
+	//m_Sound.AddSound(4, "Sound/SkillSound.mp3");
+	//m_Sound.AddSound(5, "Sound/DeadBlockSound.mp3");
 }
 
 ResorceTable::~ResorceTable() {

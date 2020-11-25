@@ -18,8 +18,13 @@ public:
 	DWORD dwThreadID[eTHREAD::MAX];
 	eSCENE Scene = eSCENE::LOBBY;
 	int lastpacket;
+	bool isReady;
 
 public:
+
+	hClientInfo() {
+		isReady = false;
+	}
 	void close() {
 		closesocket(s);
 		s = NULL;
@@ -60,6 +65,13 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
 	return (len - left);
 }
 
+bool readyall() {
+	if (cInfo[0].isReady == true && cInfo[1].isReady == true) {
+		return true;
+	}
+	else return false;
+}
+
 DWORD WINAPI SendThread(LPVOID arg) {
 	
 	DWORD retval;
@@ -76,11 +88,22 @@ DWORD WINAPI SendThread(LPVOID arg) {
 			scpl.id = client->id;
 			scpl.size = sizeof(scpl);
 			scpl.type = sc_login;
-			retval = send(client->s, reinterpret_cast<char*>(&scpl), sizeof(scpl), 0);
+			retval = send(client->s, reinterpret_cast<char*>(&scpl), scpl.size, 0);
 			break;
-		case CS_2:
-			cout << threadID << "send - cs2" << endl;
-			buffer = '2';
+		case cs_ready:
+			sc_packet_ready scpr;
+			scpr.size = sizeof(scpr);
+			scpr.type = sc_ready;
+			if (readyall()) {
+				scpr.isReady = true;
+				retval = send(client->s, reinterpret_cast<char*>(&scpr), scpr.size, 0);
+				cout << "send - allready" << endl;
+			}
+			else {
+				scpr.isReady = false;
+				retval = send(client->s, reinterpret_cast<char*>(&scpr), scpr.size, 0);
+				cout << "send - ready" << endl;
+			}
 			break;
 		case CS_3:
 			cout << threadID << "send - cs3" << endl;
@@ -115,13 +138,9 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 		case cs_login:
 			client->lastpacket = cs_login;
 			break;
-		case CS_2:
-			type = CS_2;
-			cout << threadID << "get packet - CS2" << endl;
-			cout << buffer[0] << endl;
-			cout << buffer[1] << endl;
-			cout << buffer[2] << endl;
-			cout << buffer[3] << endl;
+		case cs_ready:
+			client->lastpacket = cs_ready;
+			client->isReady = true;
 			break;
 		case CS_3:
 			type = CS_3;

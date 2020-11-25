@@ -39,14 +39,15 @@ class sc_packet_ready {
 public:
 	BYTE size;
 	BYTE type;
+	bool isReady;
 };
 #pragma pack()
 
 ///for test dummy packet
-constexpr BYTE CS_1 = 1;
-constexpr BYTE CS_2 = 2;
-constexpr BYTE CS_3 = 3;
-constexpr BYTE CS_4 = 4;
+constexpr BYTE CS_1 = 11;
+constexpr BYTE CS_2 = 12;
+constexpr BYTE CS_3 = 13;
+constexpr BYTE CS_4 = 14;
 
 #pragma pack(1)
 class cs_packet_1 {

@@ -9,7 +9,7 @@ HINSTANCE g_hInst;						// 현재 인스턴스
 LPCTSTR lpszClass = TEXT("EVAID CLASS");
 LPCTSTR lpszTitle = TEXT("EVAID TITLE");
 
-CFramework framework;
+static CFramework framework;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 

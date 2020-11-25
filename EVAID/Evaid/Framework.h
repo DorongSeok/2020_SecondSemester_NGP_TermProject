@@ -31,6 +31,11 @@ public:
 //
 //	int recvn(SOCKET s, char* buf, int len, int flags);
 //	void err_display(const char* msg);
+public:
+	WSADATA wsa;
+	SOCKET s;
+	sockaddr_in addr;
+	int addrlen;
 
 private:
 	HWND m_hWnd{ NULL };
@@ -42,4 +47,5 @@ private:
 	HDC m_hDCBackBuffer{ nullptr };
 	HBITMAP m_hbmpBackBuffer{ nullptr };
 	COLORREF m_hColorBackground{ RGB(255,255,255) };
+
 };

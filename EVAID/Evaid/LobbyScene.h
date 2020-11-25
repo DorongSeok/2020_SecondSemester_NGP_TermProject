@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 
+enum ePlayer { FIRST = 0, SECOND = 1, MAX = 2 };
 class CLobbyScene : public CScene {
 public:
 	CLobbyScene();
@@ -22,8 +23,6 @@ private:
 	bool bImConnected = false;
 	bool bImReady = false;
 
-	bool bPlayer1Connected = false;
-	bool bPlayer2Connected = false;
-	bool bPlayer1Ready = false;
-	bool bPlayer2Ready = false;
+	bool bPlayerConnected[ePlayer::MAX];
+	bool bPlayerReady[ePlayer::MAX];
 };

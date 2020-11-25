@@ -11,6 +11,7 @@
 #include <vector>
 #include <fstream>
 #include "SoundManager.h"
+#include "..\..\evaid_server\evaid_server\protocol.h"
 
 using namespace std;
 

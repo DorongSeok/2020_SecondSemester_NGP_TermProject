@@ -4,7 +4,11 @@
 #include "LobbyScene.h"
 #include "GameScene.h"
 
-CFramework::CFramework() {}
+CFramework::CFramework() {
+	if (WSAStartup(MAKEWORD(2, 2), &wsa)) cout << "wsa error" << endl;
+	s = socket(AF_INET, SOCK_STREAM, 0);
+	if (s == INVALID_SOCKET) cout << "sock error" << endl;
+}
 
 void CFramework::update() {
 	if (m_pCurrentScene) m_pCurrentScene->update();
