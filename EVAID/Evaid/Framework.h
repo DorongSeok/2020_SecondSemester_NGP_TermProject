@@ -24,13 +24,6 @@ public:
 	bool KeyBoard(UINT msg, WPARAM wParam, LPARAM lParam);
 	RECT getClientRect() const { return m_rcClient; }
 
-//public:
-//	SOCKET		m_sock;
-//	int			m_retval;
-//	char SERVERIP[20];
-//
-//	int recvn(SOCKET s, char* buf, int len, int flags);
-//	void err_display(const char* msg);
 public:
 	WSADATA wsa;
 	SOCKET s;
@@ -47,5 +40,4 @@ private:
 	HDC m_hDCBackBuffer{ nullptr };
 	HBITMAP m_hbmpBackBuffer{ nullptr };
 	COLORREF m_hColorBackground{ RGB(255,255,255) };
-
 };

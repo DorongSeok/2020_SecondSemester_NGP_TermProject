@@ -180,7 +180,6 @@ bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
 			}
 			if (!bImReady)
 			{
-
 				bImReady = true;
 				cout << "Ready" << endl;
 				break;

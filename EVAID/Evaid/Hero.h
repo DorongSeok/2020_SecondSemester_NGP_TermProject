@@ -46,3 +46,19 @@ public:
 	void SkillOff(CHero&);
 };
 
+//#pragma pack(1)
+//class Protocol_Player {
+//public:
+//	char id;
+//	JPoint pos;
+//	int skill_gauge;
+//	bool IsSkillOn;
+//	int Debuff;
+//};
+//#pragma pack(1)
+//class Protocol_Table {
+//public:
+//	char id;
+//	BLOCK_TYPE Val[table_WIDTH][table_HEIGHT];
+//	BLOCK_TYPE	nextBlock;
+//};
