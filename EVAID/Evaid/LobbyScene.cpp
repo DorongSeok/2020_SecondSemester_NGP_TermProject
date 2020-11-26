@@ -1,4 +1,4 @@
-#include "LobbyScene.h"
+ï»¿#include "LobbyScene.h"
 #include "Framework.h"
 #include "Global.h"
 #include "ResorceTable.h"
@@ -72,9 +72,9 @@ bool CLobbyScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
 
 	switch (msg) {
 	case WM_KEYUP:
-		if ('0' <= w && w <= '9')				// Å°º¸µå ¼ýÀÚÅ°
+		if ('0' <= w && w <= '9')				// Å°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å°
 			cout << w - '0';
-		else if (96 <= w && w <= 105)			// ¿À¸¥ÂÊ ¼ýÀÚÅ°
+		else if (96 <= w && w <= 105)			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å°
 			cout << w - 96;
 		else if (w == 190 || w == 110)			// '.' Å°
 			cout << '.';

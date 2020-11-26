@@ -23,8 +23,6 @@ public:
 	void DrawGameScene(HDC hDC);
 
 private:
-	int iMyPlayerNum = 2;
-
 	int Hero1Score = 0;
 	int Hero2Score = 0;
 

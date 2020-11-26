@@ -47,4 +47,5 @@ private:
 	HDC m_hDCBackBuffer{ nullptr };
 	HBITMAP m_hbmpBackBuffer{ nullptr };
 	COLORREF m_hColorBackground{ RGB(255,255,255) };
+
 };

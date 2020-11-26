@@ -157,13 +157,13 @@
     <ClCompile Include="Table.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\evaid_server\evaid_server\protocol.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="logoScene.h" />
+    <ClInclude Include="protocol.h" />
     <ClInclude Include="RankMng.h" />
     <ClInclude Include="ResorceTable.h" />
     <ClInclude Include="resource.h" />
