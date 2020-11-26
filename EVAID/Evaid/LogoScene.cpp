@@ -55,6 +55,7 @@ bool CLogoScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
 		}
 		break;
 	}
+	return false;
 }
 
 void CLogoScene::ReleaseObjects() {}

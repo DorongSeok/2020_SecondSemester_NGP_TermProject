@@ -52,7 +52,7 @@ constexpr BYTE CS_2 = 12;
 constexpr BYTE CS_3 = 13;
 constexpr BYTE CS_4 = 14;
 
-#pragma pack(1)
+#pragma pack(push, 1)
 class cs_packet_1 {
 public:
 	BYTE size;   //1
