@@ -12,6 +12,8 @@ constexpr BYTE cs_login = 1;
 constexpr BYTE sc_login = 2;
 constexpr BYTE cs_ready = 3;
 constexpr BYTE sc_ready = 4;
+constexpr BYTE cs_user = 5;
+constexpr BYTE sc_user = 6;
 
 #pragma pack(push, 1)
 class cs_packet_login {
@@ -27,7 +29,7 @@ public:
 	BYTE id;      //준비완료 클라 ID
 };
 
-class cs_pakcet_user {
+class cs_packet_user {
 public:
 	BYTE size;
 	BYTE type;
