@@ -37,8 +37,6 @@ public:
 	CTable(int);
 	~CTable();
 
-	void log();
-
 	///<summary>
 	/// 그리기 함수 (OnDraw에서 호출)
 	/// 배경화면/ 보더/ 블럭/ 다음 블럭 및 다음 블럭 보더

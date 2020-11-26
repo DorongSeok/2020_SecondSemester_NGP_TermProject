@@ -32,7 +32,7 @@ public:
 	BYTE size;
 	BYTE type;
 	BYTE table[20][10];
-	short pos[2];		//0: X, 1: Y
+	int pos[2];		//0: X, 1: Y
 	BYTE skillGauge;
 	bool skillActive;
 	BYTE nextBlock;
@@ -63,7 +63,7 @@ public:
 	BYTE size;
 	BYTE type;
 	BYTE table[2][20][10];
-	short pos[2][2];		//0: X, 1: Y
+	int pos[2][2];		//0: X, 1: Y
 	BYTE skillGauge[2];
 	bool skillActive[2];
 	BYTE nextBlock[2];

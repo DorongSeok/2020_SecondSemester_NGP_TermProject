@@ -7,8 +7,8 @@
 #define Gravity 8
 
 // 스킬관련
-#define MaxSkillGauge 10
-#define NormalSkillGaugeIncrement 1
+#define MaxSkillGauge (BYTE)10
+#define NormalSkillGaugeIncrement (BYTE)1
 
 class CHero
 {
@@ -24,8 +24,8 @@ private:
 
 	int skillCnt;		// 스킬 카운트
 	bool IsSkillOn;		// 스킬 체크
-	int SkillCostGauge;	// 스킬을 사용하기 위한 게이지
-	int NowSkillGauge;	// 현재 스킬 게이지
+	BYTE SkillCostGauge;	// 스킬을 사용하기 위한 게이지
+	BYTE NowSkillGauge;	// 현재 스킬 게이지
 	bool Invincible = false;	// 무적
 
 	int PlayerNum;		// 플레이어 구분

@@ -100,7 +100,7 @@ public:
 
 //떨어지는 블록종류
 #define Block_Type_Count 5
-enum class BLOCK_TYPE {
+enum class BLOCK_TYPE : BYTE{
 	A
 	, B
 	, C
