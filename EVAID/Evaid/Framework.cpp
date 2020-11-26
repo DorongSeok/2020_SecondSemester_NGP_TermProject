@@ -74,7 +74,7 @@ void CFramework::PopScene() {
     m_Scenes[m_nCurrentScene] = nullptr;
     m_pCurrentScene = m_Scenes[--m_nCurrentScene];
 
-    delete pScene;
+    //delete pScene;
 }
 
 void CFramework::ReleaseObject() {

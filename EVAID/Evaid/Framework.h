@@ -42,7 +42,7 @@ private:
 	RECT m_rcClient{ NULL };
 
 	CScene* m_Scenes[4];
-	int m_nCurrentScene{ -1 };
+	int m_nCurrentScene{ 0 };
 	CScene* m_pCurrentScene{ nullptr };
 	HDC m_hDCBackBuffer{ nullptr };
 	HBITMAP m_hbmpBackBuffer{ nullptr };
