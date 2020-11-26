@@ -3,9 +3,9 @@
 
 using namespace std;
 
-enum eTHREAD { tSEND = 0, tRECV = 1, tMAX = 2 };
-enum eSCENE { sLOBBY = 0, sGAME = 1 };
-enum ePlayer { pFIRST = 0, pSECOND = 1, pMAX = 2 };
+enum eTHREAD { SEND = 0, RECV = 1, MAX = 2 };
+enum eSCENE { LOBBY = 0, GAME = 1 };
+constexpr int CLIENT_LIMITE = 2;
 
 int client_table[2];
 class hClientInfo {
@@ -14,27 +14,25 @@ public:
 	SOCKET s;
 	SOCKADDR_IN addr;
 	int addrlen;
-	HANDLE hEvent[eTHREAD::tMAX];
-	DWORD dwThreadID[eTHREAD::tMAX];
-	eSCENE Scene = eSCENE::sLOBBY;
+	HANDLE hEvent[eTHREAD::MAX];
+	DWORD dwThreadID[eTHREAD::MAX];
+	eSCENE Scene = eSCENE::LOBBY;
 	int lastpacket;
 	bool isReady;
 
 public:
 
 	hClientInfo() {
-		id = NULLVAL;
 		isReady = false;
 	}
 	void close() {
 		closesocket(s);
-		id = NULLVAL;
 		s = NULL;
 		ZeroMemory(&addr, sizeof(addr));
-		CloseHandle(hEvent[eTHREAD::tSEND]);
-		CloseHandle(hEvent[eTHREAD::tRECV]);
-		dwThreadID[eTHREAD::tSEND] = NULL;
-		dwThreadID[eTHREAD::tRECV] = NULL;
+		CloseHandle(hEvent[eTHREAD::SEND]);
+		CloseHandle(hEvent[eTHREAD::RECV]);
+		dwThreadID[eTHREAD::SEND] = NULL;
+		dwThreadID[eTHREAD::RECV] = NULL;
 		client_table[id] = NULL;
 	}
 };
@@ -74,17 +72,6 @@ bool readyall() {
 	else return false;
 }
 
-int sendall(char* buffer, int bufferSize, int flags) {
-	int cnt = 0;
-	for (int i = 0; i < CLIENT_LIMITE; ++i) {
-		if (cInfo[i].id != NULLVAL) {
-			++cnt;
-			int retval = send(cInfo[i].s, buffer, bufferSize, flags);
-		}
-	}
-	return cnt;
-}
-
 DWORD WINAPI SendThread(LPVOID arg) {
 	
 	DWORD retval;
@@ -94,29 +81,27 @@ DWORD WINAPI SendThread(LPVOID arg) {
 
 	cout << "SENDTHREAD" << threadID << endl;
 	while (1) {
-		WaitForSingleObject(client->hEvent[eTHREAD::tRECV], INFINITE);
+		WaitForSingleObject(client->hEvent[eTHREAD::RECV], INFINITE);
 		switch (client->lastpacket) {
 		case cs_login:
 			sc_packet_login scpl;
 			scpl.id = client->id;
 			scpl.size = sizeof(scpl);
 			scpl.type = sc_login;
-			scpl.f_login = client_table[ePlayer::pFIRST];
-			scpl.s_login = client_table[ePlayer::pSECOND];
-			retval = sendall(reinterpret_cast<char*>(&scpl), sizeof(scpl), 0);
+			retval = send(client->s, reinterpret_cast<char*>(&scpl), scpl.size, 0);
 			break;
 		case cs_ready:
 			sc_packet_ready scpr;
 			scpr.size = sizeof(scpr);
 			scpr.type = sc_ready;
 			if (readyall()) {
-				scpr.id = ePlayer::pMAX;
-				retval = sendall(reinterpret_cast<char*>(&scpr), scpr.size, 0);
+				scpr.isReady = true;
+				retval = send(client->s, reinterpret_cast<char*>(&scpr), scpr.size, 0);
 				cout << "send - allready" << endl;
 			}
 			else {
-				scpr.id = client->id;
-				retval = sendall(reinterpret_cast<char*>(&scpr), scpr.size, 0);
+				scpr.isReady = false;
+				retval = send(client->s, reinterpret_cast<char*>(&scpr), scpr.size, 0);
 				cout << "send - ready" << endl;
 			}
 			break;
@@ -129,7 +114,7 @@ DWORD WINAPI SendThread(LPVOID arg) {
 			buffer = '4';
 			break;
 		}
-		SetEvent(client->hEvent[eTHREAD::tSEND]);
+		SetEvent(client->hEvent[eTHREAD::SEND]);
 	}
 	client->close();
 	return 0;
@@ -144,9 +129,9 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 	cout << "RECVTHREAD" << threadID << endl;
 	hClientInfo* client = static_cast<hClientInfo*>(arg);
 	while (1) {
-		WaitForSingleObject(client->hEvent[eTHREAD::tSEND], INFINITE);
+		WaitForSingleObject(client->hEvent[eTHREAD::SEND], INFINITE);
 		ZeroMemory(&buffer, sizeof(buffer));
-		retval = recv(client->s, buffer, MAXBUFFER, 0);
+		retval = recv(client->s, buffer, 10, 0);
 		if (retval == SOCKET_ERROR)  err_display("recv()");
 		else if (retval == 0) return 0;
 		switch (buffer[1]) {
@@ -174,7 +159,7 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 			cout << buffer[3] << endl;
 			break;
 		}
-		SetEvent(client->hEvent[eTHREAD::tRECV]);
+		SetEvent(client->hEvent[eTHREAD::RECV]);
 	}
 	client->close();
 	return 0;
@@ -218,18 +203,18 @@ int main(int argc, char* argv[]) {
 			err_display("accept()");
 			break;
 		}
-		cInfo[client_cur].hEvent[eTHREAD::tRECV]= CreateEvent(NULL, false, false, NULL);
-		cInfo[client_cur].hEvent[eTHREAD::tSEND]= CreateEvent(NULL, false, true, NULL);
+		cInfo[client_cur].hEvent[eTHREAD::RECV]= CreateEvent(NULL, false, false, NULL);
+		cInfo[client_cur].hEvent[eTHREAD::SEND]= CreateEvent(NULL, false, true, NULL);
 
 		cout << inet_ntoa(cInfo[client_cur].addr.sin_addr) << " " << ntohs(cInfo[client_cur].addr.sin_port) << endl;
 
-		hThread = CreateThread(NULL, 0, SendThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::tSEND]);
+		hThread = CreateThread(NULL, 0, SendThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::SEND]);
 		if (hThread == NULL) { closesocket(cInfo[client_cur].s); }
 		else {
 			SetThreadPriority(hThread, THREAD_PRIORITY_TIME_CRITICAL);
 			CloseHandle(hThread);
 		}
-		hThread = CreateThread(NULL, 0, RecvThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::tRECV]);
+		hThread = CreateThread(NULL, 0, RecvThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::RECV]);
 		if (hThread == NULL) { closesocket(cInfo[client_cur].s); }
 		else {
 			SetThreadPriority(hThread, THREAD_PRIORITY_TIME_CRITICAL);

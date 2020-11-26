@@ -180,6 +180,10 @@ bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
 			}
 			if (!bImReady)
 			{
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 7d8be19... lobby scene clear
 				bImReady = true;
 				cout << "Ready" << endl;
 				break;

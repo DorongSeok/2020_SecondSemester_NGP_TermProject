@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 
-enum ePlayer { pFIRST = 0, pSECOND = 1, pMAX = 2 };
+enum ePlayer { FIRST = 0, SECOND = 1, MAX = 2 };
 class CLobbyScene : public CScene {
 public:
 	CLobbyScene();
@@ -18,11 +18,11 @@ private:
 	char input[30];
 
 
-	int iPlayerNum = 1;				// 내가 몇번째 플레이어인지
+	int iMyPlayerNum = 1;				// 내가 몇번째 플레이어인지
 
-	bool bConnected = false;
-	bool bReady = false;
+	bool bImConnected = false;
+	bool bImReady = false;
 
-	bool bPlayerConnected[ePlayer::pMAX];
-	bool bPlayerReady[ePlayer::pMAX];
+	bool bPlayerConnected[ePlayer::MAX];
+	bool bPlayerReady[ePlayer::MAX];
 };
