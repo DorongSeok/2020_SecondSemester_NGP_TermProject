@@ -8,6 +8,8 @@ CFramework::CFramework() {
 	if (WSAStartup(MAKEWORD(2, 2), &wsa)) cout << "wsa error" << endl;
 	s = socket(AF_INET, SOCK_STREAM, 0);
 	if (s == INVALID_SOCKET) cout << "sock error" << endl;
+	DWORD recvTimeout = 1000;
+	setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char*)&recvTimeout, sizeof(recvTimeout));
 }
 
 void CFramework::update() {
