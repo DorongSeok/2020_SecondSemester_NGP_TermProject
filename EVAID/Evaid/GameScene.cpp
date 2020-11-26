@@ -109,52 +109,46 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 	switch (msg) {
 	case WM_KEYUP:
 		switch (w) {
-			// P1ayer1
-		case 'A':
-			if (Hero1P.state == STATE::LEFT) Hero1P.state = STATE::NORMAL;
-			break;
-		case 'S':
-			if (Hero1P.state == STATE::RIGHT) Hero1P.state = STATE::NORMAL;
-			break;
-
-			// P1ayer2
-		case 'H':
-			if (Hero2P.state == STATE::LEFT) Hero2P.state = STATE::NORMAL;
-			break;
-		case 'J':
-			if (Hero2P.state == STATE::RIGHT) Hero2P.state = STATE::NORMAL;
-			break;
+			case VK_LEFT:
+			{
+				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER && Hero1P.state == STATE::LEFT)		Hero1P.state = STATE::NORMAL;
+				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER && Hero2P.state == STATE::LEFT)	Hero2P.state = STATE::NORMAL;
+				break;
+			}
+			case VK_RIGHT:
+			{
+				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER && Hero1P.state == STATE::RIGHT)		Hero1P.state = STATE::NORMAL;
+				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER && Hero2P.state == STATE::RIGHT)	Hero2P.state = STATE::NORMAL;
+				break;
+			}
 		}
 		break;
 	case WM_KEYDOWN:
 		switch (w) {
-			// Player1
-		case 'A':
-			Hero1P.state = STATE::LEFT;
-			break;
-		case 'S':
-			Hero1P.state = STATE::RIGHT;
-			break;
-		case 'D':
-			Hero1P.herojump();
-			break;
-		case 'F':
-			Hero1P.SkillOn(Hero2P);
-			break;
-
-			// Player2
-		case 'H':
-			Hero2P.state = STATE::LEFT;
-			break;
-		case 'J':
-			Hero2P.state = STATE::RIGHT;
-			break;
-		case 'K':
-			Hero2P.herojump();
-			break;
-		case 'L':
-			Hero2P.SkillOn(Hero1P);
-			break;
+			case VK_LEFT:
+			{
+				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.state = STATE::LEFT;
+				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.state = STATE::LEFT;
+				break;
+			}
+			case VK_RIGHT:
+			{
+				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.state = STATE::RIGHT;
+				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.state = STATE::RIGHT;
+				break;
+			}
+			case 'Z':
+			{
+				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.herojump();
+				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.herojump();
+				break;
+			}
+			case 'X':
+			{
+				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.SkillOn(Hero2P);
+				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.SkillOn(Hero1P);
+				break;
+			}
 		}
 		break;
 	}

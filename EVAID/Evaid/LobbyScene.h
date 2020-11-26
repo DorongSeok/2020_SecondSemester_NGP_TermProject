@@ -17,9 +17,6 @@ public:
 private:
 	char input[30];
 
-
-	int iPlayerNum = 1;				// 내가 몇번째 플레이어인지
-
 	bool bConnected = false;
 	bool bReady = false;
 

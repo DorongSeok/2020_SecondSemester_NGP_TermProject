@@ -23,14 +23,14 @@ public:
 	bool Mouse(UINT msg, WPARAM wParam, LPARAM lParam);
 	bool KeyBoard(UINT msg, WPARAM wParam, LPARAM lParam);
 	RECT getClientRect() const { return m_rcClient; }
+	int recvn(SOCKET s, char* buf, int len, int flags);
 
-//public:
-//	SOCKET		m_sock;
-//	int			m_retval;
-//	char SERVERIP[20];
-//
-//	int recvn(SOCKET s, char* buf, int len, int flags);
-//	void err_display(const char* msg);
+	//public:
+	//   SOCKET      m_sock;
+	//   int         m_retval;
+	//   char SERVERIP[20];
+	//
+	//   void err_display(const char* msg);
 public:
 	WSADATA wsa;
 	SOCKET s;
@@ -41,8 +41,8 @@ private:
 	HWND m_hWnd{ NULL };
 	RECT m_rcClient{ NULL };
 
-	CScene* m_Scenes[3];
-	int m_nCurrentScene{ 0 };
+	CScene* m_Scenes[4];
+	int m_nCurrentScene{ -1 };
 	CScene* m_pCurrentScene{ nullptr };
 	HDC m_hDCBackBuffer{ nullptr };
 	HBITMAP m_hbmpBackBuffer{ nullptr };

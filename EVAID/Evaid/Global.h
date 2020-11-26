@@ -48,6 +48,9 @@ constexpr auto table_HEIGHT = 20;
 constexpr auto BLOCK_SIZE = 40;
 constexpr auto HERO_SIZE = 40;
 
+constexpr auto FIRST_PLAYER = 0;
+constexpr auto SECOND_PLAYER = 1;
+
 // 라디안 값
 #define Radian (double)0.017453292519943295769236907684886
 
@@ -153,6 +156,8 @@ public:
 	float ShadowTick_2;
 
 	int tick_spawn;
+
+	int iMyPlayerNum = 0;            // 내가 몇번째 플레이어인지
 
 	bool Gameover_1 = false;
 	bool Gameover_2 = false;

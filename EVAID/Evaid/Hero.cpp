@@ -99,7 +99,7 @@ void CHero::move(CTable Target) {
 	if (PlayerNum == 1) Global::getInstance()->Player1Center = pPosition;
 	else if (PlayerNum == 2) Global::getInstance()->Player2Center = pPosition;
 
-	cout << jumpCnt << "  " << jumpHeight << "  " << Isjump << endl;
+	//cout << jumpCnt << "  " << jumpHeight << "  " << Isjump << endl;
 
 	SetHeroRect();
 }

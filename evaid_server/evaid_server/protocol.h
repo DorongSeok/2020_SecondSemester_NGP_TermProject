@@ -23,7 +23,7 @@ class cs_packet_ready {
 public:
 	BYTE size;
 	BYTE type;
-	BYTE id;		//준비완료 클라 ID
+	BYTE id;      //준비완료 클라 ID
 };
 #pragma pack()
 
@@ -32,7 +32,7 @@ class sc_packet_login {
 public:
 	BYTE size;
 	BYTE type;
-	BYTE id;		//접속 클라 ID
+	BYTE id;      //접속 클라 ID
 	BYTE f_login;
 	BYTE s_login;
 };
@@ -41,7 +41,7 @@ class sc_packet_ready {
 public:
 	BYTE size;
 	BYTE type;
-	BYTE id;		//준비완료 한 클라 ID
+	BYTE id;      //준비완료 한 클라 ID
 };
 #pragma pack()
 
@@ -54,9 +54,9 @@ constexpr BYTE CS_4 = 14;
 #pragma pack(1)
 class cs_packet_1 {
 public:
-	BYTE size;	//1
-	BYTE type;	//1
-	BYTE data;	//1
+	BYTE size;   //1
+	BYTE type;   //1
+	BYTE data;   //1
 };
 class cs_packet_2 {
 public:

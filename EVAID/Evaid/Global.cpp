@@ -11,6 +11,7 @@ Global::Global() {
 	isStart = false;
 	Player1HeroKind = HERO::Hero1;
 	Player2HeroKind = HERO::Hero1;
+	iMyPlayerNum = 1;
 }
 
 Global* Global::inst = nullptr;
