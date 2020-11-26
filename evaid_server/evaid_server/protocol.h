@@ -5,12 +5,13 @@
 //#define SERVERIP "14.35.11.46" //µ¿¼®
 #define SERVERPORT 9000
 #define MAXBUFFER 64
+constexpr BYTE CLIENT_LIMITE = 2;
+constexpr int NULLVAL = -1;
 
 constexpr BYTE cs_login = 1;
 constexpr BYTE sc_login = 2;
 constexpr BYTE cs_ready = 3;
 constexpr BYTE sc_ready = 4;
-constexpr BYTE CLIENT_LIMITE = 2;
 
 #pragma pack(1)
 class cs_packet_login {
