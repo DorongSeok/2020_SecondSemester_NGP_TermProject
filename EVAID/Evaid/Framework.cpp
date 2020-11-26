@@ -8,6 +8,8 @@ CFramework::CFramework() {
 	if (WSAStartup(MAKEWORD(2, 2), &wsa)) cout << "wsa error" << endl;
 	s = socket(AF_INET, SOCK_STREAM, 0);
 	if (s == INVALID_SOCKET) cout << "sock error" << endl;
+	DWORD recvTimeout = 1000; //1000ms
+	setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char*)&recvTimeout, sizeof(recvTimeout));
 }
 
 void CFramework::update() {
@@ -133,25 +135,25 @@ void CFramework::clear() {
 	FillRect(m_hDCBackBuffer, &m_rcClient, static_cast<HBRUSH>(GetStockObject(DC_BRUSH)));
 }
 //
-//int CFramework::recvn(SOCKET s, char* buf, int len, int flags)
-//{
-//	int received;
-//	char* ptr = buf;
-//	int left = len;
-//
-//	while (left > 0) {
-//		received = recv(s, ptr, left, flags);
-//		if (received == SOCKET_ERROR)
-//			return SOCKET_ERROR;
-//		else if (received == 0)
-//			break;
-//		left -= received;
-//		ptr += received;
-//	}
-//
-//	return (len - left);
-//
-//}
+int CFramework::recvn(SOCKET s, char* buf, int len, int flags)
+{
+	int received;
+	char* ptr = buf;
+	int left = len;
+
+	while (left > 0) {
+		received = recv(s, ptr, left, flags);
+		if (received == SOCKET_ERROR)
+			return SOCKET_ERROR;
+		else if (received == 0)
+			break;
+		left -= received;
+		ptr += received;
+	}
+
+	return (len - left);
+
+}
 //
 //void CFramework::err_display(const char* msg)
 //{

@@ -4,3 +4,5 @@
 #include <WinSock2.h>
 #include <iostream>
 #include <fstream>
+
+constexpr int NULLVAL = -1;
