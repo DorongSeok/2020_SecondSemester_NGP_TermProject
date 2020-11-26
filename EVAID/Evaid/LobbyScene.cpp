@@ -17,6 +17,7 @@ void CLobbyScene::update() {
 	SOCKET& s = m_Framework->s;
 	sockaddr_in& addr = m_Framework->addr;
 	int retval;
+<<<<<<< Updated upstream
 
 	if (bImReady) {
 		cs_packet_ready cspr;
@@ -33,6 +34,41 @@ void CLobbyScene::update() {
 		if (scpr.isReady == true) {
 			//todo: gamescene
 			cout << "!!" << endl;
+=======
+	char buffer[MAXBUFFER];
+
+	if (bConnected) {
+		ZeroMemory(buffer, sizeof(buffer));
+		retval = recv(s, buffer, sizeof(buffer), 0);
+		switch (buffer[1]) {
+		case sc_login:
+			cout << "get login packet" << endl;
+			break;
+		case sc_ready:
+			cout << "get ready packet" << endl;
+			break;
+		}
+		if (buffer[1] == sc_login && 
+			bPlayerConnected[ePlayer::pFIRST] == false || bPlayerConnected[ePlayer::pSECOND] == false) {
+			sc_packet_login scpl;
+			memcpy(&scpl, buffer, sizeof(scpl));
+			if (retval != 0 && retval != -1) {
+				bPlayerConnected[ePlayer::pFIRST] = scpl.f_login;
+				bPlayerConnected[ePlayer::pSECOND] = scpl.s_login;
+			}
+		}
+		if (buffer[1] == sc_ready) {
+			sc_packet_ready scpr;
+			memcpy(&scpr, buffer, sizeof(scpr));
+			if (retval != 0 && retval != -1) {
+				bPlayerReady[scpr.id] = true;
+				if (scpr.id == ePlayer::pMAX) {
+					bPlayerReady[0] = true;
+					bPlayerReady[1] = true;
+					m_Framework->PopScene();
+				}
+			}
+>>>>>>> Stashed changes
 		}
 	}
 }

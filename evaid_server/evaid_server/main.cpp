@@ -95,8 +95,15 @@ DWORD WINAPI SendThread(LPVOID arg) {
 			scpr.size = sizeof(scpr);
 			scpr.type = sc_ready;
 			if (readyall()) {
+<<<<<<< Updated upstream
 				scpr.isReady = true;
 				retval = send(client->s, reinterpret_cast<char*>(&scpr), scpr.size, 0);
+=======
+				scpr.id = ePlayer::pMAX;
+				retval = sendall(reinterpret_cast<char*>(&scpr), scpr.size, 0);
+				cInfo[ePlayer::pFIRST].Scene = eSCENE::sGAME;
+				cInfo[ePlayer::pSECOND].Scene = eSCENE::sGAME;
+>>>>>>> Stashed changes
 				cout << "send - allready" << endl;
 			}
 			else {
