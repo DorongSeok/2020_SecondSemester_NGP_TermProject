@@ -73,9 +73,36 @@ void CLobbyScene::draw(HDC hDC)
     // -------------------------
 
     // button-------------------
-    if (bConnected && bReady)                         ResorceTable::getInstance()->img_lobby_ready_disabled_bnt.Draw(hDC, 676, 753);
-    else if (bConnected && !bReady)                   ResorceTable::getInstance()->img_lobby_ready_bnt.Draw(hDC, 676, 753);
-    else                                              ResorceTable::getInstance()->img_lobby_connect_bnt.Draw(hDC, 676, 753);
+    if (bConnected && bReady)                         ResorceTable::getInstance()->img_lobby_ready_disabled_bnt.Draw(hDC, 711, 753);
+    else if (bConnected && !bReady)                   ResorceTable::getInstance()->img_lobby_ready_bnt.Draw(hDC, 711, 753);
+    else                                              ResorceTable::getInstance()->img_lobby_connect_bnt.Draw(hDC, 711, 753);
+    // -------------------------
+
+    // IP-----------------------
+    ResorceTable::getInstance()->img_lobby_ip_border.Draw(hDC, 85, 753);
+
+    HFONT hFont = CreateFont(60, 0, 0, 0, 0, 0, 0, 0
+        , DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
+        , TEXT("ArcadeClassic"));
+
+    HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
+
+    SetBkMode(hDC, TRANSPARENT);
+    SetTextColor(hDC, RGB(255, 255, 255));
+
+    TCHAR IpPrint[30];
+    RECT textRect;
+    textRect.left = 93;
+    textRect.right = 656;
+    textRect.top = 771;
+    textRect.bottom = 841;
+
+    // 출력할 텍스트 입력
+    wsprintf(IpPrint, L"%s", input);
+    DrawText(hDC, IpPrint, lstrlen(IpPrint), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
+    SelectObject(hDC, oldFont);
+    DeleteObject(hFont);
     // -------------------------
 }
 
@@ -87,6 +114,8 @@ bool CLobbyScene::init(CFramework* pFramework, HWND hWnd) {
 }
 
 bool CLobbyScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
+    if (bConnected)
+        return true;
 
     switch (msg) {
     case WM_KEYUP:
@@ -145,6 +174,9 @@ bool CLobbyScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
         case 190:
             strcat(input, ".");
             break;
+        case VK_BACK:
+            input[strlen(input) - 1] = '\0';
+            break;
         case VK_RETURN:
             break;
         }
@@ -165,7 +197,7 @@ bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
         POINT M;
         M.x = LOWORD(l);
         M.y = HIWORD(l);
-        if (!(M.x > 676 && M.x < 1076)) return false;
+        if (!(M.x > 711 && M.x < 1111)) return false;
 
         if (M.y > 753 && M.y < 861)
         {

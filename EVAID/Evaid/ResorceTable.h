@@ -66,6 +66,7 @@ public:
 	CImage		img_lobby_connect_bnt;
 	CImage		img_lobby_ready_bnt;
 	CImage		img_lobby_ready_disabled_bnt;
+	CImage		img_lobby_ip_border;
 	/////////////////////////////
 
 

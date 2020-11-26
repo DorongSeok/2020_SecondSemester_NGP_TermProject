@@ -67,10 +67,11 @@ ResorceTable::~ResorceTable() {
 	img_lobby_hero2_ready.Destroy();
 	img_lobby_hero2_unready.Destroy();
 
-	//3
+	//4
 	img_lobby_connect_bnt.Destroy();
 	img_lobby_ready_bnt.Destroy();
 	img_lobby_ready_disabled_bnt.Destroy();
+	img_lobby_ip_border.Destroy();
 }
 
 bool ResorceTable::loadCheck()
@@ -127,10 +128,11 @@ bool ResorceTable::loadCheck()
 	if (img_lobby_hero2_ready.IsNull()) return false;
 	if (img_lobby_hero2_unready.IsNull()) return false;
 
-	//3
+	//4
 	if (img_lobby_connect_bnt.IsNull()) return false;
 	if (img_lobby_ready_bnt.IsNull()) return false;
 	if (img_lobby_ready_disabled_bnt.IsNull()) return false;
+	if (img_lobby_ip_border.IsNull()) return false;
 
 	return true;
 }
@@ -189,10 +191,11 @@ void ResorceTable::loadImg()
 	img_lobby_hero2_ready.Load(TEXT("Image/lobby_hero2_ready.png"));
 	img_lobby_hero2_unready.Load(TEXT("Image/lobby_hero2_unready.png"));
 
-	//3
+	//4
 	img_lobby_connect_bnt.Load(TEXT("Image/lobby_connect_bnt.png"));
 	img_lobby_ready_bnt.Load(TEXT("Image/lobby_ready_bnt.png"));
 	img_lobby_ready_disabled_bnt.Load(TEXT("Image/lobby_ready_disabled_bnt.png"));
+	img_lobby_ip_border.Load(TEXT("Image/lobby_ip_border.png"));
 }
 
 ResorceTable* ResorceTable::inst = nullptr;
