@@ -85,7 +85,6 @@ void CFramework::ReleaseObject() {
 
 bool CFramework::Mouse(UINT msg, WPARAM w, LPARAM l) {
     if (m_pCurrentScene && m_pCurrentScene->Mouse(msg, w, l)) return true;
-    return false;
 }
 
 bool CFramework::KeyBoard(UINT msg, WPARAM w, LPARAM l) {
