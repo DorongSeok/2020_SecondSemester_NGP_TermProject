@@ -13,7 +13,7 @@ constexpr BYTE sc_login = 2;
 constexpr BYTE cs_ready = 3;
 constexpr BYTE sc_ready = 4;
 
-#pragma pack(1)
+#pragma pack(push, 1)
 class cs_packet_login {
 public:
 	BYTE size;
@@ -26,9 +26,21 @@ public:
 	BYTE type;
 	BYTE id;      //준비완료 클라 ID
 };
-#pragma pack()
 
-#pragma pack(1)
+class cs_pakcet_user {
+public:
+	BYTE size;
+	BYTE type;
+	BYTE table[20][10];
+	short pos[2];		//0: X, 1: Y
+	BYTE skillGauge;
+	bool skillActive;
+	BYTE nextBlock;
+};
+
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 class sc_packet_login {
 public:
 	BYTE size;
@@ -44,7 +56,20 @@ public:
 	BYTE type;
 	BYTE id;      //준비완료 한 클라 ID
 };
-#pragma pack()
+
+class sc_packet_user {
+public:
+	//s: client_id/ c: iMyPlayerNum
+	BYTE size;
+	BYTE type;
+	BYTE table[2][20][10];
+	short pos[2][2];		//0: X, 1: Y
+	BYTE skillGauge[2];
+	bool skillActive[2];
+	BYTE nextBlock[2];
+};
+
+#pragma pack(pop)
 
 ///for test dummy packet
 constexpr BYTE CS_1 = 11;
