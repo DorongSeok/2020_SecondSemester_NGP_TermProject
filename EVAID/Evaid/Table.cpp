@@ -32,6 +32,24 @@ CTable::CTable(int Player) {
 
 CTable::~CTable() {}
 
+void CTable::SetPacketToTable(BLOCK_TYPE** val, BLOCK_TYPE nextblock)
+{
+	for (int j = 0; j < table_HEIGHT; ++j)
+		for (int i = 0; i < table_WIDTH; ++i)
+			Val[i][j] = val[i][j];
+
+	nextBlock = nextblock;
+}
+
+void CTable::GetTableToPacket(cs_packet_user* cs_pack_user)
+{
+	for (int j = 0; j < table_HEIGHT; ++j)
+		for (int i = 0; i < table_WIDTH; ++i)
+			cs_pack_user->table[i][j] = static_cast<BYTE>(Val[i][j]);
+
+	cs_pack_user->nextBlock = static_cast<BYTE>(nextBlock);
+}
+
 void CTable::drawBg(HDC hDC) {
 	ResorceTable::getInstance()->img_ingame_bg.Draw(hDC, 0 + iDrawGapX, 0);
 }
