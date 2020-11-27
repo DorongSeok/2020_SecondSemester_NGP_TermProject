@@ -4,7 +4,7 @@
 //#define SERVERIP "59.14.252.78"
 //#define SERVERIP "14.35.11.46" //µ¿¼®
 #define SERVERPORT 9000
-#define MAXBUFFER 64
+#define MAXBUFFER 512
 constexpr BYTE CLIENT_LIMITE = 2;
 constexpr int NULLVAL = -1;
 

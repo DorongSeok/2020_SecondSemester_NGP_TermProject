@@ -3,9 +3,16 @@
 
 using namespace std;
 
-enum eTHREAD { tSEND = 0, tRECV = 1, tMAX = 2 };
-enum eSCENE { sLOBBY = 0, sGAME = 1 };
-enum ePlayer { pFIRST = 0, pSECOND = 1, pMAX = 2 };
+enum eTHREAD { THREAD_SEND = 0, THREAD_RECV = 1, THREAD_MAX = 2 };
+enum eSCENE { SCENE_LOBBY = 0, SCENE_GAME = 1, SCENE_DUMMY = 2, SCENE_MAX = 3 };
+enum ePlayer { PLAYER_FIRST = 0, PLAYER_SECOND = 1, PLAYER_MAX = 2 };
+enum ePosition { POS_X = 0, POS_Y = 1, POS_MAX = 2 };
+enum eBlock { BLOCK_A = 0, BLOCK_B = 1, BLOCK_C = 2, BLOCK_D = 3, BLOCK_E = 4, BLOCK_MAX = 5, BLOCK_NONE = 6, BLOCK_STACK = 7, BLOCK_SHADOW = 8 };
+constexpr BYTE TABLE_WIDTH = 10;
+constexpr BYTE TABLE_HEIGHT = 20;
+
+
+sc_packet_user g_scpu;
 
 int client_table[2];
 class hClientInfo {
@@ -14,34 +21,46 @@ public:
    SOCKET s;
    SOCKADDR_IN addr;
    int addrlen;
-   HANDLE hEvent[eTHREAD::tMAX];
-   DWORD dwThreadID[eTHREAD::tMAX];
-   eSCENE Scene = eSCENE::sLOBBY;
+   HANDLE hEvent[eTHREAD::THREAD_MAX];
+   DWORD dwThreadID[eTHREAD::THREAD_MAX];
+   eSCENE Scene;
    int lastpacket;
+
+   // lobby
    bool isReady;
+
+   // game
+   BYTE table[TABLE_HEIGHT][TABLE_WIDTH];
+   int pos[POS_MAX];
+   BYTE skillGauge;
+   bool skillActive;
+   BYTE nextBlock;
+
+   bool getPacket;
+
 
 public:
 
    hClientInfo() {
       id = NULLVAL;
       isReady = false;
+      Scene = eSCENE::SCENE_DUMMY;
+      getPacket = false;
    }
    void close() {
       closesocket(s);
       id = NULLVAL;
       s = NULL;
       ZeroMemory(&addr, sizeof(addr));
-      CloseHandle(hEvent[eTHREAD::tSEND]);
-      CloseHandle(hEvent[eTHREAD::tRECV]);
-      dwThreadID[eTHREAD::tSEND] = NULL;
-      dwThreadID[eTHREAD::tRECV] = NULL;
+      CloseHandle(hEvent[eTHREAD::THREAD_SEND]);
+      CloseHandle(hEvent[eTHREAD::THREAD_RECV]);
+      dwThreadID[eTHREAD::THREAD_SEND] = NULL;
+      dwThreadID[eTHREAD::THREAD_RECV] = NULL;
       client_table[id] = NULL;
    }
 };
 hClientInfo cInfo[CLIENT_LIMITE];
 int client_cur = 0;
-
-int type;
 
 void err_display(const string& msg) {
    LPVOID lpMsgBuf;
@@ -67,11 +86,19 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
    return (len - left);
 }
 
-bool readyall() {
+bool getReadyAll() {
    if (cInfo[0].isReady == true && cInfo[1].isReady == true) {
       return true;
    }
    else return false;
+}
+
+bool getUserAll() {
+    if (cInfo[ePlayer::PLAYER_FIRST].getPacket == true 
+        && cInfo[ePlayer::PLAYER_SECOND].getPacket == true) {
+        return true;
+    }
+    return false;
 }
 
 int sendall(char* buffer, int bufferSize, int flags) {
@@ -94,42 +121,65 @@ DWORD WINAPI SendThread(LPVOID arg) {
 
    cout << "SENDTHREAD" << threadID << endl;
    while (1) {
-      WaitForSingleObject(client->hEvent[eTHREAD::tRECV], INFINITE);
-      switch (client->lastpacket) {
-      case cs_login:
-         sc_packet_login scpl;
-         scpl.id = client->id;
-         scpl.size = sizeof(scpl);
-         scpl.type = sc_login;
-         scpl.f_login = client_table[ePlayer::pFIRST];
-         scpl.s_login = client_table[ePlayer::pSECOND];
-         retval = sendall(reinterpret_cast<char*>(&scpl), sizeof(scpl), 0);
-         break;
-      case cs_ready:
-         sc_packet_ready scpr;
-         scpr.size = sizeof(scpr);
-         scpr.type = sc_ready;
-         if (readyall()) {
-            scpr.id = ePlayer::pMAX;
-            retval = sendall(reinterpret_cast<char*>(&scpr), scpr.size, 0);
-            cout << "send - allready" << endl;
-         }
-         else {
-            scpr.id = client->id;
-            retval = sendall(reinterpret_cast<char*>(&scpr), scpr.size, 0);
-            cout << "send - ready" << endl;
-         }
-         break;
-      case CS_3:
-         cout << threadID << "send - cs3" << endl;
-         buffer = '3';
-         break;
-      case CS_4:
-         cout << threadID << "send - cs4" << endl;
-         buffer = '4';
-         break;
+      WaitForSingleObject(client->hEvent[eTHREAD::THREAD_RECV], INFINITE);
+
+      switch (client->Scene) {
+      case eSCENE::SCENE_LOBBY: {
+          switch (client->lastpacket) {
+          case cs_login: {
+              sc_packet_login scpl;
+              scpl.id = client->id;
+              scpl.size = sizeof(scpl);
+              scpl.type = sc_login;
+              scpl.f_login = client_table[ePlayer::PLAYER_FIRST];
+              scpl.s_login = client_table[ePlayer::PLAYER_SECOND];
+              retval = sendall(reinterpret_cast<char*>(&scpl), sizeof(scpl), 0);
+              client->getPacket = false;
+              cout << "Send: login " << client->id << endl;
+          }
+              break;
+          case cs_ready: {
+              sc_packet_ready scpr;
+              scpr.size = sizeof(scpr);
+              scpr.type = sc_ready;
+              if (getReadyAll()) {
+                  scpr.id = ePlayer::PLAYER_MAX;
+                  retval = sendall(reinterpret_cast<char*>(&scpr), scpr.size, 0);
+                  client->getPacket = false;
+                  cout << "Send: allready" << endl;
+              }
+              else {
+                  scpr.id = client->id;
+                  retval = sendall(reinterpret_cast<char*>(&scpr), scpr.size, 0);
+                  client->getPacket = false;
+                  cout << "Send: ready " << client->id << endl;
+              }
+          }
+              break;
+          }
       }
-      SetEvent(client->hEvent[eTHREAD::tSEND]);
+          break;
+      case eSCENE::SCENE_GAME: {
+          switch (client->lastpacket) {
+          
+          }
+      }
+          break;
+      case eSCENE::SCENE_DUMMY: {
+          switch (client->lastpacket) {
+          case cs_user: {
+              if (getUserAll()) {
+                  retval = sendall(reinterpret_cast<char*>(&g_scpu), sizeof(g_scpu), 0);
+                  client->getPacket = false;
+                cout << "Send: user " << client->id << endl;
+              }
+          }
+                      break;
+          }
+      }
+          break;
+      }
+      SetEvent(client->hEvent[eTHREAD::THREAD_SEND]);
    }
    client->close();
    return 0;
@@ -144,37 +194,79 @@ DWORD WINAPI RecvThread(LPVOID arg) {
    cout << "RECVTHREAD" << threadID << endl;
    hClientInfo* client = static_cast<hClientInfo*>(arg);
    while (1) {
-      WaitForSingleObject(client->hEvent[eTHREAD::tSEND], INFINITE);
+      WaitForSingleObject(client->hEvent[eTHREAD::THREAD_SEND], INFINITE);
+
       ZeroMemory(&buffer, sizeof(buffer));
       retval = recv(client->s, buffer, MAXBUFFER, 0);
       if (retval == SOCKET_ERROR)  err_display("recv()");
       else if (retval == 0) return 0;
-      switch (buffer[1]) {
-      case cs_login:
-         client->lastpacket = cs_login;
-         break;
-      case cs_ready:
-         client->lastpacket = cs_ready;
-         client->isReady = true;
-         break;
-      case CS_3:
-         type = CS_3;
-         cout << threadID << "get packet - CS3" << endl;
-         cout << buffer[0] << endl;
-         cout << buffer[1] << endl;
-         cout << buffer[2] << endl;
-         cout << buffer[3] << endl;
-         break;
-      case CS_4:
-         type = CS_4;
-         cout << threadID << "get packet - CS4" << endl;
-         cout << buffer[0] << endl;
-         cout << buffer[1] << endl;
-         cout << buffer[2] << endl;
-         cout << buffer[3] << endl;
-         break;
+
+      switch (client->Scene) {
+      case eSCENE::SCENE_LOBBY: {
+          switch (buffer[1]) {
+          case cs_login: {
+              client->lastpacket = cs_login;
+              client->getPacket = true;
+              cout << "RECV: cs_login, ID: " << client->id << endl;
+          }
+              break;
+          case cs_ready: {
+              client->lastpacket = cs_ready;
+              client->isReady = true;
+              client->getPacket = true;
+              cout << "RECV: cs_ready, ID: " << client->id << endl;
+          }
+              break;
+          }
       }
-      SetEvent(client->hEvent[eTHREAD::tRECV]);
+          break;
+      case eSCENE::SCENE_GAME: {
+          switch (buffer[1]) {
+          case cs_user: {
+              cs_packet_user cspu;
+              memcpy(&cspu, buffer, sizeof(cspu));
+              client->pos[POS_X] = cspu.pos[POS_X];
+              client->pos[POS_Y] = cspu.pos[POS_Y];
+              client->skillGauge = cspu.skillGauge;
+              client->skillActive = cspu.skillActive;
+              client->nextBlock = cspu.nextBlock;
+              client->lastpacket = cs_user;
+              client->getPacket = true;
+              cout << "RECV: cs_user, ID: " << client->id << endl;
+          }
+              break;
+          }
+      }
+          break;
+      case eSCENE::SCENE_DUMMY: {
+          switch (buffer[1]) {
+          case cs_user: {
+              ZeroMemory(&g_scpu, sizeof(g_scpu));
+              cs_packet_user cspu;
+              memcpy(&cspu, buffer, sizeof(cspu));
+              memcpy(&client->table, cspu.table, sizeof(cspu));
+              client->pos[POS_X] = cspu.pos[POS_X];
+              client->pos[POS_Y] = cspu.pos[POS_Y];
+              client->skillGauge = cspu.skillGauge;
+              client->skillActive = cspu.skillActive;
+              client->nextBlock = cspu.nextBlock;
+              client->lastpacket = cs_user;
+              client->getPacket = true;
+              //~packet save for cInfo (필요한가 -> 데이터 처리를 위해 필요하다, 지금은 단순히 넘기기만해서 필요없어보임)
+              memcpy(&g_scpu.table[client->id], client->table, sizeof(client->table));
+              memcpy(&g_scpu.pos[client->id], client->pos, sizeof(client->pos));
+              g_scpu.skillGauge[client->id] = client->skillGauge;
+              g_scpu.skillActive[client->id] = client->skillActive;
+              g_scpu.nextBlock[client->id] = client->nextBlock;
+              //~packet save for server
+              cout << "RECV: cs_user, ID: " << client->id << endl;
+          }
+              break;
+          }
+      }
+          break;
+      }
+      SetEvent(client->hEvent[eTHREAD::THREAD_RECV]);
    }
    client->close();
    return 0;
@@ -218,18 +310,18 @@ int main(int argc, char* argv[]) {
          err_display("accept()");
          break;
       }
-      cInfo[client_cur].hEvent[eTHREAD::tRECV]= CreateEvent(NULL, false, false, NULL);
-      cInfo[client_cur].hEvent[eTHREAD::tSEND]= CreateEvent(NULL, false, true, NULL);
+      cInfo[client_cur].hEvent[eTHREAD::THREAD_RECV]= CreateEvent(NULL, false, false, NULL);
+      cInfo[client_cur].hEvent[eTHREAD::THREAD_SEND]= CreateEvent(NULL, false, true, NULL);
 
       cout << inet_ntoa(cInfo[client_cur].addr.sin_addr) << " " << ntohs(cInfo[client_cur].addr.sin_port) << endl;
 
-      hThread = CreateThread(NULL, 0, SendThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::tSEND]);
+      hThread = CreateThread(NULL, 0, SendThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::THREAD_SEND]);
       if (hThread == NULL) { closesocket(cInfo[client_cur].s); }
       else {
          SetThreadPriority(hThread, THREAD_PRIORITY_TIME_CRITICAL);
          CloseHandle(hThread);
       }
-      hThread = CreateThread(NULL, 0, RecvThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::tRECV]);
+      hThread = CreateThread(NULL, 0, RecvThread, &cInfo[client_cur], 0, &cInfo[client_cur].dwThreadID[eTHREAD::THREAD_RECV]);
       if (hThread == NULL) { closesocket(cInfo[client_cur].s); }
       else {
          SetThreadPriority(hThread, THREAD_PRIORITY_TIME_CRITICAL);

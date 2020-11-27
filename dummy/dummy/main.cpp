@@ -58,46 +58,48 @@ int main(int argc, char* argv[]) {
 	//받은 데이터 버퍼 커서
 	int fileCur = 0;
 	while (flag) {
-		//cs_packet_login cspl;
-		//ZeroMemory(&cspl, sizeof(cspl));
-		//cspl.type = cs_login;
-		//cspl.size = sizeof(cspl);
-		//retval = send(sock, reinterpret_cast<char*>(&cspl), cspl.size, 0);
+		
+		BYTE table[20][10] = {
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0},
+			{1,0,0,0,0,0,0,0,0,0}
+		};
 
-		//sc_packet_login scpl;
-		//ZeroMemory(&scpl, sizeof(scpl));
-		//retval = recv(sock, reinterpret_cast<char*>(&scpl), sizeof(scpl), 0);
-		//int id = static_cast<int>(scpl.id);
-		//cout << id << endl;
-		//
-		//char tmp;
-		//cin >> tmp;
+		cs_packet_user cspu;
+		ZeroMemory(&cspu, sizeof(cspu));
+		cspu.size = sizeof(cspu);
+		cspu.type = cs_user;
+		memcpy(&cspu.table, table, sizeof(table));
+		cspu.pos[0] = 10;
+		cspu.pos[1] = 20;
+		cspu.skillGauge = 11;
+		cspu.skillActive = false;
+		cspu.nextBlock = 1;
 
-		//cs_packet_ready cspr;
-		//ZeroMemory(&cspr, sizeof(cspr));
-		//cspr.type = cs_ready;
-		//cspr.size = sizeof(cspr);
-		//cspr.id = id;
-		//retval = send(sock, reinterpret_cast<char*>(&cspr), cspr.size, 0);
+		retval = send(sock, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
 
+		sc_packet_user scpu;
+		ZeroMemory(&scpu, sizeof(scpu));
+		retval = recv(sock, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
 
-		//전송용 버퍼
-		char sendBuffer[MAXBUFFER];
-		cs_packet_3 cs3;
-		cs3.size = 3;
-		cs3.data_1 = 'b';
-		cs3.data_2 = 'c';
-		cs3.type = CS_3;
-
-		//데이터 정보 전달: 크기, 데이터크기, 이름
-		retval = send(sock, reinterpret_cast<char*>(&cs3), cs3.size, 0);
-		if (retval == SOCKET_ERROR) err_display("send()");
-		else cout << "[TCP client]" << retval << "전송" << endl;
-
-		char recvBuffer;
-		ZeroMemory(&recvBuffer, sizeof(recvBuffer));
-		retval = recv(sock, &recvBuffer, sizeof(recvBuffer), 0);
-		cout << recvBuffer << endl;
+		system("pause");
 		flag = false;
 	}
 
