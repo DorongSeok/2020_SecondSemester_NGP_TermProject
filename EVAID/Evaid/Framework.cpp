@@ -36,50 +36,68 @@ bool CFramework::init(HWND hWnd) {
     ::GetClientRect(hWnd, &m_rcClient);
     SetTimer(hWnd, timer_Main, FPS, NULL);
 
-    return AddScene(hWnd);
+    auto pLogo = new CLogoScene{};
+    if (!pLogo->init(this, m_hWnd)) {
+        delete pLogo;
+        return false;
+    }
+    m_pCurrentScene = pLogo;
+
+    return true;
 }
 
-bool CFramework::AddScene(const HWND& hWnd) {
-    //////////////////////////////////////////////
-    auto pGame = new CGameScene{};
-    if (!pGame->init(this, hWnd)) {
-        delete pGame;
-        return false;
+bool CFramework::AddScene(eSCENE scene) {
+    switch (scene)
+    {
+    case eSCENE::SCENE_LOGGO:
+        {
+            auto pLogo = new CLogoScene{};
+            if (!pLogo->init(this, m_hWnd)) {
+                delete pLogo;
+                return false;
+            }
+            m_pNextScene = pLogo;
+            break;
+        }
+    case eSCENE::SCENE_LOBBY:
+        {
+            auto pLobby = new CLobbyScene{};
+            if (!pLobby->init(this, m_hWnd)) {
+                delete pLobby;
+                return false;
+            }
+            m_pNextScene = pLobby;
+            break;
+        }
+    case eSCENE::SCENE_GAME:
+        {
+            auto pGame = new CGameScene{};
+            if (!pGame->init(this, m_hWnd)) {
+                delete pGame;
+                return false;
+            }
+            m_pNextScene = pGame;
+            break;
+        }
     }
-    m_Scenes[++m_nCurrentScene] = pGame;
-    m_pCurrentScene = pGame;
-    //////////////////////////////////////////////
-    auto pLobby = new CLobbyScene{};
-    if (!pLobby->init(this, hWnd)) {
-        delete pLobby;
-        return false;
-    }
-    m_Scenes[++m_nCurrentScene] = pLobby;
-    m_pCurrentScene = pLobby;
-    ////////////////////////////////////////////////
-    auto pLogo = new CLogoScene{};
-    if (!pLogo->init(this, hWnd)) {
-       delete pLogo;
-       return false;
-    }
-    m_Scenes[++m_nCurrentScene] = pLogo;
-    m_pCurrentScene = pLogo;
     return true;
 }
 
 void CFramework::PopScene() {
-    cout << "popScene" << m_nCurrentScene << endl;
+    cout << "popScene" << m_pCurrentScene << endl;
 
-    CScene* pScene = m_Scenes[m_nCurrentScene];
-    m_Scenes[m_nCurrentScene] = nullptr;
-    m_pCurrentScene = m_Scenes[--m_nCurrentScene];
+    CScene* pScene = m_pCurrentScene;
+    m_pCurrentScene = nullptr;
+
+    m_pCurrentScene = m_pNextScene;
 
     //delete pScene;
 }
 
 void CFramework::ReleaseObject() {
     KillTimer(m_hWnd, timer_Main);
-    for (auto& p : m_Scenes) if (p != nullptr) p->ReleaseObjects();
+    m_pCurrentScene->ReleaseObjects();
+    m_pNextScene->ReleaseObjects();
     ReleaseBackBuffer();
 }
 

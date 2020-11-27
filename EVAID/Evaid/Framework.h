@@ -15,7 +15,7 @@ public:
 	void clear();
 	void Resize() { ::GetClientRect(m_hWnd, &m_rcClient); }
 	void run();
-	bool AddScene(const HWND& hWnd);
+	bool AddScene(eSCENE scene);
 	void PopScene();
 	bool init(HWND hWnd);
 
@@ -41,8 +41,7 @@ private:
 	HWND m_hWnd{ NULL };
 	RECT m_rcClient{ NULL };
 
-	CScene* m_Scenes[4];
-	int m_nCurrentScene{ 0 };
+	CScene* m_pNextScene{ nullptr };
 	CScene* m_pCurrentScene{ nullptr };
 	HDC m_hDCBackBuffer{ nullptr };
 	HBITMAP m_hbmpBackBuffer{ nullptr };

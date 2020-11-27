@@ -124,6 +124,12 @@ enum class HERO {
 	Hero2,
 };
 
+enum class eSCENE : BYTE {
+	SCENE_LOGGO = 0,
+	SCENE_LOBBY = 1,
+	SCENE_GAME = 2,
+};
+
 ///0~MAX-1
 static int getRandom(int MAX) {
 	return rand() % MAX;

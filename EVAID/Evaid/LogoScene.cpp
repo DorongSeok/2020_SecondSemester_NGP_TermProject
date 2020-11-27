@@ -38,6 +38,7 @@ bool CLogoScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
 
 		//start btn
 		if (M.y > 126 && M.y < 234) {
+			m_Framework->AddScene(eSCENE::SCENE_LOBBY);
 			m_Framework->PopScene();
 			return true;
 		}

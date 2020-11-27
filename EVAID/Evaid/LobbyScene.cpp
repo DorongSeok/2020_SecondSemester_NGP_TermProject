@@ -48,6 +48,7 @@ void CLobbyScene::update() {
                     bPlayerReady[0] = true;
                     bPlayerReady[1] = true;
                     cout << "!!" << endl;
+                    m_Framework->AddScene(eSCENE::SCENE_GAME);
                     m_Framework->PopScene();
                 }
             }

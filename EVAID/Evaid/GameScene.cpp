@@ -10,7 +10,7 @@ CGameScene::CGameScene()
 	Hero1Score = 0;
 	Hero2Score = 0;
 
-	Global::getInstance()->isStart = true;
+	Global::getInstance()->isStart = false;
 }
 
 CGameScene::~CGameScene()
@@ -19,6 +19,8 @@ CGameScene::~CGameScene()
 
 void CGameScene::update()
 {
+
+
 	if (Global::getInstance()->TimerTick % 1500 == 0 && tick_block > 1)
 		tick_block -= 1;
 
