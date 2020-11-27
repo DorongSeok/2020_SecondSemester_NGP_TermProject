@@ -91,39 +91,36 @@ void CGameScene::update()
 	Hero1P.move(board_1);
 	Hero2P.move(board_2);
 
-	SOCKET& s = m_Framework->s;
-	sockaddr_in& addr = m_Framework->addr;
-	int retval;
-	char buffer[MAXBUFFER];
+	//SOCKET& s = m_Framework->s;
+	//sockaddr_in& addr = m_Framework->addr;
+	//int retval;
+	//
+	//cs_packet_user cspu;
+	//cspu.size = sizeof(cspu);
+	//cspu.type = cs_user;
+	//ZeroMemory(&cspu, sizeof(cspu));
+	//if (Global::getInstance()->iMyPlayerNum == 0)
+	//{
+	//	Hero1P.GetHeroToPacket(&cspu);
+	//	board_1.GetTableToPacket(&cspu);
+	//}
+	//else if (Global::getInstance()->iMyPlayerNum == 1)
+	//{
+	//	Hero2P.GetHeroToPacket(&cspu);
+	//	board_2.GetTableToPacket(&cspu);
+	//}
+	//retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
+	//
+	//sc_packet_user scpu;
+	//ZeroMemory(&scpu, sizeof(scpu));
+	//retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
+	//
+	//JPoint tPos1 = { scpu.pos[0][0], scpu.pos[0][1] };
+	//JPoint tPos2 = { scpu.pos[1][0], scpu.pos[1][1] };
+	//
+	//Hero1P.SetPacketToHero(tPos1, scpu.skillGauge[0], scpu.skillActive[0]);
+	//Hero2P.SetPacketToHero(tPos2, scpu.skillGauge[1], scpu.skillActive[1]);
 
-	ZeroMemory(buffer, sizeof(buffer));
-	retval = recv(s, buffer, sizeof(buffer), 0);
-
-	if (buffer[1] == sc_user)
-	{
-		sc_packet_user scpu;
-		memcpy(&scpu, buffer, sizeof(scpu));
-
-		JPoint tPos1 = { scpu.pos[0][0], scpu.pos[0][1] };
-		JPoint tPos2 = { scpu.pos[1][0], scpu.pos[1][1] };
-
-		Hero1P.SetPacketToHero(tPos1, scpu.skillGauge[0], scpu.skillActive[0]);
-		Hero2P.SetPacketToHero(tPos2, scpu.skillGauge[1], scpu.skillActive[1]);
-	}
-
-	cs_packet_user cspu;
-	ZeroMemory(&cspu, sizeof(cspu));
-	if (Global::getInstance()->iMyPlayerNum == 0)
-	{
-		Hero1P.GetHeroToPacket(&cspu);
-		board_1.GetTableToPacket(&cspu);
-	}
-	else if (Global::getInstance()->iMyPlayerNum == 1)
-	{
-		Hero2P.GetHeroToPacket(&cspu);
-		board_2.GetTableToPacket(&cspu);
-	}
-	retval = send(s, reinterpret_cast<char*>(&cspu), cspu.size, 0);
 }
 
 void CGameScene::draw(HDC hDC)
