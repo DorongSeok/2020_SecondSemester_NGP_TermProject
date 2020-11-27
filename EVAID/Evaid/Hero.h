@@ -37,6 +37,10 @@ public:
 
 	CHero(HERO, int);		// 인자 = 히어로 종류, 플레이어구분
 	~CHero();
+
+	void SetPacketToHero(JPoint pos, BYTE skillgauge, bool skillactive);
+	void GetHeroToPacket(cs_packet_user* cs_pack_user);
+
 	void SetHeroRect();
 	void move(CTable);
 	void draw(HDC);

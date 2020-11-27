@@ -37,6 +37,9 @@ public:
 	CTable(int);
 	~CTable();
 
+	void SetPacketToTable(BLOCK_TYPE** val, BLOCK_TYPE nextblock);
+	void GetTableToPacket(cs_packet_user* cs_pack_user);
+
 	///<summary>
 	/// 그리기 함수 (OnDraw에서 호출)
 	/// 배경화면/ 보더/ 블럭/ 다음 블럭 및 다음 블럭 보더
