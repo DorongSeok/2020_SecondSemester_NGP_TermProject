@@ -208,67 +208,48 @@ void CTable::effect(POINT _pt, BLOCK_TYPE type)
 {
 	switch (type) {
 	case BLOCK_TYPE::A:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else
-			ResorceTable::getInstance()->m_Sound.PlayEffect(3);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(_pt, BLOCK_TYPE::STACK);
 		break;
 	case BLOCK_TYPE::B:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else
-			ResorceTable::getInstance()->m_Sound.PlayEffect(3);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(POINT{ _pt.x - 3,_pt.y }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x - 2,_pt.y }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x - 1,_pt.y }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 1,_pt.y }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 2,_pt.y }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 3,_pt.y }, BLOCK_TYPE::SHADOW);
-
 		safeChange(POINT{ _pt.x + 0,_pt.y }, BLOCK_TYPE::STACK);
 		break;
 	case BLOCK_TYPE::C:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else
-			ResorceTable::getInstance()->m_Sound.PlayEffect(3);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(POINT{ _pt.x , _pt.y - 1 }, BLOCK_TYPE::SHADOW);
-
 		safeChange(POINT{ _pt.x , _pt.y - 0 }, BLOCK_TYPE::STACK);
 		break;
 	case BLOCK_TYPE::D:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else
-			ResorceTable::getInstance()->m_Sound.PlayEffect(3);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(POINT{ _pt.x - 1 , _pt.y - 1 }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 0 , _pt.y - 1 }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 1 , _pt.y - 1 }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 1 , _pt.y + 0 }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x - 1 , _pt.y + 0 }, BLOCK_TYPE::SHADOW);
-
 		safeChange(POINT{ _pt.x + 0 , _pt.y + 0 }, BLOCK_TYPE::STACK);
 		break;
 	case BLOCK_TYPE::E:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2)
-			ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else
-			ResorceTable::getInstance()->m_Sound.PlayEffect(3);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(POINT{ _pt.x - 1, _pt.y - 3 }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 0, _pt.y - 3 }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 1, _pt.y - 3 }, BLOCK_TYPE::SHADOW);
-
 		safeChange(POINT{ _pt.x + 0, _pt.y + 0 }, BLOCK_TYPE::STACK);
 		break;
 	}
@@ -296,7 +277,6 @@ bool CTable::safeChange(POINT _pt, BLOCK_TYPE type)
 	if (Val[_pt.x][_pt.y] == BLOCK_TYPE::STACK && type == BLOCK_TYPE::SHADOW) return false;
 	Val[_pt.x][_pt.y] = type;
 	return true;
-	
 }
 
 void CTable::spawn(int _spawnXpos, BLOCK_TYPE _spawnType)

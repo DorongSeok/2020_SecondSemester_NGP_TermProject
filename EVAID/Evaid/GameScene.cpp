@@ -19,26 +19,20 @@ CGameScene::~CGameScene()
 
 void CGameScene::update()
 {
+	cout << Global::getInstance()->TimerTick << endl;
+	if (Global::getInstance()->TimerTick % 1500 == 0 && tick_block > 1) tick_block -= 1;
 
-
-	if (Global::getInstance()->TimerTick % 1500 == 0 && tick_block > 1)
-		tick_block -= 1;
-
-	if (board_1.isShadowOn)
-	{
+	if (board_1.isShadowOn) {
 		Global::getInstance()->ShadowTick_1 += 0.1f;
-		if (Global::getInstance()->ShadowTick_1 > shadowDelay)
-		{
+		if (Global::getInstance()->ShadowTick_1 > shadowDelay) {
 			board_1.effect_shadow();
 			Global::getInstance()->ShadowTick_1 = 0;
 			board_1.isShadowOn = false;
 		}
 	}
-	if (board_2.isShadowOn)
-	{
+	if (board_2.isShadowOn) {
 		Global::getInstance()->ShadowTick_2 += 0.1f;
-		if (Global::getInstance()->ShadowTick_2 > shadowDelay)
-		{
+		if (Global::getInstance()->ShadowTick_2 > shadowDelay) {
 			board_2.effect_shadow();
 			Global::getInstance()->ShadowTick_2 = 0;
 			board_2.isShadowOn = false;
