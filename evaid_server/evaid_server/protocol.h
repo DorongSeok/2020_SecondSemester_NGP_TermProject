@@ -16,6 +16,11 @@ constexpr BYTE cs_user = 5;
 constexpr BYTE sc_user = 6;
 
 #pragma pack(push, 1)
+class Protocol_TABLE {
+public:
+	BYTE t[20][10];
+};
+
 class cs_packet_login {
 public:
 	BYTE size;
@@ -33,16 +38,15 @@ class cs_packet_user {
 public:
 	BYTE size;
 	BYTE type;
-	BYTE table[20][10];
+	Protocol_TABLE table;
 	int pos[2];		//0: X, 1: Y
 	BYTE skillGauge;
 	bool skillActive;
 	BYTE nextBlock;
 };
 
-#pragma pack(pop)
+////////
 
-#pragma pack(push, 1)
 class sc_packet_login {
 public:
 	BYTE size;
@@ -64,14 +68,14 @@ public:
 	//s: client_id/ c: iMyPlayerNum
 	BYTE size;
 	BYTE type;
-	BYTE table[2][20][10];
+	Protocol_TABLE table[2];
 	int pos[2][2];		//0: X, 1: Y
 	BYTE skillGauge[2];
 	bool skillActive[2];
 	BYTE nextBlock[2];
 };
-
 #pragma pack(pop)
+
 
 ///for test dummy packet
 constexpr BYTE CS_1 = 11;

@@ -45,7 +45,7 @@ void CTable::GetTableToPacket(cs_packet_user* cs_pack_user)
 {
 	for (int j = 0; j < table_HEIGHT; ++j)
 		for (int i = 0; i < table_WIDTH; ++i)
-			cs_pack_user->table[i][j] = static_cast<BYTE>(Val[i][j]);
+			cs_pack_user->table.t[i][j] = static_cast<BYTE>(Val[i][j]);
 
 	cs_pack_user->nextBlock = static_cast<BYTE>(nextBlock);
 }
