@@ -13,7 +13,7 @@ CLobbyScene::CLobbyScene()
 
 CLobbyScene::~CLobbyScene() {}
 
-void CLobbyScene::update() {
+void CLobbyScene::update(long TimerTick) {
     SOCKET& s = m_Framework->s;
     sockaddr_in& addr = m_Framework->addr;
     int retval;

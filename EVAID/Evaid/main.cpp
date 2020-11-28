@@ -13,6 +13,8 @@ static CFramework framework;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
+long TimerTick = 0;
+
 // 폰트함수
 vector<BYTE> ReadFontOutputFile(LPCTSTR path)
 {
@@ -148,7 +150,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		
 		// 타이머
 		SetTimer(hWnd, 1, 16, NULL);
-		Global::getInstance()->TimerTick = 0;
+		TimerTick = 0;
 		break;
 #pragma endregion
 	//case WM_COMMAND:
@@ -207,8 +209,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		switch (wParam) {
 		case timer_Main:
-			Global::getInstance()->TimerTick += 1;
-			framework.run();
+			TimerTick += 1;
+			framework.run(TimerTick);
 			break;
 		}
 		break;

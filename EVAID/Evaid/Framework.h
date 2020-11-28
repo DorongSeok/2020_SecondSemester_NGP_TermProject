@@ -7,14 +7,14 @@ public:
 	CFramework();
 	~CFramework() = default;
 
-	void update();
+	void update(long TimerTick);
 	void draw(HDC hDC);
 	void CreateBackBuffer();
 	void ReleaseBackBuffer();
 	void DoubleBuffering(HDC hDC);
 	void clear();
 	void Resize() { ::GetClientRect(m_hWnd, &m_rcClient); }
-	void run();
+	void run(long TimerTick);
 	bool AddScene(eSCENE scene);
 	void PopScene();
 	bool init(HWND hWnd);

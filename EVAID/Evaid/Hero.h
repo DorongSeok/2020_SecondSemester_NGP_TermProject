@@ -30,6 +30,8 @@ private:
 
 	int PlayerNum;		// 플레이어 구분
 	int Debuff;			// 디버프상태
+
+	long m_TimerTick;
 public:
 	STATE state;		// 상태
 
@@ -41,6 +43,7 @@ public:
 	void SetPacketToHero(JPoint pos, BYTE skillgauge, bool skillactive);
 	void GetHeroToPacket(cs_packet_user* cs_pack_user);
 
+	void SetTimer(long TimerTick) { m_TimerTick = TimerTick; }
 	void SetHeroRect();
 	void move(CTable);
 	void draw(HDC);

@@ -3,7 +3,7 @@
 CScene::CScene() {}
 CScene::~CScene() { ReleaseObjects(); }
 
-void CScene::update() {}
+void CScene::update(long TimerTick) {}
 void CScene::draw(HDC hDC) {}
 bool CScene::init(CFramework* pFramework, HWND hWnd) {
 	m_Framework = pFramework;

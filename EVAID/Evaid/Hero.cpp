@@ -119,7 +119,7 @@ void CHero::move(CTable Target) {
 }
 
 void CHero::draw(HDC hDC) {
-	int motionTick = (Global::getInstance()->TimerTick / 10) % 2;
+	int motionTick = (m_TimerTick / 10) % 2;
 
 	RECT temprect = rect;
 	temprect.left += iDrawGapX;
@@ -210,7 +210,7 @@ void CHero::skillGaugeUp(CHero& enemyHero) {
 		else SkillOff(enemyHero);
 	}
 	// 스킬 게이지
-	if (Global::getInstance()->TimerTick % 50 == 0) if (NowSkillGauge + NormalSkillGaugeIncrement <= MaxSkillGauge)	NowSkillGauge += NormalSkillGaugeIncrement;
+	if (m_TimerTick % 50 == 0) if (NowSkillGauge + NormalSkillGaugeIncrement <= MaxSkillGauge)	NowSkillGauge += NormalSkillGaugeIncrement;
 }
 
 void CHero::SkillOn(CHero& enemyHero) {

@@ -7,7 +7,7 @@ class CScene {
 public:
 	CScene();
 	virtual ~CScene();
-	virtual void update();
+	virtual void update(long TimerTick);
 	virtual void draw(HDC hDC);
 	virtual bool init(CFramework* pFramework, HWND hWnd);
 	virtual bool Keyboard(UINT msg, WPARAM w, LPARAM l);

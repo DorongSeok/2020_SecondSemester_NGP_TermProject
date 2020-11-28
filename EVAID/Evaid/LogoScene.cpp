@@ -5,7 +5,7 @@
 
 CLogoScene::CLogoScene() {}
 CLogoScene::~CLogoScene() {}
-void CLogoScene::update() {
+void CLogoScene::update(long TimerTick) {
 }
 
 void CLogoScene::draw(HDC hDC) {

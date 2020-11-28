@@ -17,75 +17,83 @@ CGameScene::~CGameScene()
 {
 }
 
-void CGameScene::update()
+void CGameScene::update(long TimerTick)
 {
-	cout << Global::getInstance()->TimerTick << endl;
-	if (Global::getInstance()->TimerTick % 1500 == 0 && tick_block > 1) tick_block -= 1;
-
-	if (board_1.isShadowOn) {
-		Global::getInstance()->ShadowTick_1 += 0.1f;
-		if (Global::getInstance()->ShadowTick_1 > shadowDelay) {
-			board_1.effect_shadow();
-			Global::getInstance()->ShadowTick_1 = 0;
-			board_1.isShadowOn = false;
-		}
-	}
-	if (board_2.isShadowOn) {
-		Global::getInstance()->ShadowTick_2 += 0.1f;
-		if (Global::getInstance()->ShadowTick_2 > shadowDelay) {
-			board_2.effect_shadow();
-			Global::getInstance()->ShadowTick_2 = 0;
-			board_2.isShadowOn = false;
-		}
-	}
-
-	if (Global::getInstance()->Gameover_1)
+	if (IsStart)
 	{
-		bool FullBoard_1 = true;
-		for (int i = 0; i < table_WIDTH; ++i)
-		{
-			if (board_1.Val[i][0] != BLOCK_TYPE::STACK && board_1.Val[i][0] != BLOCK_TYPE::SHADOW)
-			{
-				FullBoard_1 = false;
-				break;
+		m_TimerTick++;
+		Hero1P.SetTimer(m_TimerTick);
+		Hero2P.SetTimer(m_TimerTick);
+
+
+		cout << m_TimerTick << endl;
+		if (m_TimerTick % 1500 == 0 && tick_block > 1) tick_block -= 1;
+
+		if (board_1.isShadowOn) {
+			Global::getInstance()->ShadowTick_1 += 0.1f;
+			if (Global::getInstance()->ShadowTick_1 > shadowDelay) {
+				board_1.effect_shadow();
+				Global::getInstance()->ShadowTick_1 = 0;
+				board_1.isShadowOn = false;
 			}
 		}
-		if (!FullBoard_1)
-		{
-			board_1.spawn(board_1.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
-		}
-	}
-	if (Global::getInstance()->Gameover_2)
-	{
-		bool FullBoard_2 = true;
-		for (int i = 0; i < table_WIDTH; ++i)
-		{
-			if (board_2.Val[i][0] != BLOCK_TYPE::STACK && board_2.Val[i][0] != BLOCK_TYPE::SHADOW)
-			{
-				FullBoard_2 = false;
-				break;
+		if (board_2.isShadowOn) {
+			Global::getInstance()->ShadowTick_2 += 0.1f;
+			if (Global::getInstance()->ShadowTick_2 > shadowDelay) {
+				board_2.effect_shadow();
+				Global::getInstance()->ShadowTick_2 = 0;
+				board_2.isShadowOn = false;
 			}
 		}
-		if (!FullBoard_2)
+
+		if (Global::getInstance()->Gameover_1)
 		{
-			board_2.spawn(board_2.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
+			bool FullBoard_1 = true;
+			for (int i = 0; i < table_WIDTH; ++i)
+			{
+				if (board_1.Val[i][0] != BLOCK_TYPE::STACK && board_1.Val[i][0] != BLOCK_TYPE::SHADOW)
+				{
+					FullBoard_1 = false;
+					break;
+				}
+			}
+			if (!FullBoard_1)
+			{
+				board_1.spawn(board_1.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
+			}
 		}
-	}
+		if (Global::getInstance()->Gameover_2)
+		{
+			bool FullBoard_2 = true;
+			for (int i = 0; i < table_WIDTH; ++i)
+			{
+				if (board_2.Val[i][0] != BLOCK_TYPE::STACK && board_2.Val[i][0] != BLOCK_TYPE::SHADOW)
+				{
+					FullBoard_2 = false;
+					break;
+				}
+			}
+			if (!FullBoard_2)
+			{
+				board_2.spawn(board_2.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
+			}
+		}
 
-	if (Global::getInstance()->TimerTick % tick_block == 0)
-	{
-		board_1.drop();
-		board_2.drop();
-	}
+		if (m_TimerTick % tick_block == 0)
+		{
+			board_1.drop();
+			board_2.drop();
+		}
 
-	if (Global::getInstance()->TimerTick % tick_skill == 0)
-	{
-		Hero1P.skillGaugeUp(Hero2P);
-		Hero2P.skillGaugeUp(Hero1P);
-	}
+		if (m_TimerTick % tick_skill == 0)
+		{
+			Hero1P.skillGaugeUp(Hero2P);
+			Hero2P.skillGaugeUp(Hero1P);
+		}
 
-	Hero1P.move(board_1);
-	Hero2P.move(board_2);
+		Hero1P.move(board_1);
+		Hero2P.move(board_2);
+	}
 
 	//SOCKET& s = m_Framework->s;
 	//sockaddr_in& addr = m_Framework->addr;
@@ -133,6 +141,8 @@ bool CGameScene::init(CFramework* pFramework, HWND hWnd)
 
 bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 {
+	if (!IsStart)
+		return true;
 	switch (msg) {
 	case WM_KEYUP:
 		switch (w) {
@@ -228,8 +238,8 @@ void CGameScene::DrawGameScene(HDC hDC)
 		textRect.top = 0;
 		textRect.bottom = PTStartY;
 
-		if (!Global::getInstance()->Gameover_1)	Hero1Score = Global::getInstance()->TimerTick;
-		if (!Global::getInstance()->Gameover_2)	Hero2Score = Global::getInstance()->TimerTick;
+		if (!Global::getInstance()->Gameover_1)	Hero1Score = m_TimerTick;
+		if (!Global::getInstance()->Gameover_2)	Hero2Score = m_TimerTick;
 
 		// 출력할 텍스트 입력
 		wsprintf(ScorePrint, L"Score: %d", Hero1Score);
@@ -266,6 +276,30 @@ void CGameScene::DrawGameScene(HDC hDC)
 		textRect.left += DrawGapX;
 		textRect.right += DrawGapX;
 		if (Global::getInstance()->Gameover_2)	DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
+		SelectObject(hDC, oldFont);
+		DeleteObject(hFont);
+	}
+
+	// Ready, Start 그리기
+	{
+		HFONT hFont = CreateFont(75, 0, 0, 0, 0, 0, 0, 0
+			, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
+			, TEXT("ArcadeClassic"));
+
+		HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
+
+		SetBkMode(hDC, TRANSPARENT);
+		SetTextColor(hDC, RGB(255, 255, 255));
+
+		RECT textRect;
+		textRect.left = 350;
+		textRect.right = 850;
+		textRect.top = 420;
+		textRect.bottom = 470;
+
+		if (!IsStart)	DrawText(hDC, L"Ready", lstrlen(L"Ready"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		if (IsStart && m_TimerTick < 100)	DrawText(hDC, L"Start!", lstrlen(L"Start!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
 		SelectObject(hDC, oldFont);
 		DeleteObject(hFont);

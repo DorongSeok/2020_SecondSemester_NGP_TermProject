@@ -155,8 +155,6 @@ public:
 		return inst;
 	}
 
-	// tick_Main 간격으로 증가함.
-	long TimerTick = 0;
 
 	float ShadowTick_1;
 	float ShadowTick_2;

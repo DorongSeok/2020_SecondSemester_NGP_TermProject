@@ -12,8 +12,8 @@ CFramework::CFramework() {
     setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char*)&recvTimeout, sizeof(recvTimeout));
 }
 
-void CFramework::update() {
-    if (m_pCurrentScene) m_pCurrentScene->update();
+void CFramework::update(long TimerTick) {
+    if (m_pCurrentScene) m_pCurrentScene->update(TimerTick);
 }
 
 void CFramework::draw(HDC hDC) {
@@ -26,8 +26,8 @@ void CFramework::draw(HDC hDC) {
     DoubleBuffering(hDC);
 }
 
-void CFramework::run() {
-    update();
+void CFramework::run(long TimerTick) {
+    update(TimerTick);
     InvalidateRect(m_hWnd, &m_rcClient, false);
 }
 

@@ -2,7 +2,6 @@
 
 
 Global::Global() {
-	TimerTick = 0;
 	ShadowTick_1 = 0;
 	ShadowTick_2 = 0;
 	tick_spawn = 250;

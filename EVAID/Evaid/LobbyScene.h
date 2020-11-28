@@ -7,7 +7,7 @@ public:
 	CLobbyScene();
 	~CLobbyScene() override;
 
-	void update() override;
+	void update(long TimerTick) override;
 	void draw(HDC hDC) override;
 	bool init(CFramework* pFramework, HWND hWnd) override;
 	bool Keyboard(UINT msg, WPARAM w, LPARAM l) override;
