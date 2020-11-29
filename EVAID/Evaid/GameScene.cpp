@@ -19,6 +19,24 @@ CGameScene::~CGameScene()
 
 void CGameScene::update(long TimerTick)
 {
+	SOCKET& s = m_Framework->s;
+	sockaddr_in& addr = m_Framework->addr;
+	int retval;
+
+	if (!IsStart) {
+		cs_packet_start csps;
+		csps.size = sizeof(csps);
+		csps.type = cs_start;
+		csps.start = true;
+		retval = send(s, reinterpret_cast<char*>(&csps), sizeof(csps), 0);
+		
+		sc_packet_start scps;
+		ZeroMemory(&scps, sizeof(scps));
+		retval = recv(s, reinterpret_cast<char*>(&scps), sizeof(scps), 0);
+		if (scps.start == true) {
+			IsStart = true;
+		}
+	}
 	if (IsStart)
 	{
 		m_TimerTick++;

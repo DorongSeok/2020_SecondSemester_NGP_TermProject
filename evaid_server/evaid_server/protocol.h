@@ -8,10 +8,13 @@
 constexpr BYTE CLIENT_LIMITE = 2;
 constexpr int NULLVAL = -1;
 
+//lobby
 constexpr BYTE cs_login = 1;
 constexpr BYTE sc_login = 2;
 constexpr BYTE cs_ready = 3;
 constexpr BYTE sc_ready = 4;
+
+//game
 constexpr BYTE cs_user = 5;
 constexpr BYTE sc_user = 6;
 constexpr BYTE cs_start = 7;
@@ -54,12 +57,14 @@ class cs_packet_start {
 public:
 	BYTE size;
 	BYTE type;
+	bool start;		//isstart
 };
 
 class cs_packet_end {
 public:
 	BYTE size;
 	BYTE type;
+	bool isend;		//isend;
 };
 
 ////////

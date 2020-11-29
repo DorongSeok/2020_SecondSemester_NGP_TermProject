@@ -25,19 +25,18 @@ public:
 	DWORD dwThreadID[eTHREAD::THREAD_MAX];
 	eSCENE Scene;
 	int lastpacket;
+	bool getPacket;
 
 	// lobby
 	bool isReady;
 
 	// game
+	bool isStart;
 	Protocol_TABLE table;
 	int pos[POS_MAX];
 	BYTE skillGauge;
 	bool skillActive;
 	BYTE nextBlock;
-
-	bool getPacket;
-
 
 public:
 
@@ -88,6 +87,13 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
 
 bool getReadyAll() {
 	if (cInfo[0].isReady == true && cInfo[1].isReady == true) {
+		return true;
+	}
+	else return false;
+}
+
+bool getStartAll() {
+	if (cInfo[0].isStart == true && cInfo[1].isStart == true) {
 		return true;
 	}
 	else return false;
@@ -169,11 +175,31 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					g_scpu.size = sizeof(g_scpu);
 					retval = sendall(reinterpret_cast<char*>(&g_scpu), sizeof(g_scpu), 0);
 					client->getPacket = false;
-					cout << "Send: user " << client->id << endl;
+					cout << "Send user: all " << endl;
 					ZeroMemory(&g_scpu, sizeof(g_scpu));
 				}
 			}
 						break;
+			case cs_start: {
+				if (getStartAll()) {
+					sc_packet_start scps;
+					scps.size = sizeof(scps);
+					scps.type = sc_start;
+					scps.start = true;
+					retval = sendall(reinterpret_cast<char*>(&scps), sizeof(scps), 0);
+					client->getPacket = false;
+					cout << "Send start: all" << endl;
+				}
+				else {
+					sc_packet_start scps;
+					scps.size = sizeof(scps);
+					scps.type = sc_start;
+					scps.start = false;
+					retval = send(client->s, reinterpret_cast<char*>(&scps), sizeof(scps), 0);
+					client->getPacket = false;
+					cout << "Send start(false): " << client->id << endl;
+				}
+			}
 			}
 		}
 							   break;
@@ -237,6 +263,16 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 								break;
 		case eSCENE::SCENE_GAME: {
 			switch (buffer[1]) {
+			case cs_start: {
+				client->lastpacket = cs_start;
+				client->isStart = true;
+				cout << "RECV: cs_start, ID: " << client->id << endl;
+			}
+						 break;
+			case cs_end: {
+
+			}
+					   break;
 			case cs_user: {
 				cs_packet_user cspu;
 				memcpy(&cspu, buffer, sizeof(cspu));
