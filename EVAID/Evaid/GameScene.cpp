@@ -41,11 +41,11 @@ void CGameScene::update(long TimerTick) {
 		board_1.SetPacketToTable(scpu);
 		board_2.SetPacketToTable(scpu);
 
-		if (scpu.loser != (int)ePlayer::PLAYER_MAX) {
-			m_Framework->m_LoserNum = (int)scpu.loser;
-			m_Framework->AddScene(eSCENE::SCENE_RESULT);
-			m_Framework->PopScene();
-		}
+		//if (scpu.loser != (int)ePlayer::PLAYER_MAX) {
+		//	m_Framework->m_LoserNum = (int)scpu.loser;
+		//	m_Framework->AddScene(eSCENE::SCENE_RESULT);
+		//	m_Framework->PopScene();
+		//}
 	}
 
 	m_TimerTick++;

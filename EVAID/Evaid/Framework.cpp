@@ -35,7 +35,7 @@ void CFramework::run(long TimerTick) {
 bool CFramework::init(HWND hWnd) {
     m_hWnd = hWnd;
     ::GetClientRect(hWnd, &m_rcClient);
-    SetTimer(hWnd, timer_Main, FPS, NULL);
+    //SetTimer(hWnd, timer_Main, FPS, NULL);
 
     auto pLogo = new CLogoScene{};
     if (!pLogo->init(this, m_hWnd)) {

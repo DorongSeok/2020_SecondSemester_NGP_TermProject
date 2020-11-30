@@ -31,7 +31,7 @@ public:
 	hClientInfo() {
 		id = NULLVAL;
 		isReady = false;
-		Scene = eSCENE::SCENE_LOBBY;
+		Scene = eSCENE::SCENE_DUMMY;
 	}
 	void close() {
 		closesocket(s);
@@ -122,7 +122,6 @@ int GetPosInValX(int x) { return ((x - 100/*PTStartX*/) / 40/*BLOCK_SIZE*/); }
 int GetPosInValY(int y) { return ((y - 50/*PTStartY*/) / 40/*BLOCK_SIZE*/); }
 
 BYTE GameOverCheck() {
-	return (BYTE)ePlayer::PLAYER_MAX;
 	for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) {
 		int& centerX = g_scpu.pos[i][(int)ePosition::POS_X];
 		int& centerY = g_scpu.pos[i][(int)ePosition::POS_Y];
@@ -131,6 +130,7 @@ BYTE GameOverCheck() {
 			return (BYTE)i;
 		}
 	}
+	return (BYTE)ePlayer::PLAYER_MAX;
 }
 
 DWORD WINAPI SendThread(LPVOID arg) {
@@ -182,7 +182,7 @@ DWORD WINAPI SendThread(LPVOID arg) {
 		case eSCENE::SCENE_GAME: {
 			switch (client->lastpacket) {
 			case cs_user: {
-				delay(16);
+				//delay(16);
 				if (cInfo[(int)ePlayer::PLAYER_FIRST].getUser == true
 					&& cInfo[(int)ePlayer::PLAYER_SECOND].getUser == true) {
 					cInfo[(int)ePlayer::PLAYER_FIRST].getUser = false;
@@ -203,7 +203,18 @@ DWORD WINAPI SendThread(LPVOID arg) {
 		case eSCENE::SCENE_DUMMY: {
 			switch (client->lastpacket) {
 			case cs_user: {
-
+				if (cInfo[(int)ePlayer::PLAYER_FIRST].getUser == true
+					&& cInfo[(int)ePlayer::PLAYER_SECOND].getUser == true) {
+					cInfo[(int)ePlayer::PLAYER_FIRST].getUser = false;
+					cInfo[(int)ePlayer::PLAYER_SECOND].getUser = false;
+					g_scpu.type = sc_user;
+					g_scpu.size = sizeof(g_scpu);
+					g_scpu.loser = GameOverCheck();
+					retval = sendall(reinterpret_cast<char*>(&g_scpu), sizeof(g_scpu), 0);
+					cout << "Send user: all " << g_scpu.loser << endl;
+					ZeroMemory(&g_scpu, sizeof(g_scpu));
+					g_scpu.loser = (int)ePlayer::PLAYER_MAX;
+				}
 				break;
 			}
 			}
@@ -282,6 +293,26 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 		case eSCENE::SCENE_DUMMY: {
 			switch (buffer[1]) {
 			case cs_user: {
+				cs_packet_user cspu;
+				memcpy(&cspu, buffer, sizeof(cspu));
+				memcpy(&client->table, reinterpret_cast<char*>(&cspu.table), sizeof(cspu.table));
+				client->pos[(int)ePosition::POS_X] = cspu.pos[(int)ePosition::POS_X];
+				client->pos[(int)ePosition::POS_Y] = cspu.pos[(int)ePosition::POS_Y];
+				client->skillGauge = cspu.skillGauge;
+				client->skillActive = cspu.skillActive;
+				client->nextBlock = cspu.nextBlock;
+				client->lastpacket = cs_user;
+				client->getUser = true;
+				//~packet save for cInfo (필요한가 -> 데이터 처리를 위해 필요하다, 지금은 단순히 넘기기만해서 필요없어보임)
+				memcpy(&g_scpu.table[client->id], reinterpret_cast<char*>(&client->table), sizeof(client->table));
+				g_scpu.loser = (int)ePlayer::PLAYER_MAX;
+				g_scpu.pos[client->id][(int)ePosition::POS_X] = client->pos[(int)ePosition::POS_X];
+				g_scpu.pos[client->id][(int)ePosition::POS_Y] = client->pos[(int)ePosition::POS_Y];
+				g_scpu.skillGauge[client->id] = client->skillGauge;
+				g_scpu.skillActive[client->id] = client->skillActive;
+				g_scpu.nextBlock[client->id] = client->nextBlock;
+				//~packet save for server
+				cout << "RECV: cs_user, ID: " << client->id << endl;
 				break;
 			}
 			}

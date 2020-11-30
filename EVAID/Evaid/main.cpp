@@ -142,7 +142,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		ResorceTable::getInstance()->m_Sound.PlayBGM(0);
 		
 		// ≈∏¿Ã∏”
-		SetTimer(hWnd, 1, 16, NULL);
+		SetTimer(hWnd, 1, 1000, NULL);
 		TimerTick = 0;
 		break;
 #pragma endregion

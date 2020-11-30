@@ -41,15 +41,15 @@ CHero::~CHero(){}
 
 void CHero::SetPacketToHero(const sc_packet_user& sc_pack_user)
 {
-	pPosition.x = sc_pack_user.pos[(int)PlayerNum][0];
-	pPosition.y = sc_pack_user.pos[(int)PlayerNum][1];
+	pPosition.x = sc_pack_user.pos[(int)PlayerNum][(int)ePosition::POS_X];
+	pPosition.y = sc_pack_user.pos[(int)PlayerNum][(int)ePosition::POS_Y];
 	NowSkillGauge = sc_pack_user.skillGauge[(int)PlayerNum];
 	IsSkillOn = sc_pack_user.skillActive[(int)PlayerNum];
 }
 void CHero::GetHeroToPacket(cs_packet_user* cs_pack_user)
 {
-	cs_pack_user->pos[0] = pPosition.x;
-	cs_pack_user->pos[1] = pPosition.y;
+	cs_pack_user->pos[(int)ePosition::POS_X] = pPosition.x;
+	cs_pack_user->pos[(int)ePosition::POS_Y] = pPosition.y;
 	cs_pack_user->skillGauge = NowSkillGauge;
 	cs_pack_user->skillActive = IsSkillOn;
 }

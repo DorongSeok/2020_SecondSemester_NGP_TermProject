@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 		Protocol_TABLE table;
 		for (int i = 0; i < 20; ++i) {
 			for (int j = 0; j < 10; ++j) {
-				table.t[i][j] = i;
+				table.t[i][j] = (int)eBlock::BLOCK_NONE;
 			}
 		}
 		int id = 0;
@@ -71,8 +71,8 @@ int main(int argc, char* argv[]) {
 		cspu.size = sizeof(cspu);
 		cspu.type = cs_user;
 		memcpy(&cspu.table, reinterpret_cast<char*>(&table), sizeof(table));
-		cspu.pos[0] = 10;
-		cspu.pos[1] = 20;
+		cspu.pos[(int)ePosition::POS_X] = 300;
+		cspu.pos[(int)ePosition::POS_Y] = 630;
 		cspu.skillGauge = 11;
 		cspu.skillActive = false;
 		cspu.nextBlock = 1;
@@ -82,10 +82,11 @@ int main(int argc, char* argv[]) {
 		sc_packet_user scpu;
 		ZeroMemory(&scpu, sizeof(scpu));
 		retval = recv(sock, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
-		cout << scpu.pos[id][0] << " " << scpu.pos[id][1] << endl;
+		cout << scpu.pos[id][(int)ePosition::POS_X] << " " << scpu.pos[id][(int)ePosition::POS_Y] << endl;
 		cout << static_cast<int>(scpu.skillGauge[id]) << endl;
 		cout << static_cast<int>(scpu.skillActive[id]) << endl;
 		cout << static_cast<int>(scpu.nextBlock[id]) << endl;
+		cout << static_cast<int>(scpu.loser) << endl;
 		system("pause");
 		flag = false;
 	}
