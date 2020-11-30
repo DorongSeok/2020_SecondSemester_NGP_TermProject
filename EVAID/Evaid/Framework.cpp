@@ -154,7 +154,7 @@ void CFramework::clear() {
     SetDCBrushColor(m_hDCBackBuffer, m_hColorBackground);
     FillRect(m_hDCBackBuffer, &m_rcClient, static_cast<HBRUSH>(GetStockObject(DC_BRUSH)));
 }
-//
+
 int CFramework::recvn(SOCKET s, char* buf, int len, int flags)
 {
     int received;
@@ -174,7 +174,7 @@ int CFramework::recvn(SOCKET s, char* buf, int len, int flags)
     return (len - left);
 
 }
-//
+
 //void CFramework::err_display(const char* msg)
 //{
 //   LPVOID lpMsgBuf;

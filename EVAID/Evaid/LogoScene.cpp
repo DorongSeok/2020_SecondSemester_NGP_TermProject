@@ -5,8 +5,7 @@
 
 CLogoScene::CLogoScene() {}
 CLogoScene::~CLogoScene() {}
-void CLogoScene::update(long TimerTick) {
-}
+void CLogoScene::update(long TimerTick) { }
 
 void CLogoScene::draw(HDC hDC) {
 	RECT rc = m_Framework->getClientRect();
@@ -35,7 +34,6 @@ bool CLogoScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
 		M.x = LOWORD(l);
 		M.y = HIWORD(l);
 		if (!(M.x > 700 && M.x < 1100)) return false;
-
 		//start btn
 		if (M.y > 126 && M.y < 234) {
 			m_Framework->AddScene(eSCENE::SCENE_LOBBY);
@@ -43,13 +41,9 @@ bool CLogoScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
 			return true;
 		}
 		//rank btn
-		if (M.y > 306 && M.y < 414) {
-			return true;
-		}
+		if (M.y > 306 && M.y < 414) return true;
 		//help btn
-		if (M.y > 486 && M.y < 594) {
-			return true;
-		}
+		if (M.y > 486 && M.y < 594) return true;
 		if (M.y > 666 && M.y < 774) {
 			PostQuitMessage(0);
 			return true; // 영원히 호출 안됨

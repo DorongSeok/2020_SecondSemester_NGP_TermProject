@@ -39,13 +39,13 @@ public:
 	BYTE nextBlock;
 
 public:
-
 	hClientInfo() {
 		id = NULLVAL;
 		isReady = false;
-		Scene = eSCENE::SCENE_LOBBY;
+		Scene = eSCENE::SCENE_DUMMY;
 		getPacket = false;
 	}
+
 	void close() {
 		closesocket(s);
 		id = NULLVAL;
@@ -58,6 +58,7 @@ public:
 		client_table[id] = NULL;
 	}
 };
+
 hClientInfo cInfo[CLIENT_LIMITE];
 int client_cur = 0;
 
@@ -91,14 +92,12 @@ bool getReadyAll() {
 	}
 	else return false;
 }
-
 bool getStartAll() {
 	if (cInfo[0].isStart == true && cInfo[1].isStart == true) {
 		return true;
 	}
 	else return false;
 }
-
 bool getUserAll() {
 	if (cInfo[ePlayer::PLAYER_FIRST].getPacket == true
 		&& cInfo[ePlayer::PLAYER_SECOND].getPacket == true) {
@@ -106,7 +105,6 @@ bool getUserAll() {
 	}
 	return false;
 }
-
 int sendall(char* buffer, int bufferSize, int flags) {
 	int cnt = 0;
 	for (int i = 0; i < CLIENT_LIMITE; ++i) {
@@ -142,8 +140,8 @@ DWORD WINAPI SendThread(LPVOID arg) {
 				retval = sendall(reinterpret_cast<char*>(&scpl), sizeof(scpl), 0);
 				client->getPacket = false;
 				cout << "Send: login " << client->id << endl;
+				break;
 			}
-						 break;
 			case cs_ready: {
 				sc_packet_ready scpr;
 				scpr.size = sizeof(scpr);
@@ -162,11 +160,11 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					client->getPacket = false;
 					cout << "Send: ready " << client->id << endl;
 				}
+				break;
 			}
-						 break;
 			}
+			break;
 		}
-								break;
 		case eSCENE::SCENE_GAME: {
 			switch (client->lastpacket) {
 			case cs_user: {
@@ -178,8 +176,8 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					cout << "Send user: all " << endl;
 					ZeroMemory(&g_scpu, sizeof(g_scpu));
 				}
+				break;
 			}
-						break;
 			case cs_start: {
 				if (getStartAll()) {
 					sc_packet_start scps;
@@ -199,26 +197,20 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					client->getPacket = false;
 					cout << "Send start(false): " << client->id << endl;
 				}
+				break;
 			}
 			}
+			break;
 		}
-							   break;
 		case eSCENE::SCENE_DUMMY: {
 			switch (client->lastpacket) {
-			case cs_user: {
-				if (getUserAll()) {
-					g_scpu.type = sc_user;
-					g_scpu.size = sizeof(g_scpu);
-					retval = sendall(reinterpret_cast<char*>(&g_scpu), sizeof(g_scpu), 0);
-					client->getPacket = false;
-					cout << "Send: user " << client->id << endl;
-					ZeroMemory(&g_scpu, sizeof(g_scpu));
-				}
+			case CS_DUMMY:
+				cs_packet_dummy cspd;
+				retval = send(client->s, reinterpret_cast<char*>(&cspd), sizeof(cspd), 0);
+				cout << "Send: dummy" << client->id << endl;
 			}
-						break;
-			}
+			break;
 		}
-								break;
 		}
 		SetEvent(client->hEvent[eTHREAD::THREAD_SEND]);
 	}
@@ -249,30 +241,30 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 				client->lastpacket = cs_login;
 				client->getPacket = true;
 				cout << "RECV: cs_login, ID: " << client->id << endl;
+				break;
 			}
-						 break;
 			case cs_ready: {
 				client->lastpacket = cs_ready;
 				client->isReady = true;
 				client->getPacket = true;
 				cout << "RECV: cs_ready, ID: " << client->id << endl;
+				break;
 			}
-						 break;
 			}
+			break;
 		}
-								break;
 		case eSCENE::SCENE_GAME: {
 			switch (buffer[1]) {
 			case cs_start: {
 				client->lastpacket = cs_start;
 				client->isStart = true;
 				cout << "RECV: cs_start, ID: " << client->id << endl;
+				break;
 			}
-						 break;
 			case cs_end: {
 
+				break;
 			}
-					   break;
 			case cs_user: {
 				cs_packet_user cspu;
 				memcpy(&cspu, buffer, sizeof(cspu));
@@ -292,37 +284,20 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 				g_scpu.nextBlock[client->id] = client->nextBlock;
 				//~packet save for server
 				cout << "RECV: cs_user, ID: " << client->id << endl;
+				break;
 			}
-						break;
 			}
+			break;
 		}
-							   break;
 		case eSCENE::SCENE_DUMMY: {
 			switch (buffer[1]) {
-			case cs_user: {
-				cs_packet_user cspu;
-				memcpy(&cspu, buffer, sizeof(cspu));
-				memcpy(&client->table, reinterpret_cast<char*>(&cspu.table), sizeof(cspu));
-				client->pos[POS_X] = cspu.pos[POS_X];
-				client->pos[POS_Y] = cspu.pos[POS_Y];
-				client->skillGauge = cspu.skillGauge;
-				client->skillActive = cspu.skillActive;
-				client->nextBlock = cspu.nextBlock;
-				client->lastpacket = cs_user;
-				client->getPacket = true;
-				//~packet save for cInfo (필요한가 -> 데이터 처리를 위해 필요하다, 지금은 단순히 넘기기만해서 필요없어보임)
-				memcpy(&g_scpu.table[client->id], reinterpret_cast<char*>(&client->table), sizeof(client->table));
-				memcpy(&g_scpu.pos[client->id], client->pos, sizeof(client->pos));
-				g_scpu.skillGauge[client->id] = client->skillGauge;
-				g_scpu.skillActive[client->id] = client->skillActive;
-				g_scpu.nextBlock[client->id] = client->nextBlock;
-				//~packet save for server
-				cout << "RECV: cs_user, ID: " << client->id << endl;
+			case CS_DUMMY: {
+				client->lastpacket = CS_DUMMY;
+				cout << "RECV: dummy, ID: " << client->id << endl;
 			}
-						break;
 			}
+			break;
 		}
-								break;
 		}
 		SetEvent(client->hEvent[eTHREAD::THREAD_RECV]);
 	}
@@ -336,14 +311,14 @@ int main(int argc, char* argv[]) {
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa)) return -1;
 
-	SOCKET sock_listen = socket(AF_INET, SOCK_STREAM, 0);
+	SOCKET sock_listen = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sock_listen == INVALID_SOCKET) err_display("socket()");
 
 	SOCKADDR_IN addr_server;
 	ZeroMemory(&addr_server, sizeof(addr_server));
 	addr_server.sin_family = AF_INET;
-	addr_server.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
 	addr_server.sin_port = htons(SERVERPORT);
+	addr_server.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
 	retval = bind(sock_listen, (sockaddr*)&addr_server, sizeof(addr_server));
 	if (retval == SOCKET_ERROR) err_display("bind()");
 

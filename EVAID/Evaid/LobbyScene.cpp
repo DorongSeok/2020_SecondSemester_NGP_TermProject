@@ -3,8 +3,7 @@
 #include "Global.h"
 #include "ResorceTable.h"
 
-CLobbyScene::CLobbyScene()
-{
+CLobbyScene::CLobbyScene() {
     for (int i = 0; i < ePlayer::pMAX; ++i) {
         bPlayerConnected[i] = false;
         bPlayerReady[i] = false;
@@ -56,9 +55,7 @@ void CLobbyScene::update(long TimerTick) {
     }
 }
 
-
-void CLobbyScene::draw(HDC hDC)
-{
+void CLobbyScene::draw(HDC hDC) {
     // backgroud----------------
     ResorceTable::getInstance()->img_lobby_bg.Draw(hDC, 0, 0);
     // -------------------------
@@ -115,8 +112,7 @@ bool CLobbyScene::init(CFramework* pFramework, HWND hWnd) {
 }
 
 bool CLobbyScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
-    if (bConnected)
-        return true;
+    if (bConnected) return true;
 
     switch (msg) {
     case WM_KEYUP:
@@ -200,13 +196,11 @@ bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
         M.y = HIWORD(l);
         if (!(M.x > 711 && M.x < 1111)) return false;
 
-        if (M.y > 753 && M.y < 861)
-        {
+        if (M.y > 753 && M.y < 861) {
             SOCKET& s = m_Framework->s;
             sockaddr_in& addr = m_Framework->addr;
             int retval;
-            if (!bConnected)
-            {
+            if (!bConnected) {
                 ZeroMemory(&addr, sizeof(addr));
                 addr.sin_family = AF_INET;
                 addr.sin_addr.S_un.S_addr = inet_addr(input);
@@ -234,8 +228,7 @@ bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
                 this->draw(GetDC(m_hWnd));
                 break;
             }
-            if (!bReady)
-            {
+            if (!bReady) {
                 cs_packet_ready cspr;
                 ZeroMemory(&cspr, sizeof(cspr));
                 cspr.size = sizeof(cspr);

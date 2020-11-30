@@ -10,7 +10,6 @@ bool CScene::init(CFramework* pFramework, HWND hWnd) {
 	m_hWnd = hWnd;
 	return true;
 }
-
 bool CScene::Keyboard(UINT msg, WPARAM w, LPARAM l) { return false; }
 bool CScene::Mouse(UINT msg, WPARAM w, LPARAM l) { return false; }
 void CScene::ReleaseObjects() {}

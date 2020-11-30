@@ -58,34 +58,12 @@ int main(int argc, char* argv[]) {
 	//받은 데이터 버퍼 커서
 	int fileCur = 0;
 	while (flag) {
+		cs_packet_dummy cspd;
+		retval = send(sock, reinterpret_cast<char*>(&cspd), sizeof(cspd), 0);
 		
-		Protocol_TABLE table;
-		for (int i = 0; i < 20; ++i) {
-			for (int j = 0; j < 10; ++j) {
-				table.t[i][j] = i;
-			}
-		}
-		int id = 0;
-		cs_packet_user cspu;
-		ZeroMemory(&cspu, sizeof(cspu));
-		cspu.size = sizeof(cspu);
-		cspu.type = cs_user;
-		memcpy(&cspu.table, reinterpret_cast<char*>(&table), sizeof(table));
-		cspu.pos[0] = 10;
-		cspu.pos[1] = 20;
-		cspu.skillGauge = 11;
-		cspu.skillActive = false;
-		cspu.nextBlock = 1;
-
-		retval = send(sock, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
-
-		sc_packet_user scpu;
-		ZeroMemory(&scpu, sizeof(scpu));
-		retval = recv(sock, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
-		cout << scpu.pos[id][0] << " " << scpu.pos[id][1] << endl;
-		cout << static_cast<int>(scpu.skillGauge[id]) << endl;
-		cout << static_cast<int>(scpu.skillActive[id]) << endl;
-		cout << static_cast<int>(scpu.nextBlock[id]) << endl;
+		ZeroMemory(&cspd, sizeof(cspd));
+		retval = recv(sock, reinterpret_cast<char*>(&cspd), sizeof(cspd), 0);
+		cout << "!!" << endl;
 		system("pause");
 		flag = false;
 	}

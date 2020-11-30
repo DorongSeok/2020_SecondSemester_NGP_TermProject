@@ -5,17 +5,14 @@
 
 int tick_block = 4;
 
-CGameScene::CGameScene()
-{
+CGameScene::CGameScene() {
 	Hero1Score = 0;
 	Hero2Score = 0;
 
 	Global::getInstance()->isStart = false;
 }
 
-CGameScene::~CGameScene()
-{
-}
+CGameScene::~CGameScene() {}
 
 void CGameScene::update(long TimerTick)
 {
@@ -37,12 +34,11 @@ void CGameScene::update(long TimerTick)
 			IsStart = true;
 		}
 	}
-	if (IsStart)
-	{
+
+	if (IsStart) {
 		m_TimerTick++;
 		Hero1P.SetTimer(m_TimerTick);
 		Hero2P.SetTimer(m_TimerTick);
-
 
 		cout << m_TimerTick << endl;
 		if (m_TimerTick % 1500 == 0 && tick_block > 1) tick_block -= 1;
@@ -64,47 +60,37 @@ void CGameScene::update(long TimerTick)
 			}
 		}
 
-		if (Global::getInstance()->Gameover_1)
-		{
+		if (Global::getInstance()->Gameover_1) {
 			bool FullBoard_1 = true;
-			for (int i = 0; i < table_WIDTH; ++i)
-			{
-				if (board_1.Val[i][0] != BLOCK_TYPE::STACK && board_1.Val[i][0] != BLOCK_TYPE::SHADOW)
-				{
+			for (int i = 0; i < table_WIDTH; ++i) {
+				if (board_1.Val[i][0] != BLOCK_TYPE::STACK && board_1.Val[i][0] != BLOCK_TYPE::SHADOW) {
 					FullBoard_1 = false;
 					break;
 				}
 			}
-			if (!FullBoard_1)
-			{
+			if (!FullBoard_1) {
 				board_1.spawn(board_1.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
 			}
 		}
-		if (Global::getInstance()->Gameover_2)
-		{
+		if (Global::getInstance()->Gameover_2) {
 			bool FullBoard_2 = true;
-			for (int i = 0; i < table_WIDTH; ++i)
-			{
-				if (board_2.Val[i][0] != BLOCK_TYPE::STACK && board_2.Val[i][0] != BLOCK_TYPE::SHADOW)
-				{
+			for (int i = 0; i < table_WIDTH; ++i) {
+				if (board_2.Val[i][0] != BLOCK_TYPE::STACK && board_2.Val[i][0] != BLOCK_TYPE::SHADOW) {
 					FullBoard_2 = false;
 					break;
 				}
 			}
-			if (!FullBoard_2)
-			{
+			if (!FullBoard_2) {
 				board_2.spawn(board_2.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
 			}
 		}
 
-		if (m_TimerTick % tick_block == 0)
-		{
+		if (m_TimerTick % tick_block == 0) {
 			board_1.drop();
 			board_2.drop();
 		}
 
-		if (m_TimerTick % tick_skill == 0)
-		{
+		if (m_TimerTick % tick_skill == 0) {
 			Hero1P.skillGaugeUp(Hero2P);
 			Hero2P.skillGaugeUp(Hero1P);
 		}
@@ -112,37 +98,30 @@ void CGameScene::update(long TimerTick)
 		Hero1P.move(board_1);
 		Hero2P.move(board_2);
 	}
-
-	//SOCKET& s = m_Framework->s;
-	//sockaddr_in& addr = m_Framework->addr;
-	//int retval;
-	//
-	//cs_packet_user cspu;
-	//cspu.size = sizeof(cspu);
-	//cspu.type = cs_user;
-	//ZeroMemory(&cspu, sizeof(cspu));
-	//if (Global::getInstance()->iMyPlayerNum == 0)
-	//{
-	//	Hero1P.GetHeroToPacket(&cspu);
-	//	board_1.GetTableToPacket(&cspu);
-	//}
-	//else if (Global::getInstance()->iMyPlayerNum == 1)
-	//{
-	//	Hero2P.GetHeroToPacket(&cspu);
-	//	board_2.GetTableToPacket(&cspu);
-	//}
-	//retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
-	//
-	//sc_packet_user scpu;
-	//ZeroMemory(&scpu, sizeof(scpu));
-	//retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
-	//
-	//JPoint tPos1 = { scpu.pos[0][0], scpu.pos[0][1] };
-	//JPoint tPos2 = { scpu.pos[1][0], scpu.pos[1][1] };
-	//
-	//Hero1P.SetPacketToHero(tPos1, scpu.skillGauge[0], scpu.skillActive[0]);
-	//Hero2P.SetPacketToHero(tPos2, scpu.skillGauge[1], scpu.skillActive[1]);
-
+	
+	cs_packet_user cspu;
+	cspu.size = sizeof(cspu);
+	cspu.type = cs_user;
+	ZeroMemory(&cspu, sizeof(cspu));
+	if (Global::getInstance()->iMyPlayerNum == 0) {
+		Hero1P.GetHeroToPacket(&cspu);
+		board_1.GetTableToPacket(&cspu);
+	}
+	else if (Global::getInstance()->iMyPlayerNum == 1) {
+		Hero2P.GetHeroToPacket(&cspu);
+		board_2.GetTableToPacket(&cspu);
+	}
+	retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
+	
+	sc_packet_user scpu;
+	ZeroMemory(&scpu, sizeof(scpu));
+	retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
+	
+	JPoint tPos1 = { scpu.pos[0][0], scpu.pos[0][1] };
+	JPoint tPos2 = { scpu.pos[1][0], scpu.pos[1][1] };
+	
+	Hero1P.SetPacketToHero(tPos1, scpu.skillGauge[0], scpu.skillActive[0]);
+	Hero2P.SetPacketToHero(tPos2, scpu.skillGauge[1], scpu.skillActive[1]);
 }
 
 void CGameScene::draw(HDC hDC)
@@ -164,14 +143,12 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 	switch (msg) {
 	case WM_KEYUP:
 		switch (w) {
-			case VK_LEFT:
-			{
+			case VK_LEFT: {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER && Hero1P.state == STATE::LEFT)		Hero1P.state = STATE::NORMAL;
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER && Hero2P.state == STATE::LEFT)	Hero2P.state = STATE::NORMAL;
 				break;
 			}
-			case VK_RIGHT:
-			{
+			case VK_RIGHT: {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER && Hero1P.state == STATE::RIGHT)		Hero1P.state = STATE::NORMAL;
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER && Hero2P.state == STATE::RIGHT)	Hero2P.state = STATE::NORMAL;
 				break;
@@ -180,26 +157,22 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 		break;
 	case WM_KEYDOWN:
 		switch (w) {
-			case VK_LEFT:
-			{
+			case VK_LEFT: {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.state = STATE::LEFT;
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.state = STATE::LEFT;
 				break;
 			}
-			case VK_RIGHT:
-			{
+			case VK_RIGHT: {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.state = STATE::RIGHT;
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.state = STATE::RIGHT;
 				break;
 			}
-			case 'Z':
-			{
+			case 'Z': {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.herojump();
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.herojump();
 				break;
 			}
-			case 'X':
-			{
+			case 'X': {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.SkillOn(Hero2P);
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.SkillOn(Hero1P);
 				break;
@@ -223,12 +196,9 @@ bool CGameScene::Mouse(UINT msg, WPARAM w, LPARAM l)
 	return true;
 }
 
-void CGameScene::ReleaseObjects()
-{
-}
+void CGameScene::ReleaseObjects(){}
 
-void CGameScene::DrawGameScene(HDC hDC)
-{
+void CGameScene::DrawGameScene(HDC hDC) {
 	RECT temp{ 0,0,CLIENT_WIDTH,CLIENT_HEIGHT };
 	FillRect(hDC, &temp, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
