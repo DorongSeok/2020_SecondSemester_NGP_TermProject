@@ -36,7 +36,6 @@ public:
 	BYTE nextBlock;
 	bool getUser;
 public:
-
 	hClientInfo() {
 		id = NULLVAL;
 		isReady = false;
