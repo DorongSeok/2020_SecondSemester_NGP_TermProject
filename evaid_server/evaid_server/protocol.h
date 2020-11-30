@@ -95,7 +95,7 @@ public:
 	BYTE skillGauge[2];
 	bool skillActive[2];
 	BYTE nextBlock[2];
-	BYTE winner;	//0: 1p, 1: 2p, 2: gamming
+	BYTE loser;	//0: 1p, 1: 2p, 2: gamming
 };
 
 class sc_packet_start {

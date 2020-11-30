@@ -197,7 +197,7 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					g_scpu.type = sc_user;
 					g_scpu.size = sizeof(g_scpu);
 					
-					g_scpu.winner = GameOverCheck();
+					g_scpu.loser = GameOverCheck();
 					retval = sendall(reinterpret_cast<char*>(&g_scpu), sizeof(g_scpu), 0);
 					cout << "Send user: all " << endl;
 					ZeroMemory(&g_scpu, sizeof(g_scpu));

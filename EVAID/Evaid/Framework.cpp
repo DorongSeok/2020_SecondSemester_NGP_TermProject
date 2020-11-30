@@ -82,7 +82,7 @@ bool CFramework::AddScene(eSCENE scene) {
         }
     case eSCENE::SCENE_RESULT:
     {
-        auto pResult = new CResultScene{ m_WinnerNum };
+        auto pResult = new CResultScene{ m_LoserNum };
         if (!pResult->init(this, m_hWnd)) {
             delete pResult;
             return false;

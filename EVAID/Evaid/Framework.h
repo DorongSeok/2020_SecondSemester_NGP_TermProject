@@ -31,7 +31,7 @@ public:
 	sockaddr_in addr;
 	int addrlen;
 
-	int m_WinnerNum;
+	int m_LoserNum;
 
 private:
 	HWND m_hWnd{ NULL };

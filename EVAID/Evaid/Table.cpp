@@ -251,7 +251,7 @@ void CTable::effect(POINT _pt, BLOCK_TYPE type)
 	}
 	check(standard_line, delete_line);
 	isShadowOn = true;
-	GameOverCheck(PlayerNum);
+	//GameOverCheck(PlayerNum);
 }
 
 void CTable::effect_shadow()
@@ -263,7 +263,7 @@ void CTable::effect_shadow()
 			}
 		}
 	}
-	GameOverCheck(PlayerNum);
+	//GameOverCheck(PlayerNum);
 }
 
 bool CTable::safeChange(POINT _pt, BLOCK_TYPE type)

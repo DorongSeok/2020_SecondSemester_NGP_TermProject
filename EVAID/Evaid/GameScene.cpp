@@ -48,16 +48,6 @@ void CGameScene::update(long TimerTick) {
 			board_2.SetPacketToTable(scpu);
 		}
 
-		//if (scpu.winner == )
-		//{
-		//	if (scpu.winner == Global::getInstance()->iMyPlayerNum)
-		//	{
-		//		m_Framework->m_WinnerNum = Global::getInstance()->iMyPlayerNum;
-		//		m_Framework->AddScene(eSCENE::SCENE_RESULT);
-		//		m_Framework->PopScene();
-		//	}
-		//}
-
 		m_TimerTick++;
 		Hero1P.SetTimer(m_TimerTick);
 		Hero2P.SetTimer(m_TimerTick);
@@ -121,8 +111,14 @@ void CGameScene::update(long TimerTick) {
 		Hero1P.move(board_1);
 		Hero2P.move(board_2);
 
-
+		if (scpu.loser != 2)
+		{
+			m_Framework->m_LoserNum = scpu.loser;
+			m_Framework->AddScene(eSCENE::SCENE_RESULT);
+			m_Framework->PopScene();
+		}
 	}
+
 
 }
 
