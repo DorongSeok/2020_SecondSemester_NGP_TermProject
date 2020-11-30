@@ -5,6 +5,14 @@
 //#define SERVERIP "14.35.11.46" //동석
 #define SERVERPORT 9000
 #define MAXBUFFER 512
+enum class eTHREAD { THREAD_SEND = 0, THREAD_RECV = 1, THREAD_MAX = 2 };
+enum class eSCENE { SCENE_LOGO = 0, SCENE_LOBBY = 1, SCENE_GAME = 2, SCENE_RESULT = 3, SCENE_DUMMY = 4, SCENE_MAX = 5 };
+enum class ePlayer { PLAYER_FIRST = 0, PLAYER_SECOND = 1, PLAYER_MAX = 2 };
+enum class ePosition { POS_X = 0, POS_Y = 1, POS_MAX = 2 };
+enum class eBlock { BLOCK_A = 0, BLOCK_B = 1, BLOCK_C = 2, BLOCK_D = 3, BLOCK_E = 4, BLOCK_NONE = 5, BLOCK_STACK = 6, BLOCK_SHADOW = 7 };
+constexpr BYTE TABLE_WIDTH = 10;
+constexpr BYTE TABLE_HEIGHT = 20;
+
 constexpr BYTE CLIENT_LIMITE = 2;
 constexpr int NULLVAL = -1;
 
@@ -17,11 +25,6 @@ constexpr BYTE sc_ready = 4;
 //game
 constexpr BYTE cs_user = 5;
 constexpr BYTE sc_user = 6;
-constexpr BYTE cs_start = 7;
-constexpr BYTE sc_start = 8;
-constexpr BYTE cs_end = 9;
-constexpr BYTE sc_end = 10;
-
 
 #pragma pack(push, 1)
 class Protocol_TABLE {
@@ -52,21 +55,6 @@ public:
 	bool skillActive;
 	BYTE nextBlock;
 };
-
-class cs_packet_start {
-public:
-	BYTE size;
-	BYTE type;
-	bool start;		//isstart
-};
-
-class cs_packet_end {
-public:
-	BYTE size;
-	BYTE type;
-	bool isend;		//isend;
-};
-
 ////////
 
 class sc_packet_login {
@@ -87,7 +75,7 @@ public:
 
 class sc_packet_user {
 public:
-	//s: client_id/ c: iMyPlayerNum
+	//s: client_id/ c: playerNum
 	BYTE size;
 	BYTE type;
 	Protocol_TABLE table[2];
@@ -96,20 +84,6 @@ public:
 	bool skillActive[2];
 	BYTE nextBlock[2];
 	BYTE loser;	//0: 1p, 1: 2p, 2: gamming
-};
-
-class sc_packet_start {
-public:
-	BYTE size;
-	BYTE type;
-	bool start;		//true일 때 시작
-};
-
-class sc_packet_end {
-public:
-	BYTE size;
-	BYTE type;
-	bool end;		//true일 때 끝
 };
 #pragma pack(pop)
 

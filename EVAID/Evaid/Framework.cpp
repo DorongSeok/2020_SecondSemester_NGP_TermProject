@@ -50,7 +50,7 @@ bool CFramework::init(HWND hWnd) {
 bool CFramework::AddScene(eSCENE scene) {
     switch (scene)
     {
-    case eSCENE::SCENE_LOGGO:
+    case eSCENE::SCENE_LOGO:
         {
             auto pLogo = new CLogoScene{};
             if (!pLogo->init(this, m_hWnd)) {

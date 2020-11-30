@@ -20,19 +20,15 @@ public:
 	bool Mouse(UINT msg, WPARAM w, LPARAM l) override;
 	void ReleaseObjects() override;
 
-	void DrawGameScene(HDC hDC);
-
 	long m_TimerTick = 0;
 
 private:
-	bool IsStart = false;
-
 	int Hero1Score = 0;
 	int Hero2Score = 0;
 
 	CHero Hero1P{ HERO::Hero1, 0 };
 	CHero Hero2P{ HERO::Hero2, 1 };
 
-	CTable board_1{ 0 };
-	CTable board_2{ 1 };
+	CTable board_1{ ePlayer::PLAYER_FIRST };
+	CTable board_2{ ePlayer::PLAYER_SECOND };
 };

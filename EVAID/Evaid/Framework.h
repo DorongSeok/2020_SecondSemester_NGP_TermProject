@@ -30,6 +30,7 @@ public:
 	SOCKET s;
 	sockaddr_in addr;
 	int addrlen;
+	ePlayer playerNum;
 
 	int m_LoserNum;
 

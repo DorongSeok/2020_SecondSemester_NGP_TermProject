@@ -11,11 +11,11 @@
 class CTable {
 	RECT	rcVal[table_WIDTH][table_HEIGHT];
 
-	int PlayerNum;
+	ePlayer PlayerNum;
 
 	BOOL	nowDrop = FALSE;
 
-	BLOCK_TYPE	nextBlock;
+	eBlock	nextBlock;
 	POINT	ptnextBlock{ 510, 50 };
 
 	RECT	rcnextBlock{
@@ -27,14 +27,14 @@ class CTable {
 
 public:
 	bool isShadowOn = false;
-	BLOCK_TYPE	Val[table_WIDTH][table_HEIGHT] = { BLOCK_TYPE::NONE };
+	eBlock	Val[table_WIDTH][table_HEIGHT] = { eBlock::BLOCK_NONE };
 
 	int iDrawGapX;		// 플레이어에 따른 x축 그리기 시작 좌표 격차(플레이어 1 = 0, 플레이어 2 = CLIENT_WIDTH / 2)
 
 	//boder이 그려지기 시작하는 pt
 	POINT	ptstart;
 
-	CTable(int);
+	CTable(ePlayer p);
 	~CTable();
 
 	void SetPacketToTable(sc_packet_user& sc_packet_user);
@@ -66,7 +66,7 @@ public:
 	///</summary>
 	///<param name = "_pt"> 효과가 일어날 위치 </param>
 	///<param name = "type"> 그 위치에 있는 블럭 종류 </param>
-	void effect(POINT _pt, BLOCK_TYPE type);
+	void effect(POINT _pt, eBlock type);
 
 	void effect_shadow();
 
@@ -75,14 +75,14 @@ public:
 	///</summary>
 	///<param name = "_pt"> 바꾸고 싶은 위치 </param>
 	///<param name = "type"> 바꾸고 싶은 블럭 종류 </param>
-	bool safeChange(POINT _pt, BLOCK_TYPE type);
+	bool safeChange(POINT _pt, eBlock type);
 
 	///<summary>
 	/// 블럭 생성
 	///</summary>
 	///<param name = "_spawnXpos"> 생성되는 X위치 (Y는 0으로 고정) </param>
 	///<param name = "_spawnType"> 생성하고 싶은 블럭 종류</param>
-	void spawn(int _spawnXpos, BLOCK_TYPE _spawnType);
+	void spawn(int _spawnXpos, eBlock _spawnType);
 
 	///<summary>
 	/// 채워진 줄이 기준 줄보다 길 경우 _delete만큼 지움

@@ -5,12 +5,8 @@ Global::Global() {
 	ShadowTick_1 = 0;
 	ShadowTick_2 = 0;
 	tick_spawn = 250;
-	Gameover_1 = false;
-	Gameover_2 = false;
-	isStart = false;
 	Player1HeroKind = HERO::Hero1;
 	Player2HeroKind = HERO::Hero1;
-	iMyPlayerNum = 1;
 }
 
 Global* Global::inst = nullptr;

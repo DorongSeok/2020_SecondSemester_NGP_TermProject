@@ -5,7 +5,7 @@
 
 CLobbyScene::CLobbyScene()
 {
-    for (int i = 0; i < ePlayer::pMAX; ++i) {
+    for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) {
         bPlayerConnected[i] = false;
         bPlayerReady[i] = false;
     }
@@ -31,12 +31,13 @@ void CLobbyScene::update(long TimerTick) {
             break;
         }
         if (buffer[1] == sc_login &&
-            bPlayerConnected[ePlayer::pFIRST] == false || bPlayerConnected[ePlayer::pSECOND] == false) {
+            bPlayerConnected[(int)ePlayer::PLAYER_FIRST] == false 
+            || bPlayerConnected[(int)ePlayer::PLAYER_SECOND] == false) {
             sc_packet_login scpl;
             memcpy(&scpl, buffer, sizeof(scpl));
             if (retval != 0 && retval != -1) {
-                bPlayerConnected[ePlayer::pFIRST] = scpl.f_login;
-                bPlayerConnected[ePlayer::pSECOND] = scpl.s_login;
+                bPlayerConnected[(int)ePlayer::PLAYER_FIRST] = scpl.f_login;
+                bPlayerConnected[(int)ePlayer::PLAYER_SECOND] = scpl.s_login;
             }
         }
         if (buffer[1] == sc_ready) {
@@ -44,7 +45,7 @@ void CLobbyScene::update(long TimerTick) {
             memcpy(&scpr, buffer, sizeof(scpr));
             if (retval != 0 && retval != -1) {
                 bPlayerReady[scpr.id] = true;
-                if (scpr.id == ePlayer::pMAX) {
+                if (scpr.id == (BYTE)ePlayer::PLAYER_MAX) {
                     bPlayerReady[0] = true;
                     bPlayerReady[1] = true;
                     cout << "!!" << endl;
@@ -64,19 +65,31 @@ void CLobbyScene::draw(HDC hDC)
     // -------------------------
 
     // player border------------
-    if (bPlayerReady[ePlayer::pFIRST])                ResorceTable::getInstance()->img_lobby_hero1_ready.Draw(hDC, 85, 50);
-    else if (bPlayerConnected[ePlayer::pFIRST])       ResorceTable::getInstance()->img_lobby_hero1_unready.Draw(hDC, 85, 50);
-    else                                              ResorceTable::getInstance()->img_lobby_hero_border.Draw(hDC, 85, 50);
+    if (bPlayerReady[(int)ePlayer::PLAYER_FIRST]) {
+        ResorceTable::getInstance()->img_lobby_hero1_ready.Draw(hDC, 85, 50);
+    } else if (bPlayerConnected[(int)ePlayer::PLAYER_FIRST]) {
+        ResorceTable::getInstance()->img_lobby_hero1_unready.Draw(hDC, 85, 50);
+    }else {
+        ResorceTable::getInstance()->img_lobby_hero_border.Draw(hDC, 85, 50);
+    }
 
-    if (bPlayerReady[ePlayer::pSECOND])               ResorceTable::getInstance()->img_lobby_hero2_ready.Draw(hDC, 641, 50);
-    else if (bPlayerConnected[ePlayer::pSECOND])      ResorceTable::getInstance()->img_lobby_hero2_unready.Draw(hDC, 641, 50);
-    else                                              ResorceTable::getInstance()->img_lobby_hero_border.Draw(hDC, 641, 50);
+    if (bPlayerReady[(int)ePlayer::PLAYER_SECOND]) {
+        ResorceTable::getInstance()->img_lobby_hero2_ready.Draw(hDC, 641, 50);
+    } else if (bPlayerConnected[(int)ePlayer::PLAYER_SECOND]) {
+        ResorceTable::getInstance()->img_lobby_hero2_unready.Draw(hDC, 641, 50);
+    } else {
+        ResorceTable::getInstance()->img_lobby_hero_border.Draw(hDC, 641, 50);
+    }
     // -------------------------
 
     // button-------------------
-    if (bConnected && bReady)                         ResorceTable::getInstance()->img_lobby_ready_disabled_bnt.Draw(hDC, 711, 753);
-    else if (bConnected && !bReady)                   ResorceTable::getInstance()->img_lobby_ready_bnt.Draw(hDC, 711, 753);
-    else                                              ResorceTable::getInstance()->img_lobby_connect_bnt.Draw(hDC, 711, 753);
+    if (bConnected && bReady) {
+        ResorceTable::getInstance()->img_lobby_ready_disabled_bnt.Draw(hDC, 711, 753);
+    } else if (bConnected && !bReady) {
+        ResorceTable::getInstance()->img_lobby_ready_bnt.Draw(hDC, 711, 753);
+    } else {
+        ResorceTable::getInstance()->img_lobby_connect_bnt.Draw(hDC, 711, 753);
+    }
     // -------------------------
 
     // IP-----------------------
@@ -224,11 +237,11 @@ bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
                 ZeroMemory(&scpl, sizeof(scpl));
                 retval = recv(s, reinterpret_cast<char*>(&scpl), sizeof(scpl), 0);
 
-                Global::getInstance()->iMyPlayerNum = static_cast<int>(scpl.id);
-                bPlayerConnected[ePlayer::pFIRST] = scpl.f_login;
-                bPlayerConnected[ePlayer::pSECOND] = scpl.s_login;
+                m_Framework->playerNum = static_cast<ePlayer>(scpl.id);
+                bPlayerConnected[(int)ePlayer::PLAYER_FIRST] = scpl.f_login;
+                bPlayerConnected[(int)ePlayer::PLAYER_SECOND] = scpl.s_login;
                 bConnected = true;
-                cout << "id: " << Global::getInstance()->iMyPlayerNum << endl;
+                cout << "id: " << (int)m_Framework->playerNum << endl;
                 cout << "Connected" << endl;
                 cout << endl << "IP: " << input << endl;
                 this->draw(GetDC(m_hWnd));
@@ -240,9 +253,9 @@ bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
                 ZeroMemory(&cspr, sizeof(cspr));
                 cspr.size = sizeof(cspr);
                 cspr.type = cs_ready;
-                cspr.id = Global::getInstance()->iMyPlayerNum;
+                cspr.id = (BYTE)m_Framework->playerNum;
                 retval = send(s, reinterpret_cast<char*>(&cspr), cspr.size, 0);
-                bPlayerReady[Global::getInstance()->iMyPlayerNum] = true;
+                bPlayerReady[(int)m_Framework->playerNum] = true;
                 bReady = true;
                 cout << "Ready" << endl;
                 break;

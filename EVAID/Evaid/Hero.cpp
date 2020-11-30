@@ -65,8 +65,8 @@ void CHero::move(CTable Target) {
 		int bottomY = GetPosInValY(rect.bottom + Gravity);
 		int leftX = GetPosInValX(rect.left + 7);
 		int rightX = GetPosInValX(rect.right - 7);
-		if (((Target.Val[leftX][bottomY] == BLOCK_TYPE::NONE && Target.Val[rightX][bottomY] == BLOCK_TYPE::NONE)
-			|| (Target.Val[leftX][bottomY] == BLOCK_TYPE::SHADOW && Target.Val[rightX][bottomY] == BLOCK_TYPE::SHADOW))
+		if (((Target.Val[leftX][bottomY] == eBlock::BLOCK_NONE && Target.Val[rightX][bottomY] == eBlock::BLOCK_NONE)
+			|| (Target.Val[leftX][bottomY] == eBlock::BLOCK_SHADOW && Target.Val[rightX][bottomY] == eBlock::BLOCK_SHADOW))
 			|| (rect.bottom - PTStartY) % BLOCK_SIZE > 0) pPosition.y += Gravity;
 		else Isjump = false;
 	}
@@ -81,11 +81,11 @@ void CHero::move(CTable Target) {
 		int PosR = GetPosInValX(rect.right - 1);
 		int PosT = GetPosInValY(rect.top);
 		int PosB = GetPosInValY(rect.bottom);
-		if ((Target.Val[PosL][PosT] != BLOCK_TYPE::NONE && Target.Val[PosL][PosT] != BLOCK_TYPE::SHADOW)
-			|| (Target.Val[PosR][PosT] != BLOCK_TYPE::NONE && Target.Val[PosR][PosT] != BLOCK_TYPE::SHADOW)) {
+		if ((Target.Val[PosL][PosT] != eBlock::BLOCK_NONE && Target.Val[PosL][PosT] != eBlock::BLOCK_SHADOW)
+			|| (Target.Val[PosR][PosT] != eBlock::BLOCK_NONE && Target.Val[PosR][PosT] != eBlock::BLOCK_SHADOW)) {
 			jumpCnt = 0;
-			if (!((Target.Val[PosL][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosL][PosB + 1] != BLOCK_TYPE::SHADOW)
-				|| (Target.Val[PosR][PosB + 1] != BLOCK_TYPE::NONE && Target.Val[PosR][PosB + 1] != BLOCK_TYPE::SHADOW)))
+			if (!((Target.Val[PosL][PosB + 1] != eBlock::BLOCK_NONE && Target.Val[PosL][PosB + 1] != eBlock::BLOCK_SHADOW)
+				|| (Target.Val[PosR][PosB + 1] != eBlock::BLOCK_NONE && Target.Val[PosR][PosB + 1] != eBlock::BLOCK_SHADOW)))
 				pPosition.y = PTStartY + (PosT + 1) * BLOCK_SIZE + BLOCK_SIZE / 2;
 		}
 	}
@@ -94,8 +94,8 @@ void CHero::move(CTable Target) {
 		int PosT = GetPosInValY(rect.top);
 		int PosB = GetPosInValY(rect.bottom - 1);
 		int PosL = GetPosInValX(rect.left - speed);
-		if (((Target.Val[PosL][PosT] == BLOCK_TYPE::NONE && Target.Val[PosL][PosB] == BLOCK_TYPE::NONE)
-			|| (Target.Val[PosL][PosT] == BLOCK_TYPE::SHADOW && Target.Val[PosL][PosB] == BLOCK_TYPE::SHADOW))
+		if (((Target.Val[PosL][PosT] == eBlock::BLOCK_NONE && Target.Val[PosL][PosB] == eBlock::BLOCK_NONE)
+			|| (Target.Val[PosL][PosT] == eBlock::BLOCK_SHADOW && Target.Val[PosL][PosB] == eBlock::BLOCK_SHADOW))
 			&& rect.left - speed >= PTStartX) pPosition.x -= speed;
 		else pPosition.x = (rect.left / BLOCK_SIZE) * BLOCK_SIZE + BLOCK_SIZE;
 	}
@@ -105,16 +105,11 @@ void CHero::move(CTable Target) {
 		int rightX = GetPosInValX(rect.right + speed);
 		if (rightX == table_WIDTH)
 			rightX -= 1;
-		if (((Target.Val[rightX][topY] == BLOCK_TYPE::NONE && Target.Val[rightX][bottomY] == BLOCK_TYPE::NONE)
-			|| (Target.Val[rightX][topY] == BLOCK_TYPE::SHADOW && Target.Val[rightX][bottomY] == BLOCK_TYPE::SHADOW))
+		if (((Target.Val[rightX][topY] == eBlock::BLOCK_NONE && Target.Val[rightX][bottomY] == eBlock::BLOCK_NONE)
+			|| (Target.Val[rightX][topY] == eBlock::BLOCK_SHADOW && Target.Val[rightX][bottomY] == eBlock::BLOCK_SHADOW))
 			&& rect.right + speed <= PTStartX + table_WIDTH * BLOCK_SIZE) pPosition.x += speed;
 		else pPosition.x = (rect.right / BLOCK_SIZE) * BLOCK_SIZE;
 	}
-
-	if (PlayerNum == 0) Global::getInstance()->Player1Center = pPosition;
-	else if (PlayerNum == 1) Global::getInstance()->Player2Center = pPosition;
-
-	//cout << jumpCnt << "  " << jumpHeight << "  " << Isjump << endl;
 
 	SetHeroRect();
 }
