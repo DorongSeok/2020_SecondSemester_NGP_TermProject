@@ -37,7 +37,7 @@ public:
 	CTable(int);
 	~CTable();
 
-	void SetPacketToTable(const sc_packet_user& sc_packet_user);
+	void SetPacketToTable(sc_packet_user& sc_packet_user);
 	void GetTableToPacket(cs_packet_user* cs_pack_user);
 
 	///<summary>

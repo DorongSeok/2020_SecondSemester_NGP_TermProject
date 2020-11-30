@@ -5,83 +5,64 @@
 
 int tick_block = 4;
 
-CGameScene::CGameScene()
-{
+CGameScene::CGameScene() {
 	Hero1Score = 0;
 	Hero2Score = 0;
 
 	Global::getInstance()->isStart = false;
 }
 
-CGameScene::~CGameScene()
-{
-}
+CGameScene::~CGameScene() {}
 
-void CGameScene::update(long TimerTick)
-{
+void CGameScene::update(long TimerTick) {
 	SOCKET& s = m_Framework->s;
 	sockaddr_in& addr = m_Framework->addr;
 	int retval;
-
-	if (!IsStart) {
-		cs_packet_start csps;
-		csps.size = sizeof(csps);
-		csps.type = cs_start;
-		csps.start = true;
-		retval = send(s, reinterpret_cast<char*>(&csps), sizeof(csps), 0);
-		
-		sc_packet_start scps;
-		ZeroMemory(&scps, sizeof(scps));
-		retval = recv(s, reinterpret_cast<char*>(&scps), sizeof(scps), 0);
-		if (scps.start == true) {
-			IsStart = true;
-
-			cs_packet_user cspu;
-			cspu.size = sizeof(cspu);
-			cspu.type = cs_user;
-			ZeroMemory(&cspu, sizeof(cspu));
-			if (Global::getInstance()->iMyPlayerNum == 0)
-			{
-				Hero1P.GetHeroToPacket(&cspu);
-				board_1.GetTableToPacket(&cspu);
-			}
-			else if (Global::getInstance()->iMyPlayerNum == 1)
-			{
-				Hero2P.GetHeroToPacket(&cspu);
-				board_2.GetTableToPacket(&cspu);
-			}
-			retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
-
-			//// 그릴 정보 받아오기
-			//sc_packet_user scpu;
-			//ZeroMemory(&scpu, sizeof(scpu));
-			//retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
-			//
-			//JPoint tPos1 = { scpu.pos[0][0], scpu.pos[0][1] };
-			//JPoint tPos2 = { scpu.pos[1][0], scpu.pos[1][1] };
-			//
-			//Hero1P.SetPacketToHero(scpu);
-			//Hero2P.SetPacketToHero(scpu);
-			//
-			//board_1.SetPacketToTable(scpu);
-			//board_2.SetPacketToTable(scpu);
+	IsStart = true;
+	if (IsStart) {
+		cs_packet_user cspu;
+		ZeroMemory(&cspu, sizeof(cspu));
+		cspu.size = sizeof(cspu);
+		cspu.type = cs_user;
+		if (Global::getInstance()->iMyPlayerNum == 0) {
+			Hero1P.GetHeroToPacket(&cspu);
+			board_1.GetTableToPacket(&cspu);
 		}
-	}
+		else if (Global::getInstance()->iMyPlayerNum == 1) {
+			Hero2P.GetHeroToPacket(&cspu);
+			board_2.GetTableToPacket(&cspu);
+		}
 
-	if (IsStart)
-	{
+		//for (int i = 0; i < table_HEIGHT; ++i) {
+		//	for (int j = 0; j < table_WIDTH; ++j) {
+		//		cout << (int)board_1.Val[j][i];
+		//	}
+		//	cout << endl;
+		//}
+		//cout << "------------" << endl;
+		//for (int i = 0; i < table_HEIGHT; ++i) {
+		//	for (int j = 0; j < table_WIDTH; ++j) {
+		//		cout << (int)board_2.Val[j][i];
+		//	}
+		//	cout << endl;
+		//}
+
+		retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
+
 		sc_packet_user scpu;
 		ZeroMemory(&scpu, sizeof(scpu));
 		retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
+		if (retval != 0) {
+			JPoint tPos1 = { scpu.pos[0][0], scpu.pos[0][1] };
+			JPoint tPos2 = { scpu.pos[1][0], scpu.pos[1][1] };
 
-		JPoint tPos1 = { scpu.pos[0][0], scpu.pos[0][1] };
-		JPoint tPos2 = { scpu.pos[1][0], scpu.pos[1][1] };
+			Hero1P.SetPacketToHero(scpu);
+			Hero2P.SetPacketToHero(scpu);
 
-		Hero1P.SetPacketToHero(scpu);
-		Hero2P.SetPacketToHero(scpu);
+			board_1.SetPacketToTable(scpu);
+			board_2.SetPacketToTable(scpu);
+		}
 
-		board_1.SetPacketToTable(scpu);
-		board_2.SetPacketToTable(scpu);
 
 
 		m_TimerTick++;
@@ -109,47 +90,37 @@ void CGameScene::update(long TimerTick)
 			}
 		}
 
-		if (Global::getInstance()->Gameover_1)
-		{
+		if (Global::getInstance()->Gameover_1) {
 			bool FullBoard_1 = true;
-			for (int i = 0; i < table_WIDTH; ++i)
-			{
-				if (board_1.Val[i][0] != BLOCK_TYPE::STACK && board_1.Val[i][0] != BLOCK_TYPE::SHADOW)
-				{
+			for (int i = 0; i < table_WIDTH; ++i) {
+				if (board_1.Val[i][0] != BLOCK_TYPE::STACK && board_1.Val[i][0] != BLOCK_TYPE::SHADOW) {
 					FullBoard_1 = false;
 					break;
 				}
 			}
-			if (!FullBoard_1)
-			{
+			if (!FullBoard_1) {
 				board_1.spawn(board_1.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
 			}
 		}
-		if (Global::getInstance()->Gameover_2)
-		{
+		if (Global::getInstance()->Gameover_2) {
 			bool FullBoard_2 = true;
-			for (int i = 0; i < table_WIDTH; ++i)
-			{
-				if (board_2.Val[i][0] != BLOCK_TYPE::STACK && board_2.Val[i][0] != BLOCK_TYPE::SHADOW)
-				{
+			for (int i = 0; i < table_WIDTH; ++i) {
+				if (board_2.Val[i][0] != BLOCK_TYPE::STACK && board_2.Val[i][0] != BLOCK_TYPE::SHADOW) {
 					FullBoard_2 = false;
 					break;
 				}
 			}
-			if (!FullBoard_2)
-			{
+			if (!FullBoard_2) {
 				board_2.spawn(board_2.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
 			}
 		}
 
-		if (m_TimerTick % tick_block == 0)
-		{
+		if (m_TimerTick % tick_block == 0) {
 			board_1.drop();
 			board_2.drop();
 		}
 
-		if (m_TimerTick % tick_skill == 0)
-		{
+		if (m_TimerTick % tick_skill == 0) {
 			Hero1P.skillGaugeUp(Hero2P);
 			Hero2P.skillGaugeUp(Hero1P);
 		}
@@ -158,52 +129,32 @@ void CGameScene::update(long TimerTick)
 		Hero2P.move(board_2);
 
 
-		cs_packet_user cspu;
-		cspu.size = sizeof(cspu);
-		cspu.type = cs_user;
-		ZeroMemory(&cspu, sizeof(cspu));
-		if (Global::getInstance()->iMyPlayerNum == 0)
-		{
-			Hero1P.GetHeroToPacket(&cspu);
-			board_1.GetTableToPacket(&cspu);
-		}
-		else if (Global::getInstance()->iMyPlayerNum == 1)
-		{
-			Hero2P.GetHeroToPacket(&cspu);
-			board_2.GetTableToPacket(&cspu);
-		}
-		retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
 	}
 
 }
 
-void CGameScene::draw(HDC hDC)
-{
+void CGameScene::draw(HDC hDC) {
 	DrawGameScene(hDC);
 }
 
-bool CGameScene::init(CFramework* pFramework, HWND hWnd)
-{
+bool CGameScene::init(CFramework* pFramework, HWND hWnd) {
 	if (!CScene::init(pFramework, hWnd)) return false;
 	cout << "GAME SCENE" << endl;
 	return true;
 }
 
-bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
-{
+bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
 	if (!IsStart)
 		return true;
 	switch (msg) {
 	case WM_KEYUP:
 		switch (w) {
-			case VK_LEFT:
-			{
+			case VK_LEFT: {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER && Hero1P.state == STATE::LEFT)		Hero1P.state = STATE::NORMAL;
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER && Hero2P.state == STATE::LEFT)	Hero2P.state = STATE::NORMAL;
 				break;
 			}
-			case VK_RIGHT:
-			{
+			case VK_RIGHT: {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER && Hero1P.state == STATE::RIGHT)		Hero1P.state = STATE::NORMAL;
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER && Hero2P.state == STATE::RIGHT)	Hero2P.state = STATE::NORMAL;
 				break;
@@ -212,26 +163,22 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l)
 		break;
 	case WM_KEYDOWN:
 		switch (w) {
-			case VK_LEFT:
-			{
+			case VK_LEFT: {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.state = STATE::LEFT;
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.state = STATE::LEFT;
 				break;
 			}
-			case VK_RIGHT:
-			{
+			case VK_RIGHT: {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.state = STATE::RIGHT;
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.state = STATE::RIGHT;
 				break;
 			}
-			case 'Z':
-			{
+			case 'Z': {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.herojump();
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.herojump();
 				break;
 			}
-			case 'X':
-			{
+			case 'X': {
 				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.SkillOn(Hero2P);
 				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.SkillOn(Hero1P);
 				break;
@@ -255,12 +202,9 @@ bool CGameScene::Mouse(UINT msg, WPARAM w, LPARAM l)
 	return true;
 }
 
-void CGameScene::ReleaseObjects()
-{
-}
+void CGameScene::ReleaseObjects() {}
 
-void CGameScene::DrawGameScene(HDC hDC)
-{
+void CGameScene::DrawGameScene(HDC hDC) {
 	RECT temp{ 0,0,CLIENT_WIDTH,CLIENT_HEIGHT };
 	FillRect(hDC, &temp, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
