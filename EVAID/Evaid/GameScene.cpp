@@ -18,7 +18,9 @@ void CGameScene::update(long TimerTick) {
 	SOCKET& s = m_Framework->s;
 	sockaddr_in& addr = m_Framework->addr;
 	int retval;
+
 	IsStart = true;
+
 	if (IsStart) {
 		cs_packet_user cspu;
 		ZeroMemory(&cspu, sizeof(cspu));
@@ -32,30 +34,13 @@ void CGameScene::update(long TimerTick) {
 			Hero2P.GetHeroToPacket(&cspu);
 			board_2.GetTableToPacket(&cspu);
 		}
-
-		//for (int i = 0; i < table_HEIGHT; ++i) {
-		//	for (int j = 0; j < table_WIDTH; ++j) {
-		//		cout << (int)board_1.Val[j][i];
-		//	}
-		//	cout << endl;
-		//}
-		//cout << "------------" << endl;
-		//for (int i = 0; i < table_HEIGHT; ++i) {
-		//	for (int j = 0; j < table_WIDTH; ++j) {
-		//		cout << (int)board_2.Val[j][i];
-		//	}
-		//	cout << endl;
-		//}
-
 		retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
+
 
 		sc_packet_user scpu;
 		ZeroMemory(&scpu, sizeof(scpu));
 		retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
 		if (retval != 0) {
-			JPoint tPos1 = { scpu.pos[0][0], scpu.pos[0][1] };
-			JPoint tPos2 = { scpu.pos[1][0], scpu.pos[1][1] };
-
 			Hero1P.SetPacketToHero(scpu);
 			Hero2P.SetPacketToHero(scpu);
 

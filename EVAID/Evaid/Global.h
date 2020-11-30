@@ -107,7 +107,7 @@ enum class BLOCK_TYPE : BYTE{
 	, D = 3
 	, E = 4
 	, NONE = 5
-	, STACK	= 6	//쌓여진 블록
+	, STACK	= 6			//쌓여진 블록
 	, SHADOW = 7		//그림자
 };
 

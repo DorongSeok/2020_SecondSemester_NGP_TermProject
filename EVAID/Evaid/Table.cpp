@@ -34,23 +34,14 @@ CTable::~CTable() {}
 
 void CTable::SetPacketToTable(sc_packet_user& sc_packet_user)
 {
-	//memcpy(&Val, reinterpret_cast<char*>(&sc_packet_user.table[PlayerNum]), sizeof(sc_packet_user.table[PlayerNum]));
-	for (int j = 0; j < table_HEIGHT; ++j) {
-		for (int i = 0; i < table_WIDTH; ++i) {
-			Val[i][j] = static_cast<BLOCK_TYPE>(sc_packet_user.table[PlayerNum].t[i][j]);
-		}
-	}
+	memcpy(Val, sc_packet_user.table[PlayerNum].t, sizeof(Val));
 
 	nextBlock = static_cast<BLOCK_TYPE>(sc_packet_user.nextBlock[PlayerNum]);
 }
 
 void CTable::GetTableToPacket(cs_packet_user* cs_pack_user)
 {
-	for (int j = 0; j < table_HEIGHT; ++j) {
-		for (int i = 0; i < table_WIDTH; ++i) {
-			cs_pack_user->table.t[i][j] = static_cast<BYTE>(Val[i][j]);
-		}
-	}
+	memcpy(cs_pack_user->table.t, Val, sizeof(cs_pack_user->table.t));
 
 	cs_pack_user->nextBlock = static_cast<BYTE>(nextBlock);
 }

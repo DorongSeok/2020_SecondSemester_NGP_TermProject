@@ -176,7 +176,7 @@ DWORD WINAPI SendThread(LPVOID arg) {
 		case eSCENE::SCENE_GAME: {
 			switch (client->lastpacket) {
 			case cs_user: {
-				delay(100);
+				//delay(100);
 				if (cInfo[(int)ePlayer::PLAYER_FIRST].getUser == true && cInfo[(int)ePlayer::PLAYER_SECOND].getUser == true) {
 					cInfo[(int)ePlayer::PLAYER_FIRST].getUser = false;
 					cInfo[(int)ePlayer::PLAYER_SECOND].getUser = false;
