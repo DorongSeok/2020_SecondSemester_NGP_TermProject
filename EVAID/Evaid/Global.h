@@ -101,14 +101,14 @@ public:
 //떨어지는 블록종류
 #define Block_Type_Count 5
 enum class BLOCK_TYPE : BYTE{
-	A
-	, B
-	, C
-	, D
-	, E
-	, NONE
-	, STACK		//쌓여진 블록
-	, SHADOW		//그림자
+	A = 0 
+	, B = 1 
+	, C = 2
+	, D = 3
+	, E = 4
+	, NONE = 5
+	, STACK	= 6	//쌓여진 블록
+	, SHADOW = 7		//그림자
 };
 
 // 상태

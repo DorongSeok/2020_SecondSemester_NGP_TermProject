@@ -40,7 +40,7 @@ public:
 	CHero(HERO, int);		// 인자 = 히어로 종류, 플레이어구분
 	~CHero();
 
-	void SetPacketToHero(JPoint pos, BYTE skillgauge, bool skillactive);
+	void SetPacketToHero(const sc_packet_user& sc_pack_user);
 	void GetHeroToPacket(cs_packet_user* cs_pack_user);
 
 	void SetTimer(long TimerTick) { m_TimerTick = TimerTick; }

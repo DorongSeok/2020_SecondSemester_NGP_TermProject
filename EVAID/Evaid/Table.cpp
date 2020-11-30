@@ -32,13 +32,13 @@ CTable::CTable(int Player) {
 
 CTable::~CTable() {}
 
-void CTable::SetPacketToTable(BLOCK_TYPE** val, BLOCK_TYPE nextblock)
+void CTable::SetPacketToTable(const sc_packet_user& sc_packet_user)
 {
 	for (int j = 0; j < table_HEIGHT; ++j)
 		for (int i = 0; i < table_WIDTH; ++i)
-			Val[i][j] = val[i][j];
+			Val[i][j] = static_cast<BLOCK_TYPE>(sc_packet_user.table[PlayerNum].t[i][j]);
 
-	nextBlock = nextblock;
+	nextBlock = static_cast<BLOCK_TYPE>(sc_packet_user.nextBlock[PlayerNum]);
 }
 
 void CTable::GetTableToPacket(cs_packet_user* cs_pack_user)

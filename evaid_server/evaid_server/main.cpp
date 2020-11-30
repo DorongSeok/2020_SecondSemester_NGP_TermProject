@@ -118,6 +118,8 @@ int sendall(char* buffer, int bufferSize, int flags) {
 	return cnt;
 }
 
+int temp = 0;
+
 DWORD WINAPI SendThread(LPVOID arg) {
 
 	DWORD retval;
@@ -181,7 +183,7 @@ DWORD WINAPI SendThread(LPVOID arg) {
 			}
 						break;
 			case cs_start: {
-				if (getStartAll()) {
+				if (getStartAll() && temp > 500) {
 					sc_packet_start scps;
 					scps.size = sizeof(scps);
 					scps.type = sc_start;
@@ -198,6 +200,7 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					retval = send(client->s, reinterpret_cast<char*>(&scps), sizeof(scps), 0);
 					client->getPacket = false;
 					cout << "Send start(false): " << client->id << endl;
+					temp++;
 				}
 			}
 			}

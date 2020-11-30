@@ -37,11 +37,12 @@ CHero::CHero(HERO KindOfHero, int Player) {
 
 CHero::~CHero(){}
 
-void CHero::SetPacketToHero(JPoint pos, BYTE skillgauge, bool skillactive)
+void CHero::SetPacketToHero(const sc_packet_user& sc_pack_user)
 {
-	pPosition = pos;
-	NowSkillGauge = skillgauge;
-	IsSkillOn = skillactive;
+	pPosition.x = sc_pack_user.pos[PlayerNum][0];
+	pPosition.y = sc_pack_user.pos[PlayerNum][1];
+	NowSkillGauge = sc_pack_user.skillGauge[PlayerNum];
+	IsSkillOn = sc_pack_user.skillActive[PlayerNum];
 }
 void CHero::GetHeroToPacket(cs_packet_user* cs_pack_user)
 {
