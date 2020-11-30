@@ -54,9 +54,8 @@ ResorceTable::~ResorceTable() {
 	img_ingame_border.Destroy();
 	img_ingame_nextblock_border.Destroy();
 
-	//3
+	//2
 	img_main_btn_start.Destroy();
-	img_main_btn_rank.Destroy();
 	img_main_btn_exit.Destroy();
 
 	//6
@@ -115,9 +114,8 @@ bool ResorceTable::loadCheck()
 	if (img_ingame_border.IsNull()) return false;
 	if (img_ingame_nextblock_border.IsNull()) return false;
 	
-	//3
+	//2
 	if (img_main_btn_start.IsNull()) return false;
-	if (img_main_btn_rank.IsNull()) return false;
 	if (img_main_btn_exit.IsNull()) return false;
 
 	//6
@@ -178,9 +176,8 @@ void ResorceTable::loadImg()
 	img_ingame_border.Load(TEXT("Image/ingame_border.png"));
 	img_ingame_nextblock_border.Load(TEXT("Image/ingame_nextblock_border.png"));
 	
-	//3
+	//2
 	img_main_btn_start.Load(TEXT("Image/main_start_bnt.png"));
-	img_main_btn_rank.Load(TEXT("Image/main_rank_bnt.png"));
 	img_main_btn_exit.Load(TEXT("Image/main_exit_bnt.png"));
 
 	//6

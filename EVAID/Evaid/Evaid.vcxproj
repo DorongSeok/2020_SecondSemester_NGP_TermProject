@@ -155,6 +155,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Table.cpp" />
+    <ClCompile Include="ResultScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\evaid_server\evaid_server\protocol.h" />
@@ -164,9 +165,9 @@
     <ClInclude Include="Hero.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="logoScene.h" />
-    <ClInclude Include="RankMng.h" />
     <ClInclude Include="ResorceTable.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ResultScene.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Table.h" />

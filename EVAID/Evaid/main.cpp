@@ -138,7 +138,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 #pragma region 초기화
 	case WM_CREATE:
 		//framework.init(hWnd);
-		Global::getInstance()->rankMng.load();
 		// 폰트 설정
 		{
 			static auto vFont = ReadFontOutputFile(L"Font/ARCADECLASSIC.TTF");

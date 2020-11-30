@@ -2,7 +2,6 @@
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <commctrl.h>
-#include "RankMng.h"
 #include <Windows.h>
 #include <atlimage.h>
 #include <time.h>
@@ -98,6 +97,7 @@ public:
 	~JPoint() {};
 };
 
+//-----------------------------------------------
 //떨어지는 블록종류
 #define Block_Type_Count 5
 enum class BLOCK_TYPE : BYTE{
@@ -128,7 +128,9 @@ enum class eSCENE : BYTE {
 	SCENE_LOGGO = 0,
 	SCENE_LOBBY = 1,
 	SCENE_GAME = 2,
+	SCENE_RESULT = 3,
 };
+//---------------------------------------------
 
 ///0~MAX-1
 static int getRandom(int MAX) {
@@ -170,8 +172,6 @@ public:
 	JPoint Player2Center;
 
 	bool isStart;
-	
-	CRankMng rankMng;
 
 	HERO	Player1HeroKind;
 	HERO	Player2HeroKind;

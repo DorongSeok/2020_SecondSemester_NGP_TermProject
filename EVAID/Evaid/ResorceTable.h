@@ -51,7 +51,6 @@ public:
 
 	/////////////////////////////
 	CImage		img_main_btn_start;
-	CImage		img_main_btn_rank;
 	CImage		img_main_btn_exit;
 	/////////////////////////////
 

@@ -12,6 +12,9 @@ void CLogoScene::draw(HDC hDC) {
 	RECT rc = m_Framework->getClientRect();
 
 	ResorceTable::getInstance()->img_logo_bg.Draw(hDC, 0, 0);
+
+	ResorceTable::getInstance()->img_main_btn_start.Draw(hDC, 750, 626);
+	ResorceTable::getInstance()->img_main_btn_exit.Draw(hDC, 750, 766);
 }
 
 bool CLogoScene::init(CFramework* pFramework, HWND hWnd) {
@@ -34,23 +37,16 @@ bool CLogoScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
 		POINT M;
 		M.x = LOWORD(l);
 		M.y = HIWORD(l);
-		if (!(M.x > 700 && M.x < 1100)) return false;
+		if (!(M.x > 750 && M.x < 1150)) return false;
 
 		//start btn
-		if (M.y > 126 && M.y < 234) {
+		if (M.y > 626 && M.y < 734) {	// 108
 			m_Framework->AddScene(eSCENE::SCENE_LOBBY);
 			m_Framework->PopScene();
 			return true;
 		}
-		//rank btn
-		if (M.y > 306 && M.y < 414) {
-			return true;
-		}
-		//help btn
-		if (M.y > 486 && M.y < 594) {
-			return true;
-		}
-		if (M.y > 666 && M.y < 774) {
+		// Exit btn
+		if (M.y > 766 && M.y < 874) {
 			PostQuitMessage(0);
 			return true; // 영원히 호출 안됨
 		}

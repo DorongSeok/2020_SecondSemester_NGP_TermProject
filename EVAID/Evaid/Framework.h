@@ -25,17 +25,13 @@ public:
 	RECT getClientRect() const { return m_rcClient; }
 	int recvn(SOCKET s, char* buf, int len, int flags);
 
-	//public:
-	//   SOCKET      m_sock;
-	//   int         m_retval;
-	//   char SERVERIP[20];
-	//
-	//   void err_display(const char* msg);
 public:
 	WSADATA wsa;
 	SOCKET s;
 	sockaddr_in addr;
 	int addrlen;
+
+	int m_WinnerNum;
 
 private:
 	HWND m_hWnd{ NULL };

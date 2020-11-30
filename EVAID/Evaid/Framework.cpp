@@ -2,6 +2,7 @@
 #include "Framework.h"
 #include "logoScene.h"
 #include "LobbyScene.h"
+#include "ResultScene.h"
 #include "GameScene.h"
 
 CFramework::CFramework() {
@@ -79,6 +80,16 @@ bool CFramework::AddScene(eSCENE scene) {
             m_pNextScene = pGame;
             break;
         }
+    case eSCENE::SCENE_RESULT:
+    {
+        auto pResult = new CResultScene{ m_WinnerNum };
+        if (!pResult->init(this, m_hWnd)) {
+            delete pResult;
+            return false;
+        }
+        m_pNextScene = pResult;
+        break;
+    }
     }
     return true;
 }

@@ -48,7 +48,15 @@ void CGameScene::update(long TimerTick) {
 			board_2.SetPacketToTable(scpu);
 		}
 
-
+		//if (scpu.winner == )
+		//{
+		//	if (scpu.winner == Global::getInstance()->iMyPlayerNum)
+		//	{
+		//		m_Framework->m_WinnerNum = Global::getInstance()->iMyPlayerNum;
+		//		m_Framework->AddScene(eSCENE::SCENE_RESULT);
+		//		m_Framework->PopScene();
+		//	}
+		//}
 
 		m_TimerTick++;
 		Hero1P.SetTimer(m_TimerTick);
@@ -261,26 +269,26 @@ void CGameScene::DrawGameScene(HDC hDC) {
 	}
 
 	// Ready, Start ±×¸®±â
-	{
-		HFONT hFont = CreateFont(75, 0, 0, 0, 0, 0, 0, 0
-			, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
-			, TEXT("ArcadeClassic"));
-
-		HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
-
-		SetBkMode(hDC, TRANSPARENT);
-		SetTextColor(hDC, RGB(255, 255, 255));
-
-		RECT textRect;
-		textRect.left = 350;
-		textRect.right = 850;
-		textRect.top = 420;
-		textRect.bottom = 470;
-
-		if (!IsStart)	DrawText(hDC, L"Ready", lstrlen(L"Ready"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-		if (IsStart && m_TimerTick < 100)	DrawText(hDC, L"Start!", lstrlen(L"Start!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-		SelectObject(hDC, oldFont);
-		DeleteObject(hFont);
-	}
+	//{
+	//	HFONT hFont = CreateFont(75, 0, 0, 0, 0, 0, 0, 0
+	//		, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
+	//		, TEXT("ArcadeClassic"));
+	//
+	//	HFONT oldFont = (HFONT)SelectObject(hDC, hFont);
+	//
+	//	SetBkMode(hDC, TRANSPARENT);
+	//	SetTextColor(hDC, RGB(255, 255, 255));
+	//
+	//	RECT textRect;
+	//	textRect.left = 350;
+	//	textRect.right = 850;
+	//	textRect.top = 420;
+	//	textRect.bottom = 470;
+	//
+	//	if (!IsStart)	DrawText(hDC, L"Ready", lstrlen(L"Ready"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+	//	if (IsStart && m_TimerTick < 100)	DrawText(hDC, L"Start!", lstrlen(L"Start!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+	//
+	//	SelectObject(hDC, oldFont);
+	//	DeleteObject(hFont);
+	//}
 }
