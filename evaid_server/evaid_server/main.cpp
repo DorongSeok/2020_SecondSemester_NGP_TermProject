@@ -126,6 +126,21 @@ void showtable() {
 	}
 }
 
+static int GetPosInValX(int x) { return ((x - 100/*PTStartX*/) / 40/*BLOCK_SIZE*/); }
+static int GetPosInValY(int y) { return ((y - 50/*PTStartY*/) / 40/*BLOCK_SIZE*/); }
+
+int GameOverCheck() {
+	for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) {
+		int& centerX = g_scpu.pos[i][(int)ePosition::POS_X];
+		int& centerY = g_scpu.pos[i][(int)ePosition::POS_Y];
+		if ((g_scpu.table[i].t[GetPosInValX(centerX - 17)][GetPosInValY(centerY)] != (BYTE)eBlock::BLOCK_NONE && g_scpu.table[i].t[GetPosInValX(centerX - 17)][GetPosInValY(centerY)] != (BYTE)eBlock::BLOCK_SHADOW)
+			|| (g_scpu.table[i].t[GetPosInValX(centerX + 17)][GetPosInValY(centerY)] != (BYTE)eBlock::BLOCK_NONE && g_scpu.table[i].t[GetPosInValX(centerX + 17)][GetPosInValY(centerY)] != (BYTE)eBlock::BLOCK_SHADOW)) {
+			return i;
+		}
+	}
+	return (int)ePlayer::PLAYER_MAX;
+}
+
 DWORD WINAPI SendThread(LPVOID arg) {
 
 	DWORD retval;
@@ -181,8 +196,8 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					cInfo[(int)ePlayer::PLAYER_SECOND].getUser = false;
 					g_scpu.type = sc_user;
 					g_scpu.size = sizeof(g_scpu);
-
-					showtable();
+					
+					g_scpu.winner = GameOverCheck();
 					retval = sendall(reinterpret_cast<char*>(&g_scpu), sizeof(g_scpu), 0);
 					cout << "Send user: all " << endl;
 					ZeroMemory(&g_scpu, sizeof(g_scpu));
