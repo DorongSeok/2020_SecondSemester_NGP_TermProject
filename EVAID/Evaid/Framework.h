@@ -1,5 +1,4 @@
 #pragma once
-#include "Global.h"
 #include "Scene.h"
 
 class CFramework {
@@ -45,3 +44,4 @@ private:
 	COLORREF m_hColorBackground{ RGB(255,255,255) };
 
 };
+

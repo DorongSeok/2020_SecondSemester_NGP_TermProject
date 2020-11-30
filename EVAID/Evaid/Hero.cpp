@@ -1,7 +1,7 @@
+#include "stdafx.h"
 #include "Hero.h"
-#include "Global.h"
 
-CHero::CHero(HERO KindOfHero, int Player) {
+CHero::CHero(HERO KindOfHero, ePlayer Player) {
 
 	HeroType = KindOfHero;
 	pPosition = JPoint(HeroStartPosX, HeroStartPosY);
@@ -13,10 +13,12 @@ CHero::CHero(HERO KindOfHero, int Player) {
 	Debuff = 0;
 
 	PlayerNum = Player;
-	if (PlayerNum == 0)
+	if (PlayerNum == ePlayer::PLAYER_FIRST) {
 		iDrawGapX = 0;
-	else
+	}
+	else if(PlayerNum == ePlayer::PLAYER_SECOND) {
 		iDrawGapX = DrawGapX;
+	}
 
 	SetHeroRect();
 
@@ -39,10 +41,10 @@ CHero::~CHero(){}
 
 void CHero::SetPacketToHero(const sc_packet_user& sc_pack_user)
 {
-	pPosition.x = sc_pack_user.pos[PlayerNum][0];
-	pPosition.y = sc_pack_user.pos[PlayerNum][1];
-	NowSkillGauge = sc_pack_user.skillGauge[PlayerNum];
-	IsSkillOn = sc_pack_user.skillActive[PlayerNum];
+	pPosition.x = sc_pack_user.pos[(int)PlayerNum][0];
+	pPosition.y = sc_pack_user.pos[(int)PlayerNum][1];
+	NowSkillGauge = sc_pack_user.skillGauge[(int)PlayerNum];
+	IsSkillOn = sc_pack_user.skillActive[(int)PlayerNum];
 }
 void CHero::GetHeroToPacket(cs_packet_user* cs_pack_user)
 {
@@ -202,11 +204,19 @@ void CHero::herojump() {
 void CHero::skillGaugeUp(CHero& enemyHero) {
 	// 지속시간 스킬
 	if (IsSkillOn) {
-		if (skillCnt > 0) skillCnt--;
-		else SkillOff(enemyHero);
+		if (skillCnt > 0) {
+			skillCnt--;
+		}
+		else {
+			SkillOff(enemyHero);
+		}
 	}
 	// 스킬 게이지
-	if (m_TimerTick % 50 == 0) if (NowSkillGauge + NormalSkillGaugeIncrement <= MaxSkillGauge)	NowSkillGauge += NormalSkillGaugeIncrement;
+	if (m_TimerTick % 50 == 0) {
+		if (NowSkillGauge + NormalSkillGaugeIncrement <= MaxSkillGauge) {
+			NowSkillGauge += NormalSkillGaugeIncrement;
+		}
+	}
 }
 
 void CHero::SkillOn(CHero& enemyHero) {

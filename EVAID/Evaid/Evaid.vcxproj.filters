@@ -31,9 +31,6 @@
     <Filter Include="Class\Font">
       <UniqueIdentifier>{dae2ca29-8e57-4c50-8fb7-5782c9316d39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Class\Global">
-      <UniqueIdentifier>{7c5dd68a-5494-4b62-b8d7-20464b02de47}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -50,9 +47,6 @@
     </ClCompile>
     <ClCompile Include="Table.cpp">
       <Filter>Class\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="Global.cpp">
-      <Filter>Class\Global</Filter>
     </ClCompile>
     <ClCompile Include="Framework.cpp">
       <Filter>Class</Filter>
@@ -86,9 +80,6 @@
     <ClInclude Include="Table.h">
       <Filter>Class\Table</Filter>
     </ClInclude>
-    <ClInclude Include="Global.h">
-      <Filter>Class\Global</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -111,6 +102,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ResultScene.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -31,7 +31,6 @@ void CGameScene::update(long TimerTick) {
 	}
 	retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
 
-
 	sc_packet_user scpu;
 	ZeroMemory(&scpu, sizeof(scpu));
 	retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
@@ -57,18 +56,18 @@ void CGameScene::update(long TimerTick) {
 	if (m_TimerTick % 1500 == 0 && tick_block > 1) tick_block -= 1;
 
 	if (board_1.isShadowOn) {
-		Global::getInstance()->ShadowTick_1 += 0.1f;
-		if (Global::getInstance()->ShadowTick_1 > shadowDelay) {
+		board_1.shadowTick += 0.1f;
+		if (board_1.shadowTick > shadowDelay) {
 			board_1.effect_shadow();
-			Global::getInstance()->ShadowTick_1 = 0;
+			board_1.shadowTick = 0;
 			board_1.isShadowOn = false;
 		}
 	}
 	if (board_2.isShadowOn) {
-		Global::getInstance()->ShadowTick_2 += 0.1f;
-		if (Global::getInstance()->ShadowTick_2 > shadowDelay) {
+		board_2.shadowTick += 0.1f;
+		if (board_2.shadowTick > shadowDelay) {
 			board_2.effect_shadow();
-			Global::getInstance()->ShadowTick_2 = 0;
+			board_2.shadowTick = 0;
 			board_2.isShadowOn = false;
 		}
 	}

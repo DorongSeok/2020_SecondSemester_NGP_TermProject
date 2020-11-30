@@ -1,7 +1,6 @@
 #pragma once
 #include "Scene.h"
 #include "Hero.h"
-#include "Global.h"
 #include "Table.h"
 
 class CHero;
@@ -26,8 +25,8 @@ private:
 	int Hero1Score = 0;
 	int Hero2Score = 0;
 
-	CHero Hero1P{ HERO::Hero1, 0 };
-	CHero Hero2P{ HERO::Hero2, 1 };
+	CHero Hero1P{ HERO::Hero1, ePlayer::PLAYER_FIRST };
+	CHero Hero2P{ HERO::Hero2, ePlayer::PLAYER_SECOND };
 
 	CTable board_1{ ePlayer::PLAYER_FIRST };
 	CTable board_2{ ePlayer::PLAYER_SECOND };

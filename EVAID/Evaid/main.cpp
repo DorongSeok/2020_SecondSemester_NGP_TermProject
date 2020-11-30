@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "ResorceTable.h"
-#include "Global.h"
 #include "Table.h"
 #include "Hero.h"
 #include "resource.h"
@@ -16,8 +16,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 long TimerTick = 0;
 
 // 폰트함수
-vector<BYTE> ReadFontOutputFile(LPCTSTR path)
-{
+vector<BYTE> ReadFontOutputFile(LPCTSTR path) {
 	ifstream fFont(path, ios::in | ios::binary);
 
 	if (!fFont.is_open()) {
@@ -38,11 +37,6 @@ vector<BYTE> ReadFontOutputFile(LPCTSTR path)
 
 	return vbFont;
 }
-
-CImage doublebuffer;
-CImage doublebuffer_Stage_1;
-
-HWND Stage_hWnd;
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 	DWORD dwStyle =
@@ -152,23 +146,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		TimerTick = 0;
 		break;
 #pragma endregion
-	//case WM_COMMAND:
-	//{
-	//	switch (LOWORD(wParam)) {
-	//	case ID_PLAYER01_1:
-	//		Global::getInstance()->Player1HeroKind = HERO::Hero1;
-	//		break;
-	//	case ID_PLAYER01_2:
-	//		Global::getInstance()->Player1HeroKind = HERO::Hero2;
-	//		break;
-	//	case ID_PLAYER02_1:
-	//		Global::getInstance()->Player2HeroKind = HERO::Hero1;
-	//		break;
-	//	case ID_PLAYER02_2:
-	//		Global::getInstance()->Player2HeroKind = HERO::Hero2;
-	//		break;
-	//	}
-	//}
+
 #pragma region 그리기
 	case WM_PAINT:
 	{

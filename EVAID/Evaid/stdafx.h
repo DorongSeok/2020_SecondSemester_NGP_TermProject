@@ -11,13 +11,8 @@
 #include <fstream>
 #include "SoundManager.h"
 #include "..\..\evaid_server\evaid_server\protocol.h"
-
 using namespace std;
-
 #pragma comment(linker,"/entry:WinMainCRTStartup /subsystem:console")
-
-using std::cout;
-using std::endl;
 
 //client
 constexpr auto CLIENT_WIDTH = 1200;		// 너비;
@@ -123,30 +118,5 @@ inline bool SafeRelease(gdiobj& target) {
 	return true;
 }
 
-class Global {
-private:
-	static Global* inst;
-	Global();
-	~Global() {};
-public:
-	//Global::getInstance()-> 객체이름
-	static Global* getInstance() {
-		if (inst == nullptr) inst = new Global();
-		return inst;
-	}
-
-	float ShadowTick_1;
-	float ShadowTick_2;
-
-	int tick_spawn;
-
-	HERO	Player1HeroKind;
-	HERO	Player2HeroKind;
-	
-	char* ServerIP;
-};
-
 static int GetPosInValX(int x) { return ((x - PTStartX) / BLOCK_SIZE); }
 static int GetPosInValY(int y) { return ((y - PTStartY) / BLOCK_SIZE); }
-
-void err_display(const char* msg);

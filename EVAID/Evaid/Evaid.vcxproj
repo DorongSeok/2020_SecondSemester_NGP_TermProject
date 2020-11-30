@@ -146,7 +146,6 @@
   <ItemGroup>
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="Global.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="LogoScene.cpp" />
@@ -161,7 +160,6 @@
     <ClInclude Include="..\..\evaid_server\evaid_server\protocol.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="GameScene.h" />
-    <ClInclude Include="Global.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="logoScene.h" />
@@ -170,6 +168,7 @@
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="Table.h" />
   </ItemGroup>
   <ItemGroup>

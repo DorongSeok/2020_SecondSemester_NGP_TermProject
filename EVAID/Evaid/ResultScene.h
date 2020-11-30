@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "Global.h"
 
 class CResultScene : public CScene {
 public:

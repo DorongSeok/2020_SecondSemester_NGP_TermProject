@@ -1,6 +1,6 @@
+#include "stdafx.h"
 #include "LobbyScene.h"
 #include "Framework.h"
-#include "Global.h"
 #include "ResorceTable.h"
 
 CLobbyScene::CLobbyScene()

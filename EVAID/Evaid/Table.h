@@ -1,5 +1,5 @@
 #pragma once
-#include "Global.h"
+#include "stdafx.h"
 #include "ResorceTable.h"
 #include "SoundManager.h"
 
@@ -26,10 +26,12 @@ class CTable {
 
 
 public:
+	float shadowTick;
 	bool isShadowOn = false;
 	eBlock	Val[table_WIDTH][table_HEIGHT] = { eBlock::BLOCK_NONE };
 
-	int iDrawGapX;		// 플레이어에 따른 x축 그리기 시작 좌표 격차(플레이어 1 = 0, 플레이어 2 = CLIENT_WIDTH / 2)
+	// 플레이어에 따른 x축 그리기 시작 좌표 격차(플레이어 1 = 0, 플레이어 2 = CLIENT_WIDTH / 2)
+	int iDrawGapX;		
 
 	//boder이 그려지기 시작하는 pt
 	POINT	ptstart;

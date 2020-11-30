@@ -1,5 +1,4 @@
 #include "Table.h"
-#include "Global.h"
 
 CTable::CTable(ePlayer Player) {
 	PlayerNum = Player;
