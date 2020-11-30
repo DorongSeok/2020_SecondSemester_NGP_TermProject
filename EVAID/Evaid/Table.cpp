@@ -6,7 +6,7 @@ CTable::CTable(int Player) {
 	ptstart.x = PTStartX;
 	ptstart.y = PTStartY;
 
-	if (PlayerNum == 1)
+	if (PlayerNum == 0)
 		iDrawGapX = 0;
 	else
 		iDrawGapX = DrawGapX;
@@ -208,14 +208,14 @@ void CTable::effect(POINT _pt, BLOCK_TYPE type)
 {
 	switch (type) {
 	case BLOCK_TYPE::A:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 0) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
 		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(_pt, BLOCK_TYPE::STACK);
 		break;
 	case BLOCK_TYPE::B:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 0) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
 		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(POINT{ _pt.x - 3,_pt.y }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x - 2,_pt.y }, BLOCK_TYPE::SHADOW);
@@ -226,15 +226,15 @@ void CTable::effect(POINT _pt, BLOCK_TYPE type)
 		safeChange(POINT{ _pt.x + 0,_pt.y }, BLOCK_TYPE::STACK);
 		break;
 	case BLOCK_TYPE::C:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 0) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
 		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(POINT{ _pt.x , _pt.y - 1 }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x , _pt.y - 0 }, BLOCK_TYPE::STACK);
 		break;
 	case BLOCK_TYPE::D:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 0) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
 		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(POINT{ _pt.x - 1 , _pt.y - 1 }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 0 , _pt.y - 1 }, BLOCK_TYPE::SHADOW);
@@ -244,8 +244,8 @@ void CTable::effect(POINT _pt, BLOCK_TYPE type)
 		safeChange(POINT{ _pt.x + 0 , _pt.y + 0 }, BLOCK_TYPE::STACK);
 		break;
 	case BLOCK_TYPE::E:
-		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
-		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 2) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		if (Global::getInstance()->Gameover_1 == true && PlayerNum == 0) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
+		else if (Global::getInstance()->Gameover_2 == true && PlayerNum == 1) ResorceTable::getInstance()->m_Sound.PlayEffect(5);
 		else ResorceTable::getInstance()->m_Sound.PlayEffect(3);
 		safeChange(POINT{ _pt.x - 1, _pt.y - 3 }, BLOCK_TYPE::SHADOW);
 		safeChange(POINT{ _pt.x + 0, _pt.y - 3 }, BLOCK_TYPE::SHADOW);
@@ -293,8 +293,8 @@ bool CTable::check(int _standard, int _delete)
 			if (Val[i][(table_HEIGHT - 1) - j] != BLOCK_TYPE::STACK) return FALSE;
 		}
 	}
-	if ((Global::getInstance()->Gameover_1 == false && PlayerNum == 1) ||
-		(Global::getInstance()->Gameover_2 == false && PlayerNum == 2))
+	if ((Global::getInstance()->Gameover_1 == false && PlayerNum == 0) ||
+		(Global::getInstance()->Gameover_2 == false && PlayerNum == 1))
 	{
 		for (int i = 0; i < table_WIDTH; ++i) {
 			for (int j = 0; j < delete_line; ++j) {
@@ -333,7 +333,7 @@ int CTable::getRandomXPos()
 
 void CTable::GameOverCheck(int Player)
 {
-	if (Player == 1)
+	if (Player == 0)
 	{
 		if ((Val[GetPosInValX(Global::getInstance()->Player1Center.x - 17)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::NONE &&
 			Val[GetPosInValX(Global::getInstance()->Player1Center.x - 17)][GetPosInValY(Global::getInstance()->Player1Center.y)] != BLOCK_TYPE::SHADOW)
@@ -343,7 +343,7 @@ void CTable::GameOverCheck(int Player)
 			Global::getInstance()->Gameover_1 = true;
 		}
 	}
-	else if (Player == 2)
+	else if (Player == 1)
 	{
 		if ((Val[GetPosInValX(Global::getInstance()->Player2Center.x - 17)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::NONE &&
 			Val[GetPosInValX(Global::getInstance()->Player2Center.x - 17)][GetPosInValY(Global::getInstance()->Player2Center.y)] != BLOCK_TYPE::SHADOW)

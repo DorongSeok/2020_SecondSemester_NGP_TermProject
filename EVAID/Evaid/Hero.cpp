@@ -13,7 +13,7 @@ CHero::CHero(HERO KindOfHero, int Player) {
 	Debuff = 0;
 
 	PlayerNum = Player;
-	if (PlayerNum == 1)
+	if (PlayerNum == 0)
 		iDrawGapX = 0;
 	else
 		iDrawGapX = DrawGapX;
@@ -111,8 +111,8 @@ void CHero::move(CTable Target) {
 		else pPosition.x = (rect.right / BLOCK_SIZE) * BLOCK_SIZE;
 	}
 
-	if (PlayerNum == 1) Global::getInstance()->Player1Center = pPosition;
-	else if (PlayerNum == 2) Global::getInstance()->Player2Center = pPosition;
+	if (PlayerNum == 0) Global::getInstance()->Player1Center = pPosition;
+	else if (PlayerNum == 1) Global::getInstance()->Player2Center = pPosition;
 
 	//cout << jumpCnt << "  " << jumpHeight << "  " << Isjump << endl;
 

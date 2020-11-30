@@ -30,9 +30,9 @@ private:
 	int Hero1Score = 0;
 	int Hero2Score = 0;
 
-	CHero Hero1P{ HERO::Hero1, 1 };
-	CHero Hero2P{ HERO::Hero2, 2 };
+	CHero Hero1P{ HERO::Hero1, 0 };
+	CHero Hero2P{ HERO::Hero2, 1 };
 
-	CTable board_1{ 1 };
-	CTable board_2{ 2 };
+	CTable board_1{ 0 };
+	CTable board_2{ 1 };
 };
