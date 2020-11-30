@@ -2,10 +2,8 @@
 #include "Framework.h"
 #include "ResorceTable.h"
 
-CResultScene::CResultScene(int loser)
+CResultScene::CResultScene()
 {
-	m_LooserNum = loser;
-
 	m_Closing_Counter = 1000;
 }
 
@@ -47,7 +45,7 @@ void CResultScene::draw(HDC hDC)
 		textRect.top = 300;
 		textRect.bottom = 400;
 
-		if(m_LooserNum == 1)
+		if(m_Framework->m_LoserNum == 1)
 			DrawText(hDC, L"Player1 Win!", lstrlen(L"Player1 Win!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 		else
 			DrawText(hDC, L"Player2 Win!", lstrlen(L"Player2 Win!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);

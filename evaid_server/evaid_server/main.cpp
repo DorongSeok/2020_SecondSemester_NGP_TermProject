@@ -126,8 +126,8 @@ void showtable() {
 	}
 }
 
-static int GetPosInValX(int x) { return ((x - 100/*PTStartX*/) / 40/*BLOCK_SIZE*/); }
-static int GetPosInValY(int y) { return ((y - 50/*PTStartY*/) / 40/*BLOCK_SIZE*/); }
+int GetPosInValX(int x) { return ((x - 100/*PTStartX*/) / 40/*BLOCK_SIZE*/); }
+int GetPosInValY(int y) { return ((y - 50/*PTStartY*/) / 40/*BLOCK_SIZE*/); }
 
 int GameOverCheck() {
 	for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) {
@@ -196,11 +196,11 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					cInfo[(int)ePlayer::PLAYER_SECOND].getUser = false;
 					g_scpu.type = sc_user;
 					g_scpu.size = sizeof(g_scpu);
-					
 					g_scpu.loser = GameOverCheck();
 					retval = sendall(reinterpret_cast<char*>(&g_scpu), sizeof(g_scpu), 0);
 					cout << "Send user: all " << endl;
 					ZeroMemory(&g_scpu, sizeof(g_scpu));
+					g_scpu.loser = (int)ePlayer::PLAYER_MAX;
 				}
 				break;
 			}
@@ -273,6 +273,7 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 				//~packet save for cInfo (필요한가 -> 데이터 처리를 위해 필요하다, 지금은 단순히 넘기기만해서 필요없어보임)
 				memcpy(&g_scpu.table[client->id], reinterpret_cast<char*>(&client->table), sizeof(client->table));
 				memcpy(&g_scpu.pos[client->id], client->pos, sizeof(client->pos));
+				g_scpu.loser = (int)ePlayer::PLAYER_MAX;
 				g_scpu.skillGauge[client->id] = client->skillGauge;
 				g_scpu.skillActive[client->id] = client->skillActive;
 				g_scpu.nextBlock[client->id] = client->nextBlock;

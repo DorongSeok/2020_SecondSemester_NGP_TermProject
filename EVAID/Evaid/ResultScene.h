@@ -4,7 +4,7 @@
 
 class CResultScene : public CScene {
 public:
-	CResultScene(int loser);
+	CResultScene();
 	~CResultScene() override;
 
 	void update(long TimerTick) override;
