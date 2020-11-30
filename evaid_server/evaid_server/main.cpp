@@ -144,8 +144,8 @@ DWORD WINAPI SendThread(LPVOID arg) {
 				retval = sendall(reinterpret_cast<char*>(&scpl), sizeof(scpl), 0);
 				client->getPacket = false;
 				cout << "Send: login " << client->id << endl;
+				break;
 			}
-						 break;
 			case cs_ready: {
 				sc_packet_ready scpr;
 				scpr.size = sizeof(scpr);
@@ -164,11 +164,11 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					client->getPacket = false;
 					cout << "Send: ready " << client->id << endl;
 				}
+				break;
 			}
-						 break;
 			}
+			break;
 		}
-								break;
 		case eSCENE::SCENE_GAME: {
 			switch (client->lastpacket) {
 			case cs_user: {
@@ -180,8 +180,8 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					cout << "Send user: all " << endl;
 					ZeroMemory(&g_scpu, sizeof(g_scpu));
 				}
+				break;
 			}
-						break;
 			case cs_start: {
 				if (getStartAll() && temp > 500) {
 					sc_packet_start scps;
@@ -202,10 +202,11 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					cout << "Send start(false): " << client->id << endl;
 					temp++;
 				}
+				break;
 			}
 			}
+			break;
 		}
-							   break;
 		case eSCENE::SCENE_DUMMY: {
 			switch (client->lastpacket) {
 			case cs_user: {
@@ -217,11 +218,11 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					cout << "Send: user " << client->id << endl;
 					ZeroMemory(&g_scpu, sizeof(g_scpu));
 				}
+				break;
 			}
-						break;
 			}
+			break;
 		}
-								break;
 		}
 		SetEvent(client->hEvent[eTHREAD::THREAD_SEND]);
 	}
@@ -252,18 +253,18 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 				client->lastpacket = cs_login;
 				client->getPacket = true;
 				cout << "RECV: cs_login, ID: " << client->id << endl;
+				break;
 			}
-						 break;
 			case cs_ready: {
 				client->lastpacket = cs_ready;
 				client->isReady = true;
 				client->getPacket = true;
 				cout << "RECV: cs_ready, ID: " << client->id << endl;
+				break;
 			}
-						 break;
 			}
+			break;
 		}
-								break;
 		case eSCENE::SCENE_GAME: {
 			switch (buffer[1]) {
 			case cs_start: {
@@ -298,8 +299,8 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 			}
 						break;
 			}
+			break;
 		}
-							   break;
 		case eSCENE::SCENE_DUMMY: {
 			switch (buffer[1]) {
 			case cs_user: {
@@ -321,11 +322,11 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 				g_scpu.nextBlock[client->id] = client->nextBlock;
 				//~packet save for server
 				cout << "RECV: cs_user, ID: " << client->id << endl;
+				break;
 			}
-						break;
 			}
+			break;
 		}
-								break;
 		}
 		SetEvent(client->hEvent[eTHREAD::THREAD_RECV]);
 	}
