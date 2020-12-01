@@ -27,6 +27,7 @@ public:
 	BYTE skillGauge;
 	bool skillActive;
 	BYTE nextBlock;
+	eHeroState state;
 	bool getUser;
 public:
 
@@ -268,6 +269,7 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 				client->skillActive = cspu.skillActive;
 				client->nextBlock = cspu.nextBlock;
 				client->lastpacket = cs_user;
+				client->state = static_cast<eHeroState>(cspu.state);
 				client->getUser = true;
 				//~packet save for cInfo (필요한가 -> 데이터 처리를 위해 필요하다, 지금은 단순히 넘기기만해서 필요없어보임)
 				memcpy(&g_scpu.table[client->id], reinterpret_cast<char*>(&client->table), sizeof(client->table));
@@ -275,6 +277,7 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 				g_scpu.skillGauge[client->id] = client->skillGauge;
 				g_scpu.skillActive[client->id] = client->skillActive;
 				g_scpu.nextBlock[client->id] = client->nextBlock;
+				g_scpu.state[client->id] = static_cast<BYTE>(client->state);
 				//~packet save for server
 				cout << "RECV: cs_user, ID: " << client->id << endl;
 				break;
