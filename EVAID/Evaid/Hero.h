@@ -44,6 +44,7 @@ public:
 	void setFramework(CFramework* f) { m_framework = f; }
 	void SetTimer(long TimerTick) { m_TimerTick = TimerTick; }
 	void SetHeroRect();
+	void DebuffCheck();
 	void move(CTable);
 	void draw(HDC);
 	void herojump();

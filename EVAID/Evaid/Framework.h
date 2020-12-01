@@ -38,6 +38,8 @@ public:
 	
 	bool FirstConnect;
 
+	char ServerIP[30];
+
 	bool GameOver_1;
 	bool GameOver_2;
 private:

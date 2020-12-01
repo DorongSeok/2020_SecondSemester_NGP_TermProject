@@ -128,8 +128,8 @@ void CGameScene::update(long TimerTick) {
 	Hero1P.move(board_1);
 	Hero2P.move(board_2);
 
-
-
+	Hero1P.DebuffCheck();
+	Hero2P.DebuffCheck();
 }
 
 void CGameScene::draw(HDC hDC) {

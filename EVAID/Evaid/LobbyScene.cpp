@@ -124,9 +124,9 @@ void CLobbyScene::draw(HDC hDC)
 
     // 출력할 텍스트 입력
     wchar_t* tinput;
-    int strSize = MultiByteToWideChar(CP_ACP, 0, input, -1, NULL, NULL);
+    int strSize = MultiByteToWideChar(CP_ACP, 0, m_Framework->ServerIP, -1, NULL, NULL);
     tinput = new WCHAR[strSize];
-    MultiByteToWideChar(CP_ACP, 0, input, strlen(input) + 1, tinput, strSize);
+    MultiByteToWideChar(CP_ACP, 0, m_Framework->ServerIP, strlen(m_Framework->ServerIP) + 1, tinput, strSize);
 
     wsprintf(IpPrint, L"%s", tinput);
     DrawText(hDC, IpPrint, lstrlen(IpPrint), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
@@ -141,7 +141,6 @@ void CLobbyScene::draw(HDC hDC)
 bool CLobbyScene::init(CFramework* pFramework, HWND hWnd) {
     if (!CScene::init(pFramework, hWnd)) return false;
     cout << "LOBBY SCENE" << endl;
-    memset(input, NULL, sizeof(input));
     return true;
 }
 
@@ -160,54 +159,54 @@ bool CLobbyScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
 
         switch (w) {
         case VK_F1:
-            strcat(input, "127.0.0.1");
+            strcat(m_Framework->ServerIP, "127.0.0.1");
             break;
         case '0':
         case 96:
-            strcat(input, "0");
+            strcat(m_Framework->ServerIP, "0");
             break;
         case '1':
         case 97:
-            strcat(input, "1");
+            strcat(m_Framework->ServerIP, "1");
             break;
         case '2':
         case 98:
-            strcat(input, "2");
+            strcat(m_Framework->ServerIP, "2");
             break;
         case '3':
         case 99:
-            strcat(input, "3");
+            strcat(m_Framework->ServerIP, "3");
             break;
         case '4':
         case 100:
-            strcat(input, "4");
+            strcat(m_Framework->ServerIP, "4");
             break;
         case '5':
         case 101:
-            strcat(input, "5");
+            strcat(m_Framework->ServerIP, "5");
             break;
         case '6':
         case 102:
-            strcat(input, "6");
+            strcat(m_Framework->ServerIP, "6");
             break;
         case '7':
         case 103:
-            strcat(input, "7");
+            strcat(m_Framework->ServerIP, "7");
             break;
         case '8':
         case 104:
-            strcat(input, "8");
+            strcat(m_Framework->ServerIP, "8");
             break;
         case '9':
         case 105:
-            strcat(input, "9");
+            strcat(m_Framework->ServerIP, "9");
             break;
         case 110:
         case 190:
-            strcat(input, ".");
+            strcat(m_Framework->ServerIP, ".");
             break;
         case VK_BACK:
-            input[strlen(input) - 1] = '\0';
+            m_Framework->ServerIP[strlen(m_Framework->ServerIP) - 1] = '\0';
             break;
         case VK_RETURN:
             break;
@@ -240,7 +239,7 @@ bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
             {
                 ZeroMemory(&addr, sizeof(addr));
                 addr.sin_family = AF_INET;
-                addr.sin_addr.S_un.S_addr = inet_addr(input);
+                addr.sin_addr.S_un.S_addr = inet_addr(m_Framework->ServerIP);
                 addr.sin_port = htons(SERVERPORT);
                 retval = connect(s, (sockaddr*)&addr, sizeof(addr));
                 if (retval == SOCKET_ERROR) cout << "connect error" << endl;
@@ -261,7 +260,7 @@ bool CLobbyScene::Mouse(UINT msg, WPARAM w, LPARAM l) {
                 bConnected = true;
                 cout << "id: " << (int)m_Framework->PlayerNum << endl;
                 cout << "Connected" << endl;
-                cout << endl << "IP: " << input << endl;
+                cout << endl << "IP: " << m_Framework->ServerIP << endl;
                 this->draw(GetDC(m_hWnd));
                 break;
             }

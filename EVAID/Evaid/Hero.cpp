@@ -45,7 +45,9 @@ void CHero::SetPacketToHero(const sc_packet_user& sc_pack_user)
 	NowSkillGauge = sc_pack_user.skillGauge[PlayerNum];
 	IsSkillOn = sc_pack_user.skillActive[PlayerNum];
 	if (sc_pack_user.skillActive[abs(PlayerNum - 1)])
-		Debuff = PlayerNum;
+		Debuff = abs(PlayerNum - 1);
+	else
+		Debuff = 2;
 	state = static_cast<eHeroState>(sc_pack_user.state[PlayerNum]);
 }
 void CHero::GetHeroToPacket(cs_packet_user* cs_pack_user)
@@ -62,6 +64,28 @@ void CHero::SetHeroRect() {
 	rect.right = pPosition.x + (HERO_SIZE / 2);
 	rect.top = pPosition.y - (HERO_SIZE / 2);
 	rect.bottom = pPosition.y + (HERO_SIZE / 2);
+}
+
+void CHero::DebuffCheck()
+{
+	if (Debuff == 0)
+		speed = 4;
+	else if (Debuff == 1)
+		jumpHeight = 0;
+	else
+	{
+		switch (HeroType)
+		{
+		case HERO::Hero1:
+			speed = 9;
+			jumpHeight = 15;		// jumpHeighy / 5 가 점프하는 칸수
+			break;
+		case HERO::Hero2:
+			speed = 9;
+			jumpHeight = 15;		// 세칸 점프
+			break;
+		}
+	}
 }
 
 void CHero::move(CTable Target) {
@@ -225,32 +249,11 @@ void CHero::SkillOn(CHero& enemyHero) {
 		ResorceTable::getInstance()->m_Sound.PlayEffect(4);
 		IsSkillOn = true;
 		NowSkillGauge -= SkillCostGauge;
-		switch (HeroType) {
-		case HERO::Hero1:
-			enemyHero.Debuff = 0;
-			skillCnt = 10;
-			enemyHero.speed -= 4;
-			break;
-		case HERO::Hero2:
-			enemyHero.Debuff = 1;
-			skillCnt = 10;
-			enemyHero.jumpHeight = 0;
-			break;
-		}
+		skillCnt = 10;
 	}
 }
 
 void CHero::SkillOff(CHero& enemyHero)
 {
-	enemyHero.Debuff = 2;
 	IsSkillOn = false;
-	switch (HeroType) {
-	case HERO::Hero1:
-		enemyHero.speed += 4;
-		break;
-	case HERO::Hero2:
-		if (HeroType == HERO::Hero1) enemyHero.jumpHeight = 20;
-		else enemyHero.jumpHeight = 15;
-		break;
-	}
 }

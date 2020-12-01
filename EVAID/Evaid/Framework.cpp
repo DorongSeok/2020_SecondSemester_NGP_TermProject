@@ -14,6 +14,7 @@ CFramework::CFramework() {
     GameOver_1 = false;
     GameOver_2 = false;
     FirstConnect = true;
+    memset(ServerIP, NULL, sizeof(ServerIP));
 }
 
 void CFramework::update(long TimerTick) {
