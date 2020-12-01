@@ -40,21 +40,23 @@ void CGameScene::update(long TimerTick) {
 		sc_packet_user scpu;
 		ZeroMemory(&scpu, sizeof(scpu));
 		retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
-		if (retval > 0) {
+		if (retval != 0) {
 			Hero1P.SetPacketToHero(scpu);
 			Hero2P.SetPacketToHero(scpu);
 
 			board_1.SetPacketToTable(scpu);
 			board_2.SetPacketToTable(scpu);
-
-			if (scpu.loser != (int)2)
-			{
-				cout << retval << endl;
-				m_Framework->m_LoserNum = (int)scpu.loser;
-				m_Framework->AddScene(eSCENE::SCENE_RESULT);
-				m_Framework->PopScene();
-			}
 		}
+
+		//if (scpu.winner == )
+		//{
+		//	if (scpu.winner == Global::getInstance()->iMyPlayerNum)
+		//	{
+		//		m_Framework->m_WinnerNum = Global::getInstance()->iMyPlayerNum;
+		//		m_Framework->AddScene(eSCENE::SCENE_RESULT);
+		//		m_Framework->PopScene();
+		//	}
+		//}
 
 		m_TimerTick++;
 		Hero1P.SetTimer(m_TimerTick);
@@ -118,8 +120,9 @@ void CGameScene::update(long TimerTick) {
 
 		Hero1P.move(board_1);
 		Hero2P.move(board_2);
-	}
 
+
+	}
 
 }
 

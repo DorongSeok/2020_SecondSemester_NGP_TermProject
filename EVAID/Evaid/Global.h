@@ -20,7 +20,7 @@ using std::cout;
 using std::endl;
 
 //client
-constexpr auto CLIENT_WIDTH = 1200;		// 너비;
+constexpr auto CLIENT_WIDTH = 1200;	// 너비;
 constexpr auto CLIENT_HEIGHT = 900;		// 높이
 
 //child

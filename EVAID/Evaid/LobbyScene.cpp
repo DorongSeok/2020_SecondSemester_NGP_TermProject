@@ -99,8 +99,15 @@ void CLobbyScene::draw(HDC hDC)
     textRect.bottom = 841;
 
     // 출력할 텍스트 입력
-    wsprintf(IpPrint, L"%s", input);
+    wchar_t* tinput;
+    int strSize = MultiByteToWideChar(CP_ACP, 0, input, -1, NULL, NULL);
+    tinput = new WCHAR[strSize];
+    MultiByteToWideChar(CP_ACP, 0, input, strlen(input) + 1, tinput, strSize);
+
+    wsprintf(IpPrint, L"%s", tinput);
     DrawText(hDC, IpPrint, lstrlen(IpPrint), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
+    delete[] tinput;
 
     SelectObject(hDC, oldFont);
     DeleteObject(hFont);
