@@ -13,6 +13,7 @@ CFramework::CFramework() {
     setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char*)&recvTimeout, sizeof(recvTimeout));
     GameOver_1 = false;
     GameOver_2 = false;
+    FirstConnect = true;
 }
 
 void CFramework::update(long TimerTick) {
@@ -64,7 +65,7 @@ bool CFramework::AddScene(eSCENE scene) {
         }
     case eSCENE::SCENE_LOBBY:
         {
-            auto pLobby = new CLobbyScene{};
+            auto pLobby = new CLobbyScene{ FirstConnect };
             if (!pLobby->init(this, m_hWnd)) {
                 delete pLobby;
                 return false;

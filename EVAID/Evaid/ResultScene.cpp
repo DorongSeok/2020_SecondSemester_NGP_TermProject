@@ -4,7 +4,7 @@
 
 CResultScene::CResultScene()
 {
-	m_Closing_Counter = 500;
+	m_Closing_Counter = 300;
 }
 
 CResultScene::~CResultScene()
@@ -16,6 +16,10 @@ void CResultScene::update(long TimerTick)
 	m_Closing_Counter--;
 	if (m_Closing_Counter < 0)
 	{
+		m_Framework->GameOver_1 = false;
+		m_Framework->GameOver_2 = false;
+		m_Framework->FirstConnect = false;
+
 		m_Framework->AddScene(eSCENE::SCENE_LOBBY);
 		m_Framework->PopScene();
 	}

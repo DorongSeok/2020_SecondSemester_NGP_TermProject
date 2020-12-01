@@ -3,7 +3,7 @@
 
 class CLobbyScene : public CScene {
 public:
-	CLobbyScene();
+	CLobbyScene( bool );
 	~CLobbyScene() override;
 
 	void update(long TimerTick) override;

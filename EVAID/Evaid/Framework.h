@@ -35,6 +35,8 @@ public:
 	ePlayer PlayerNum;
 	JPoint Player1Center;
 	JPoint Player2Center;
+	
+	bool FirstConnect;
 
 	bool GameOver_1;
 	bool GameOver_2;

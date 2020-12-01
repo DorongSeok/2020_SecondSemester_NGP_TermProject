@@ -3,30 +3,12 @@
 #include "stdafx.h"
 #include "ResorceTable.h"
 
-CLobbyScene::CLobbyScene()
+CLobbyScene::CLobbyScene(bool FirstConnect)
 {
-    if (bConnected)
+    if (!FirstConnect)
     {
-        SOCKET& s = m_Framework->s;
-        sockaddr_in& addr = m_Framework->addr;
-        int retval;
-        char buffer[MAXBUFFER];
-        ZeroMemory(buffer, sizeof(buffer));
-        retval = recv(s, buffer, sizeof(buffer), 0);
-
-        if (buffer[1] == sc_login &&
-            bPlayerConnected[(int)ePlayer::PLAYER_FIRST] == false || bPlayerConnected[(int)ePlayer::PLAYER_SECOND] == false) {
-            sc_packet_login scpl;
-            memcpy(&scpl, buffer, sizeof(scpl));
-            if (retval != 0 && retval != -1) {
-                bPlayerConnected[(int)ePlayer::PLAYER_FIRST] = scpl.f_login;
-                bPlayerConnected[(int)ePlayer::PLAYER_SECOND] = scpl.s_login;
-            }
-        }
-
         for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) bPlayerReady[i] = false;
-        m_Framework->GameOver_1 = false;
-        m_Framework->GameOver_2 = false;
+        bConnected = true;
         bReady = false;
         //input[0] = '\0';
     }
