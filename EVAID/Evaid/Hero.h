@@ -24,7 +24,6 @@ private:
 	bool IsSkillOn;		// 스킬 체크
 	BYTE SkillCostGauge;	// 스킬을 사용하기 위한 게이지
 	BYTE NowSkillGauge;	// 현재 스킬 게이지
-	bool Invincible = false;	// 무적
 
 	int PlayerNum;		// 플레이어 구분
 	int Debuff;			// 디버프상태

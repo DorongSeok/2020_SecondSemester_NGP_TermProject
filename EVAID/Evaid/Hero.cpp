@@ -36,7 +36,7 @@ CHero::CHero(HERO KindOfHero, int Player, CFramework* f) {
 	}
 }
 
-CHero::~CHero(){}
+CHero::~CHero() {}
 
 void CHero::SetPacketToHero(const sc_packet_user& sc_pack_user)
 {
@@ -68,7 +68,9 @@ void CHero::move(CTable Target) {
 		int rightX = GetPosInValX(rect.right - 7);
 		if (((Target.Val[leftX][bottomY] == eBlock::BLOCK_NONE && Target.Val[rightX][bottomY] == eBlock::BLOCK_NONE)
 			|| (Target.Val[leftX][bottomY] == eBlock::BLOCK_SHADOW && Target.Val[rightX][bottomY] == eBlock::BLOCK_SHADOW))
-			|| (rect.bottom - PTStartY) % BLOCK_SIZE > 0) pPosition.y += Gravity;
+			|| (rect.bottom - PTStartY) % BLOCK_SIZE > 0) {
+			pPosition.y += Gravity;
+		}
 		else Isjump = false;
 	}
 	else {
@@ -77,18 +79,16 @@ void CHero::move(CTable Target) {
 	}
 
 	// 떨어지는 블록과 충돌체크
-	if (!Invincible) {
-		int PosL = GetPosInValX(rect.left + 1);
-		int PosR = GetPosInValX(rect.right - 1);
-		int PosT = GetPosInValY(rect.top);
-		int PosB = GetPosInValY(rect.bottom);
-		if ((Target.Val[PosL][PosT] != eBlock::BLOCK_NONE && Target.Val[PosL][PosT] != eBlock::BLOCK_SHADOW)
-			|| (Target.Val[PosR][PosT] != eBlock::BLOCK_NONE && Target.Val[PosR][PosT] != eBlock::BLOCK_SHADOW)) {
-			jumpCnt = 0;
-			if (!((Target.Val[PosL][PosB + 1] != eBlock::BLOCK_NONE && Target.Val[PosL][PosB + 1] != eBlock::BLOCK_SHADOW)
-				|| (Target.Val[PosR][PosB + 1] != eBlock::BLOCK_NONE && Target.Val[PosR][PosB + 1] != eBlock::BLOCK_SHADOW)))
-				pPosition.y = PTStartY + (PosT + 1) * BLOCK_SIZE + BLOCK_SIZE / 2;
-		}
+	int PosL = GetPosInValX(rect.left + 1);
+	int PosR = GetPosInValX(rect.right - 1);
+	int PosT = GetPosInValY(rect.top);
+	int PosB = GetPosInValY(rect.bottom);
+	if ((Target.Val[PosL][PosT] != eBlock::BLOCK_NONE && Target.Val[PosL][PosT] != eBlock::BLOCK_SHADOW)
+		|| (Target.Val[PosR][PosT] != eBlock::BLOCK_NONE && Target.Val[PosR][PosT] != eBlock::BLOCK_SHADOW)) {
+		jumpCnt = 0;
+		if (!((Target.Val[PosL][PosB + 1] != eBlock::BLOCK_NONE && Target.Val[PosL][PosB + 1] != eBlock::BLOCK_SHADOW)
+			|| (Target.Val[PosR][PosB + 1] != eBlock::BLOCK_NONE && Target.Val[PosR][PosB + 1] != eBlock::BLOCK_SHADOW)))
+			pPosition.y = PTStartY + (PosT + 1) * BLOCK_SIZE + BLOCK_SIZE / 2;
 	}
 	// 이동 관련
 	if (state == STATE::LEFT) {
@@ -139,7 +139,8 @@ void CHero::draw(HDC hDC) {
 			else ResorceTable::getInstance()->img_Hero2_S2.Draw(hDC, temprect);
 			break;
 		}
-	} else {
+	}
+	else {
 		switch (HeroType) {
 		case HERO::Hero1:
 			switch (state) {
@@ -147,7 +148,7 @@ void CHero::draw(HDC hDC) {
 				ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, temprect);
 				break;
 			case STATE::LEFT:
-				if(motionTick) ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, temprect);
+				if (motionTick) ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, temprect);
 				else ResorceTable::getInstance()->img_Hero1_L2.Draw(hDC, temprect);
 				break;
 			case STATE::RIGHT:
@@ -244,7 +245,7 @@ void CHero::SkillOff(CHero& enemyHero)
 		enemyHero.speed += 4;
 		break;
 	case HERO::Hero2:
-		if(HeroType==HERO::Hero1) enemyHero.jumpHeight = 20;
+		if (HeroType == HERO::Hero1) enemyHero.jumpHeight = 20;
 		else enemyHero.jumpHeight = 15;
 		break;
 	}

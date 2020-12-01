@@ -58,7 +58,7 @@ const int HeroStartPosX = 300;
 const int HeroStartPosY = 630;
 
 // 히어로 떨어지는 속도
-#define Gravity 9.8
+#define Gravity 8
 
 // 스킬관련
 #define MaxSkillGauge 10
