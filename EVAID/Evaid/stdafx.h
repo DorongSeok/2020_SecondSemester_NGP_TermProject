@@ -96,13 +96,6 @@ public:
 //떨어지는 블록종류
 #define Block_Type_Count 5
 
-// 상태
-enum class STATE {
-	NORMAL
-	, LEFT
-	, RIGHT
-};
-
 // 히어로 종류
 enum class HERO {
 	Hero1,

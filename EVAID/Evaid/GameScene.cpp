@@ -8,6 +8,8 @@ int tick_block = 4;
 CGameScene::CGameScene() {
 	Hero1Score = 0;
 	Hero2Score = 0;
+
+	m_GameEnd = false;
 }
 
 CGameScene::~CGameScene() {}
@@ -33,6 +35,7 @@ void CGameScene::update(long TimerTick) {
 		Hero2P.GetHeroToPacket(&cspu);
 		board_2.GetTableToPacket(&cspu);
 	}
+	cspu.gameEnd = false;
 	retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
 
 
@@ -46,16 +49,6 @@ void CGameScene::update(long TimerTick) {
 		board_1.SetPacketToTable(scpu);
 		board_2.SetPacketToTable(scpu);
 	}
-
-	//if (scpu.winner == )
-	//{
-	//	if (scpu.winner == Global::getInstance()->iMyPlayerNum)
-	//	{
-	//		m_Framework->m_WinnerNum = Global::getInstance()->iMyPlayerNum;
-	//		m_Framework->AddScene(eSCENE::SCENE_RESULT);
-	//		m_Framework->PopScene();
-	//	}
-	//}
 
 	m_TimerTick++;
 	Hero1P.SetTimer(m_TimerTick);
@@ -222,7 +215,7 @@ void CGameScene::DrawGameScene(HDC hDC) {
 		textRect.bottom = PTStartY;
 
 		if (!m_Framework->GameOver_1)	Hero1Score = m_TimerTick;
-		if (!m_Framework->GameOver_2)	Hero2Score = m_TimerTick;
+		if (!m_Framework->GameOsver_2)	Hero2Score = m_TimerTick;
 
 		// 출력할 텍스트 입력
 		wsprintf(ScorePrint, L"Score: %d", Hero1Score);

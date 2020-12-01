@@ -25,6 +25,8 @@ public:
 	long m_TimerTick = 0;
 
 private:
+	bool m_GameEnd;
+
 	int Hero1Score = 0;
 	int Hero2Score = 0;
 

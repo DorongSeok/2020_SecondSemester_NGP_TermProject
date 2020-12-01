@@ -11,6 +11,8 @@ enum class eSCENE : BYTE { SCENE_LOGO = 0, SCENE_LOBBY = 1, SCENE_GAME = 2, SCEN
 enum class ePlayer : BYTE { PLAYER_FIRST = 0, PLAYER_SECOND = 1, PLAYER_MAX = 2 };
 enum class ePosition : BYTE { POS_X = 0, POS_Y = 1, POS_MAX = 2 };
 enum class eBlock : BYTE { BLOCK_A = 0, BLOCK_B = 1, BLOCK_C = 2, BLOCK_D = 3, BLOCK_E = 4, BLOCK_NONE = 5, BLOCK_STACK = 6, BLOCK_SHADOW = 7 };
+enum class eHeroState : BYTE { HEROSTATE_NORMAL = 0, HEROSTATE_LEFT = 1, HEROSTATE_RIGHT = 2 };
+
 constexpr BYTE TABLE_WIDTH = 10;
 constexpr BYTE TABLE_HEIGHT = 20;
 
@@ -60,6 +62,8 @@ public:
 	BYTE skillGauge;
 	bool skillActive;
 	BYTE nextBlock;
+	bool gameEnd;
+	BYTE state;
 };
 
 class cs_packet_start {
@@ -104,6 +108,7 @@ public:
 	BYTE skillGauge[2];
 	bool skillActive[2];
 	BYTE nextBlock[2];
+	BYTE state[2];
 };
 
 class sc_packet_start {
