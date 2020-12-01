@@ -16,7 +16,6 @@ enum class eHeroState : BYTE { HEROSTATE_NORMAL = 0, HEROSTATE_LEFT = 1, HEROSTA
 constexpr BYTE TABLE_WIDTH = 10;
 constexpr BYTE TABLE_HEIGHT = 20;
 
-constexpr BYTE CLIENT_LIMITE = 2;
 constexpr int NULLVAL = -1;
 
 //lobby

@@ -7,6 +7,7 @@ using std::endl;
 sc_packet_user g_scpu;
 
 int client_table[2];
+
 class hClientInfo {
 public:
 	int id;
@@ -30,10 +31,18 @@ public:
 public:
 
 	hClientInfo() {
+		init();
+	}
+	~hClientInfo() {
+		close();
+	}
+
+	void init() {
 		id = NULLVAL;
 		isReady = false;
 		Scene = eSCENE::SCENE_LOBBY;
 	}
+
 	void close() {
 		closesocket(s);
 		id = NULLVAL;
@@ -46,7 +55,34 @@ public:
 		client_table[id] = NULL;
 	}
 };
-hClientInfo cInfo[CLIENT_LIMITE];
+
+class Client {
+public:
+	hClientInfo info[(int)ePlayer::PLAYER_MAX];
+
+	int sendAll(char* buffer, int bufferSize, int flags) {
+		int cnt = 0;
+		for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) {
+			if (info[i].id != NULLVAL) {
+				++cnt;
+				send(info[i].s, buffer, bufferSize, flags);
+			}
+		}
+		return cnt;
+	}
+
+	bool getReadyAll() {
+		if (info[(int)ePlayer::PLAYER_FIRST].isReady == true
+			&& info[(int)ePlayer::PLAYER_SECOND].isReady == true) {
+			info[(int)ePlayer::PLAYER_FIRST].isReady = false;
+			info[(int)ePlayer::PLAYER_SECOND].isReady = false;
+			return true;
+		}
+		return false;
+	}
+
+};
+hClientInfo cInfo[(int)ePlayer::PLAYER_MAX];
 int client_cur = 0;
 
 void err_display(const std::string& msg) {
@@ -84,7 +120,7 @@ bool getReadyAll() {
 
 int sendall(char* buffer, int bufferSize, int flags) {
 	int cnt = 0;
-	for (int i = 0; i < CLIENT_LIMITE; ++i) {
+	for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) {
 		if (cInfo[i].id != NULLVAL) {
 			++cnt;
 			int retval = send(cInfo[i].s, buffer, bufferSize, flags);
@@ -98,24 +134,6 @@ void delay(int ms) {
 	while (1) {
 		clock_t e = clock();
 		if (e - s > ms) return;
-	}
-}
-
-void showtable() {
-	
-	for (int i = 0; i < TABLE_HEIGHT; ++i) {
-		for (int j = 0; j < TABLE_WIDTH; ++j) {
-			cout << (int)g_scpu.table[(int)ePlayer::PLAYER_FIRST].t[j][i];
-		}
-		cout << endl;
-	}
-	cout << "---------------------" << endl;
-
-	for (int i = 0; i < TABLE_HEIGHT; ++i) {
-		for (int j = 0; j < TABLE_WIDTH; ++j) {
-			cout << (int)g_scpu.table[(int)ePlayer::PLAYER_SECOND].t[j][i];
-		}
-		cout << endl;
 	}
 }
 
@@ -175,7 +193,6 @@ DWORD WINAPI SendThread(LPVOID arg) {
 					g_scpu.type = sc_user;
 					g_scpu.size = sizeof(g_scpu);
 
-					showtable();
 					retval = sendall(reinterpret_cast<char*>(&g_scpu), sizeof(g_scpu), 0);
 					cout << "Send user: all " << endl;
 					ZeroMemory(&g_scpu, sizeof(g_scpu));
@@ -241,6 +258,10 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 				cs_packet_user cspu;
 				memcpy(&cspu, buffer, sizeof(cspu));
 				memcpy(&client->table, reinterpret_cast<char*>(&cspu.table), sizeof(cspu.table));
+				if (cspu.gameEnd == true) {
+					client->lastpacket = cs_login;
+					SetEvent(client->hEvent[(int)eTHREAD::THREAD_RECV]);
+				}
 				client->pos[(int)ePosition::POS_X] = cspu.pos[(int)ePosition::POS_X];
 				client->pos[(int)ePosition::POS_Y] = cspu.pos[(int)ePosition::POS_Y];
 				client->skillGauge = cspu.skillGauge;
