@@ -1,7 +1,7 @@
 #pragma once
 
-#define SERVERIP "127.0.0.1"
-//#define SERVERIP "59.14.252.78"
+//#define SERVERIP "127.0.0.1"
+#define SERVERIP "59.14.252.78"
 //#define SERVERIP "14.35.11.46" //µ¿¼®
 #define SERVERPORT 9000
 #define MAXBUFFER 512
