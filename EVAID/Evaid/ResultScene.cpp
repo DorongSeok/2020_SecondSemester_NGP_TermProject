@@ -2,11 +2,9 @@
 #include "Framework.h"
 #include "ResorceTable.h"
 
-CResultScene::CResultScene(int winner)
+CResultScene::CResultScene()
 {
-	m_WinnerNum = winner;
-
-	m_Closing_Counter = 1000;
+	m_Closing_Counter = 500;
 }
 
 CResultScene::~CResultScene()
@@ -30,7 +28,7 @@ void CResultScene::draw(HDC hDC)
 	// 배경
 	ResorceTable::getInstance()->img_lobby_bg.Draw(hDC, 0, 0);
 
-	// 승리 플레이어, 점수 출력
+	// 승리 플레이어
 	{
 		HFONT hFont = CreateFont(100, 0, 0, 0, 0, 0, 0, 0
 			, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN
@@ -47,7 +45,7 @@ void CResultScene::draw(HDC hDC)
 		textRect.top = 300;
 		textRect.bottom = 400;
 
-		if(m_WinnerNum == 0)
+		if(m_Framework->m_WinnerNum == 0)
 			DrawText(hDC, L"Player1 Win!", lstrlen(L"Player1 Win!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 		else
 			DrawText(hDC, L"Player2 Win!", lstrlen(L"Player2 Win!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);

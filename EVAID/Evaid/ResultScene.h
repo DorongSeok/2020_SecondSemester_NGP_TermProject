@@ -4,7 +4,7 @@
 
 class CResultScene : public CScene {
 public:
-	CResultScene(int winner);
+	CResultScene();
 	~CResultScene() override;
 
 	void update(long TimerTick) override;
@@ -15,7 +15,5 @@ public:
 	void ReleaseObjects() override;
 
 private:
-	int m_WinnerNum;
-
 	int m_Closing_Counter;
 };

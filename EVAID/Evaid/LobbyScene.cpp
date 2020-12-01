@@ -5,9 +5,22 @@
 
 CLobbyScene::CLobbyScene()
 {
-    for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) {
-        bPlayerConnected[i] = false;
-        bPlayerReady[i] = false;
+    if (bConnected)
+    {
+        for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) bPlayerReady[i] = false;
+        m_Framework->GameOver_1 = false;
+        m_Framework->GameOver_2 = false;
+        bReady = false;
+        //input[0] = '\0';
+    }
+    else
+    {
+        bConnected = false;
+        bReady = false;
+        for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) {
+            bPlayerConnected[i] = false;
+            bPlayerReady[i] = false;
+        }
     }
 }
 

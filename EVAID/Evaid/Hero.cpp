@@ -5,7 +5,7 @@ CHero::CHero(HERO KindOfHero, int Player, CFramework* f) {
 
 	HeroType = KindOfHero;
 	pPosition = JPoint(HeroStartPosX, HeroStartPosY);
-	state = STATE::NORMAL;
+	state = eHeroState::HEROSTATE_NORMAL;
 	NowSkillGauge = 0;
 	jumpCnt = 0;
 	skillCnt = 0;
@@ -44,6 +44,9 @@ void CHero::SetPacketToHero(const sc_packet_user& sc_pack_user)
 	pPosition.y = sc_pack_user.pos[PlayerNum][1];
 	NowSkillGauge = sc_pack_user.skillGauge[PlayerNum];
 	IsSkillOn = sc_pack_user.skillActive[PlayerNum];
+	if (sc_pack_user.skillActive[abs(PlayerNum - 1)])
+		Debuff = PlayerNum;
+	state = static_cast<eHeroState>(sc_pack_user.state[PlayerNum]);
 }
 void CHero::GetHeroToPacket(cs_packet_user* cs_pack_user)
 {
@@ -51,6 +54,7 @@ void CHero::GetHeroToPacket(cs_packet_user* cs_pack_user)
 	cs_pack_user->pos[1] = pPosition.y;
 	cs_pack_user->skillGauge = NowSkillGauge;
 	cs_pack_user->skillActive = IsSkillOn;
+	cs_pack_user->state = static_cast<BYTE>(state);
 }
 
 void CHero::SetHeroRect() {
@@ -91,7 +95,7 @@ void CHero::move(CTable Target) {
 			pPosition.y = PTStartY + (PosT + 1) * BLOCK_SIZE + BLOCK_SIZE / 2;
 	}
 	// 이동 관련
-	if (state == STATE::LEFT) {
+	if (state == eHeroState::HEROSTATE_LEFT) {
 		int PosT = GetPosInValY(rect.top);
 		int PosB = GetPosInValY(rect.bottom - 1);
 		int PosL = GetPosInValX(rect.left - speed);
@@ -100,7 +104,7 @@ void CHero::move(CTable Target) {
 			&& rect.left - speed >= PTStartX) pPosition.x -= speed;
 		else pPosition.x = (rect.left / BLOCK_SIZE) * BLOCK_SIZE + BLOCK_SIZE;
 	}
-	else if (state == STATE::RIGHT) {
+	else if (state == eHeroState::HEROSTATE_RIGHT) {
 		int topY = GetPosInValY(rect.top);
 		int bottomY = GetPosInValY(rect.bottom - 1);
 		int rightX = GetPosInValX(rect.right + speed);
@@ -144,14 +148,14 @@ void CHero::draw(HDC hDC) {
 		switch (HeroType) {
 		case HERO::Hero1:
 			switch (state) {
-			case STATE::NORMAL:
+			case eHeroState::HEROSTATE_NORMAL:
 				ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, temprect);
 				break;
-			case STATE::LEFT:
+			case eHeroState::HEROSTATE_LEFT:
 				if (motionTick) ResorceTable::getInstance()->img_Hero1_L1.Draw(hDC, temprect);
 				else ResorceTable::getInstance()->img_Hero1_L2.Draw(hDC, temprect);
 				break;
-			case STATE::RIGHT:
+			case eHeroState::HEROSTATE_RIGHT:
 				if (motionTick) ResorceTable::getInstance()->img_Hero1_R1.Draw(hDC, temprect);
 				else ResorceTable::getInstance()->img_Hero1_R2.Draw(hDC, temprect);
 				break;
@@ -159,14 +163,14 @@ void CHero::draw(HDC hDC) {
 			break;
 		case HERO::Hero2:
 			switch (state) {
-			case STATE::NORMAL:
+			case eHeroState::HEROSTATE_NORMAL:
 				ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, temprect);
 				break;
-			case STATE::LEFT:
+			case eHeroState::HEROSTATE_LEFT:
 				if (motionTick) ResorceTable::getInstance()->img_Hero2_L1.Draw(hDC, temprect);
 				else ResorceTable::getInstance()->img_Hero2_L2.Draw(hDC, temprect);
 				break;
-			case STATE::RIGHT:
+			case eHeroState::HEROSTATE_RIGHT:
 				if (motionTick) ResorceTable::getInstance()->img_Hero2_R1.Draw(hDC, temprect);
 				else ResorceTable::getInstance()->img_Hero2_R2.Draw(hDC, temprect);
 				break;
@@ -177,10 +181,10 @@ void CHero::draw(HDC hDC) {
 
 	// 디버프 상태
 	switch (Debuff) {
-	case 1:
+	case 0:
 		ResorceTable::getInstance()->img_Debuff_H1.Draw(hDC, temprect);
 		break;
-	case 2:
+	case 1:
 		ResorceTable::getInstance()->img_Debuff_H2.Draw(hDC, temprect);
 		break;
 	}
@@ -223,12 +227,12 @@ void CHero::SkillOn(CHero& enemyHero) {
 		NowSkillGauge -= SkillCostGauge;
 		switch (HeroType) {
 		case HERO::Hero1:
-			enemyHero.Debuff = 1;
+			enemyHero.Debuff = 0;
 			skillCnt = 10;
 			enemyHero.speed -= 4;
 			break;
 		case HERO::Hero2:
-			enemyHero.Debuff = 2;
+			enemyHero.Debuff = 1;
 			skillCnt = 10;
 			enemyHero.jumpHeight = 0;
 			break;
@@ -238,7 +242,7 @@ void CHero::SkillOn(CHero& enemyHero) {
 
 void CHero::SkillOff(CHero& enemyHero)
 {
-	enemyHero.Debuff = 0;
+	enemyHero.Debuff = 2;
 	IsSkillOn = false;
 	switch (HeroType) {
 	case HERO::Hero1:

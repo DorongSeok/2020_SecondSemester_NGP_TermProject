@@ -35,7 +35,17 @@ void CGameScene::update(long TimerTick) {
 		Hero2P.GetHeroToPacket(&cspu);
 		board_2.GetTableToPacket(&cspu);
 	}
-	cspu.gameEnd = false;
+	if (m_Framework->GameOver_1)
+	{
+		m_GameEnd = true;
+		m_Framework->m_WinnerNum = 1;
+	}
+	else if (m_Framework->GameOver_2)
+	{
+		m_GameEnd = true;
+		m_Framework->m_WinnerNum = 0;
+	}
+	cspu.gameEnd = m_GameEnd;
 	retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
 
 
@@ -48,6 +58,11 @@ void CGameScene::update(long TimerTick) {
 
 		board_1.SetPacketToTable(scpu);
 		board_2.SetPacketToTable(scpu);
+	}
+	if (m_GameEnd)
+	{
+		m_Framework->AddScene(eSCENE::SCENE_RESULT);
+		m_Framework->PopScene();
 	}
 
 	m_TimerTick++;
@@ -132,13 +147,13 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
 	case WM_KEYUP:
 		switch (w) {
 		case VK_LEFT: {
-			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST && Hero1P.state == STATE::LEFT)		Hero1P.state = STATE::NORMAL;
-			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND && Hero2P.state == STATE::LEFT)	Hero2P.state = STATE::NORMAL;
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST && Hero1P.state == eHeroState::HEROSTATE_LEFT)		Hero1P.state = eHeroState::HEROSTATE_NORMAL;
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND && Hero2P.state == eHeroState::HEROSTATE_LEFT)	Hero2P.state = eHeroState::HEROSTATE_NORMAL;
 			break;
 		}
 		case VK_RIGHT: {
-			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST && Hero1P.state == STATE::RIGHT)		Hero1P.state = STATE::NORMAL;
-			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND && Hero2P.state == STATE::RIGHT)	Hero2P.state = STATE::NORMAL;
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST && Hero1P.state == eHeroState::HEROSTATE_RIGHT)		Hero1P.state = eHeroState::HEROSTATE_NORMAL;
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND && Hero2P.state == eHeroState::HEROSTATE_RIGHT)	Hero2P.state = eHeroState::HEROSTATE_NORMAL;
 			break;
 		}
 		}
@@ -146,13 +161,13 @@ bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
 	case WM_KEYDOWN:
 		switch (w) {
 		case VK_LEFT: {
-			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST)			Hero1P.state = STATE::LEFT;
-			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND)		Hero2P.state = STATE::LEFT;
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST)			Hero1P.state = eHeroState::HEROSTATE_LEFT;
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND)		Hero2P.state = eHeroState::HEROSTATE_LEFT;
 			break;
 		}
 		case VK_RIGHT: {
-			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST)			Hero1P.state = STATE::RIGHT;
-			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND)		Hero2P.state = STATE::RIGHT;
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST)			Hero1P.state = eHeroState::HEROSTATE_RIGHT;
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND)		Hero2P.state = eHeroState::HEROSTATE_RIGHT;
 			break;
 		}
 		case 'Z': {
@@ -215,7 +230,7 @@ void CGameScene::DrawGameScene(HDC hDC) {
 		textRect.bottom = PTStartY;
 
 		if (!m_Framework->GameOver_1)	Hero1Score = m_TimerTick;
-		if (!m_Framework->GameOsver_2)	Hero2Score = m_TimerTick;
+		if (!m_Framework->GameOver_2)	Hero2Score = m_TimerTick;
 
 		// 출력할 텍스트 입력
 		wsprintf(ScorePrint, L"Score: %d", Hero1Score);
