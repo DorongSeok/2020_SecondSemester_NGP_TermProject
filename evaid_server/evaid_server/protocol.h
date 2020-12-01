@@ -28,10 +28,6 @@ constexpr BYTE sc_ready = 4;
 //game
 constexpr BYTE cs_user = 5;
 constexpr BYTE sc_user = 6;
-constexpr BYTE cs_start = 7;
-constexpr BYTE sc_start = 8;
-constexpr BYTE cs_end = 9;
-constexpr BYTE sc_end = 10;
 
 
 #pragma pack(push, 1)
@@ -62,8 +58,8 @@ public:
 	BYTE skillGauge;
 	bool skillActive;
 	BYTE nextBlock;
-	bool gameEnd;
 	BYTE state;
+	bool gameEnd;
 };
 
 class cs_packet_start {
