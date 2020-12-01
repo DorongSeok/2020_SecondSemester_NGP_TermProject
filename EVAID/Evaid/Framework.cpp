@@ -1,4 +1,4 @@
-#include "Global.h"
+#include "stdafx.h"
 #include "Framework.h"
 #include "logoScene.h"
 #include "LobbyScene.h"
@@ -11,6 +11,8 @@ CFramework::CFramework() {
     if (s == INVALID_SOCKET) cout << "sock error" << endl;
     DWORD recvTimeout = 1000; //1000ms
     setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char*)&recvTimeout, sizeof(recvTimeout));
+    GameOver_1 = false;
+    GameOver_2 = false;
 }
 
 void CFramework::update(long TimerTick) {
@@ -50,7 +52,7 @@ bool CFramework::init(HWND hWnd) {
 bool CFramework::AddScene(eSCENE scene) {
     switch (scene)
     {
-    case eSCENE::SCENE_LOGGO:
+    case eSCENE::SCENE_LOGO:
         {
             auto pLogo = new CLogoScene{};
             if (!pLogo->init(this, m_hWnd)) {

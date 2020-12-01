@@ -1,5 +1,5 @@
 #include "ResorceTable.h"
-#include "Global.h"
+#include "stdafx.h"
 #include "Table.h"
 #include "Hero.h"
 #include "resource.h"
@@ -152,23 +152,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		TimerTick = 0;
 		break;
 #pragma endregion
-	//case WM_COMMAND:
-	//{
-	//	switch (LOWORD(wParam)) {
-	//	case ID_PLAYER01_1:
-	//		Global::getInstance()->Player1HeroKind = HERO::Hero1;
-	//		break;
-	//	case ID_PLAYER01_2:
-	//		Global::getInstance()->Player1HeroKind = HERO::Hero2;
-	//		break;
-	//	case ID_PLAYER02_1:
-	//		Global::getInstance()->Player2HeroKind = HERO::Hero1;
-	//		break;
-	//	case ID_PLAYER02_2:
-	//		Global::getInstance()->Player2HeroKind = HERO::Hero2;
-	//		break;
-	//	}
-	//}
 #pragma region ±×¸®±â
 	case WM_PAINT:
 	{

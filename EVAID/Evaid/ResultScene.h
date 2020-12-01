@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#include "Global.h"
+#include "stdafx.h"
 
 class CResultScene : public CScene {
 public:

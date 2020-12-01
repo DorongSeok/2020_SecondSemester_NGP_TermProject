@@ -8,121 +8,119 @@ int tick_block = 4;
 CGameScene::CGameScene() {
 	Hero1Score = 0;
 	Hero2Score = 0;
-
-	Global::getInstance()->isStart = false;
 }
 
 CGameScene::~CGameScene() {}
 
 void CGameScene::update(long TimerTick) {
+	Hero1P.setFramework(m_Framework);
+	Hero2P.setFramework(m_Framework);
+	board_1.setFramework(m_Framework);
+	board_2.setFramework(m_Framework);
 	SOCKET& s = m_Framework->s;
 	sockaddr_in& addr = m_Framework->addr;
 	int retval;
 
-	IsStart = true;
-
-	if (IsStart) {
-		cs_packet_user cspu;
-		ZeroMemory(&cspu, sizeof(cspu));
-		cspu.size = sizeof(cspu);
-		cspu.type = cs_user;
-		if (Global::getInstance()->iMyPlayerNum == 0) {
-			Hero1P.GetHeroToPacket(&cspu);
-			board_1.GetTableToPacket(&cspu);
-		}
-		else if (Global::getInstance()->iMyPlayerNum == 1) {
-			Hero2P.GetHeroToPacket(&cspu);
-			board_2.GetTableToPacket(&cspu);
-		}
-		retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
-
-
-		sc_packet_user scpu;
-		ZeroMemory(&scpu, sizeof(scpu));
-		retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
-		if (retval != 0) {
-			Hero1P.SetPacketToHero(scpu);
-			Hero2P.SetPacketToHero(scpu);
-
-			board_1.SetPacketToTable(scpu);
-			board_2.SetPacketToTable(scpu);
-		}
-
-		//if (scpu.winner == )
-		//{
-		//	if (scpu.winner == Global::getInstance()->iMyPlayerNum)
-		//	{
-		//		m_Framework->m_WinnerNum = Global::getInstance()->iMyPlayerNum;
-		//		m_Framework->AddScene(eSCENE::SCENE_RESULT);
-		//		m_Framework->PopScene();
-		//	}
-		//}
-
-		m_TimerTick++;
-		Hero1P.SetTimer(m_TimerTick);
-		Hero2P.SetTimer(m_TimerTick);
-
-
-		cout << m_TimerTick << endl;
-		if (m_TimerTick % 1500 == 0 && tick_block > 1) tick_block -= 1;
-
-		if (board_1.isShadowOn) {
-			Global::getInstance()->ShadowTick_1 += 0.1f;
-			if (Global::getInstance()->ShadowTick_1 > shadowDelay) {
-				board_1.effect_shadow();
-				Global::getInstance()->ShadowTick_1 = 0;
-				board_1.isShadowOn = false;
-			}
-		}
-		if (board_2.isShadowOn) {
-			Global::getInstance()->ShadowTick_2 += 0.1f;
-			if (Global::getInstance()->ShadowTick_2 > shadowDelay) {
-				board_2.effect_shadow();
-				Global::getInstance()->ShadowTick_2 = 0;
-				board_2.isShadowOn = false;
-			}
-		}
-
-		if (Global::getInstance()->Gameover_1) {
-			bool FullBoard_1 = true;
-			for (int i = 0; i < table_WIDTH; ++i) {
-				if (board_1.Val[i][0] != BLOCK_TYPE::STACK && board_1.Val[i][0] != BLOCK_TYPE::SHADOW) {
-					FullBoard_1 = false;
-					break;
-				}
-			}
-			if (!FullBoard_1) {
-				board_1.spawn(board_1.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
-			}
-		}
-		if (Global::getInstance()->Gameover_2) {
-			bool FullBoard_2 = true;
-			for (int i = 0; i < table_WIDTH; ++i) {
-				if (board_2.Val[i][0] != BLOCK_TYPE::STACK && board_2.Val[i][0] != BLOCK_TYPE::SHADOW) {
-					FullBoard_2 = false;
-					break;
-				}
-			}
-			if (!FullBoard_2) {
-				board_2.spawn(board_2.getRandomXPos(), static_cast<BLOCK_TYPE>(getRandom(Block_Type_Count)));
-			}
-		}
-
-		if (m_TimerTick % tick_block == 0) {
-			board_1.drop();
-			board_2.drop();
-		}
-
-		if (m_TimerTick % tick_skill == 0) {
-			Hero1P.skillGaugeUp(Hero2P);
-			Hero2P.skillGaugeUp(Hero1P);
-		}
-
-		Hero1P.move(board_1);
-		Hero2P.move(board_2);
-
-
+	cs_packet_user cspu;
+	ZeroMemory(&cspu, sizeof(cspu));
+	cspu.size = sizeof(cspu);
+	cspu.type = cs_user;
+	if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST) {
+		Hero1P.GetHeroToPacket(&cspu);
+		board_1.GetTableToPacket(&cspu);
 	}
+	else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND) {
+		Hero2P.GetHeroToPacket(&cspu);
+		board_2.GetTableToPacket(&cspu);
+	}
+	retval = send(s, reinterpret_cast<char*>(&cspu), sizeof(cspu), 0);
+
+
+	sc_packet_user scpu;
+	ZeroMemory(&scpu, sizeof(scpu));
+	retval = recv(s, reinterpret_cast<char*>(&scpu), sizeof(scpu), 0);
+	if (retval != 0) {
+		Hero1P.SetPacketToHero(scpu);
+		Hero2P.SetPacketToHero(scpu);
+
+		board_1.SetPacketToTable(scpu);
+		board_2.SetPacketToTable(scpu);
+	}
+
+	//if (scpu.winner == )
+	//{
+	//	if (scpu.winner == Global::getInstance()->iMyPlayerNum)
+	//	{
+	//		m_Framework->m_WinnerNum = Global::getInstance()->iMyPlayerNum;
+	//		m_Framework->AddScene(eSCENE::SCENE_RESULT);
+	//		m_Framework->PopScene();
+	//	}
+	//}
+
+	m_TimerTick++;
+	Hero1P.SetTimer(m_TimerTick);
+	Hero2P.SetTimer(m_TimerTick);
+
+
+	cout << m_TimerTick << endl;
+	if (m_TimerTick % 1500 == 0 && tick_block > 1) tick_block -= 1;
+
+	if (board_1.isShadowOn) {
+		board_1.shadowTick += 0.1f;
+		if (board_1.shadowTick > shadowDelay) {
+			board_1.effect_shadow();
+			board_1.shadowTick = 0;
+			board_1.isShadowOn = false;
+		}
+	}
+	if (board_2.isShadowOn) {
+		board_2.shadowTick += 0.1f;
+		if (board_2.shadowTick > shadowDelay) {
+			board_2.effect_shadow();
+			board_2.shadowTick = 0;
+			board_2.isShadowOn = false;
+		}
+	}
+
+	if (m_Framework->GameOver_1) {
+		bool FullBoard_1 = true;
+		for (int i = 0; i < table_WIDTH; ++i) {
+			if (board_1.Val[i][0] != eBlock::BLOCK_STACK && board_1.Val[i][0] != eBlock::BLOCK_SHADOW) {
+				FullBoard_1 = false;
+				break;
+			}
+		}
+		if (!FullBoard_1) {
+			board_1.spawn(board_1.getRandomXPos(), static_cast<eBlock>(getRandom(Block_Type_Count)));
+		}
+	}
+	if (m_Framework->GameOver_2) {
+		bool FullBoard_2 = true;
+		for (int i = 0; i < table_WIDTH; ++i) {
+			if (board_2.Val[i][0] != eBlock::BLOCK_STACK && board_2.Val[i][0] != eBlock::BLOCK_SHADOW) {
+				FullBoard_2 = false;
+				break;
+			}
+		}
+		if (!FullBoard_2) {
+			board_2.spawn(board_2.getRandomXPos(), static_cast<eBlock>(getRandom(Block_Type_Count)));
+		}
+	}
+
+	if (m_TimerTick % tick_block == 0) {
+		board_1.drop();
+		board_2.drop();
+	}
+
+	if (m_TimerTick % tick_skill == 0) {
+		Hero1P.skillGaugeUp(Hero2P);
+		Hero2P.skillGaugeUp(Hero1P);
+	}
+
+	Hero1P.move(board_1);
+	Hero2P.move(board_2);
+
+
 
 }
 
@@ -137,45 +135,43 @@ bool CGameScene::init(CFramework* pFramework, HWND hWnd) {
 }
 
 bool CGameScene::Keyboard(UINT msg, WPARAM w, LPARAM l) {
-	if (!IsStart)
-		return true;
 	switch (msg) {
 	case WM_KEYUP:
 		switch (w) {
-			case VK_LEFT: {
-				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER && Hero1P.state == STATE::LEFT)		Hero1P.state = STATE::NORMAL;
-				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER && Hero2P.state == STATE::LEFT)	Hero2P.state = STATE::NORMAL;
-				break;
-			}
-			case VK_RIGHT: {
-				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER && Hero1P.state == STATE::RIGHT)		Hero1P.state = STATE::NORMAL;
-				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER && Hero2P.state == STATE::RIGHT)	Hero2P.state = STATE::NORMAL;
-				break;
-			}
+		case VK_LEFT: {
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST && Hero1P.state == STATE::LEFT)		Hero1P.state = STATE::NORMAL;
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND && Hero2P.state == STATE::LEFT)	Hero2P.state = STATE::NORMAL;
+			break;
+		}
+		case VK_RIGHT: {
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST && Hero1P.state == STATE::RIGHT)		Hero1P.state = STATE::NORMAL;
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND && Hero2P.state == STATE::RIGHT)	Hero2P.state = STATE::NORMAL;
+			break;
+		}
 		}
 		break;
 	case WM_KEYDOWN:
 		switch (w) {
-			case VK_LEFT: {
-				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.state = STATE::LEFT;
-				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.state = STATE::LEFT;
-				break;
-			}
-			case VK_RIGHT: {
-				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.state = STATE::RIGHT;
-				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.state = STATE::RIGHT;
-				break;
-			}
-			case 'Z': {
-				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.herojump();
-				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.herojump();
-				break;
-			}
-			case 'X': {
-				if (Global::getInstance()->iMyPlayerNum == FIRST_PLAYER)			Hero1P.SkillOn(Hero2P);
-				else if (Global::getInstance()->iMyPlayerNum == SECOND_PLAYER)		Hero2P.SkillOn(Hero1P);
-				break;
-			}
+		case VK_LEFT: {
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST)			Hero1P.state = STATE::LEFT;
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND)		Hero2P.state = STATE::LEFT;
+			break;
+		}
+		case VK_RIGHT: {
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST)			Hero1P.state = STATE::RIGHT;
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND)		Hero2P.state = STATE::RIGHT;
+			break;
+		}
+		case 'Z': {
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST)			Hero1P.herojump();
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND)		Hero2P.herojump();
+			break;
+		}
+		case 'X': {
+			if (m_Framework->PlayerNum == ePlayer::PLAYER_FIRST)			Hero1P.SkillOn(Hero2P);
+			else if (m_Framework->PlayerNum == ePlayer::PLAYER_SECOND)		Hero2P.SkillOn(Hero1P);
+			break;
+		}
 		}
 		break;
 	}
@@ -204,8 +200,8 @@ void CGameScene::DrawGameScene(HDC hDC) {
 	board_1.draw(hDC);
 	board_2.draw(hDC);
 
-	if (!Global::getInstance()->Gameover_1)	Hero1P.draw(hDC);
-	if (!Global::getInstance()->Gameover_2)	Hero2P.draw(hDC);
+	if (!m_Framework->GameOver_1)	Hero1P.draw(hDC);
+	if (!m_Framework->GameOver_2)	Hero2P.draw(hDC);
 
 	// 스코어 그리기
 	{
@@ -225,8 +221,8 @@ void CGameScene::DrawGameScene(HDC hDC) {
 		textRect.top = 0;
 		textRect.bottom = PTStartY;
 
-		if (!Global::getInstance()->Gameover_1)	Hero1Score = m_TimerTick;
-		if (!Global::getInstance()->Gameover_2)	Hero2Score = m_TimerTick;
+		if (!m_Framework->GameOver_1)	Hero1Score = m_TimerTick;
+		if (!m_Framework->GameOver_2)	Hero2Score = m_TimerTick;
 
 		// 출력할 텍스트 입력
 		wsprintf(ScorePrint, L"Score: %d", Hero1Score);
@@ -258,11 +254,11 @@ void CGameScene::DrawGameScene(HDC hDC) {
 		textRect.top = 0;
 		textRect.bottom = CLIENT_HEIGHT;
 
-		if (Global::getInstance()->Gameover_1)	DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		if (m_Framework->GameOver_1)	DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
 		textRect.left += DrawGapX;
 		textRect.right += DrawGapX;
-		if (Global::getInstance()->Gameover_2)	DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		if (m_Framework->GameOver_2)	DrawText(hDC, L"Game Over!", lstrlen(L"Game Over!"), &textRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
 		SelectObject(hDC, oldFont);
 		DeleteObject(hFont);

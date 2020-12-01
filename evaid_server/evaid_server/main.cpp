@@ -4,14 +4,6 @@
 using std::cout;
 using std::endl;
 
-enum class eTHREAD { THREAD_SEND = 0, THREAD_RECV = 1, THREAD_MAX = 2 };
-enum class eSCENE { SCENE_LOBBY = 0, SCENE_GAME = 1, SCENE_DUMMY = 2, SCENE_MAX = 3 };
-enum class ePlayer { PLAYER_FIRST = 0, PLAYER_SECOND = 1, PLAYER_MAX = 2 };
-enum class ePosition { POS_X = 0, POS_Y = 1, POS_MAX = 2 };
-enum class eBlock { BLOCK_A = 0, BLOCK_B = 1, BLOCK_C = 2, BLOCK_D = 3, BLOCK_E = 4, BLOCK_NONE = 5, BLOCK_STACK = 6, BLOCK_SHADOW = 7 };
-constexpr BYTE TABLE_WIDTH = 10;
-constexpr BYTE TABLE_HEIGHT = 20;
-
 sc_packet_user g_scpu;
 
 int client_table[2];

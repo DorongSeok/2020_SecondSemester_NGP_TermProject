@@ -1,5 +1,5 @@
 #pragma once
-#include "Global.h"
+#include "stdafx.h"
 
 class ResorceTable {
 private:

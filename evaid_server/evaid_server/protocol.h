@@ -5,6 +5,15 @@
 //#define SERVERIP "14.35.11.46" //µ¿¼®
 #define SERVERPORT 9000
 #define MAXBUFFER 512
+
+enum class eTHREAD { THREAD_SEND = 0, THREAD_RECV = 1, THREAD_MAX = 2 };
+enum class eSCENE : BYTE { SCENE_LOGO = 0, SCENE_LOBBY = 1, SCENE_GAME = 2, SCENE_RESULT = 3, SCENE_DUMMY = 4, SCENE_MAX = 5 };
+enum class ePlayer : BYTE { PLAYER_FIRST = 0, PLAYER_SECOND = 1, PLAYER_MAX = 2 };
+enum class ePosition : BYTE { POS_X = 0, POS_Y = 1, POS_MAX = 2 };
+enum class eBlock : BYTE { BLOCK_A = 0, BLOCK_B = 1, BLOCK_C = 2, BLOCK_D = 3, BLOCK_E = 4, BLOCK_NONE = 5, BLOCK_STACK = 6, BLOCK_SHADOW = 7 };
+constexpr BYTE TABLE_WIDTH = 10;
+constexpr BYTE TABLE_HEIGHT = 20;
+
 constexpr BYTE CLIENT_LIMITE = 2;
 constexpr int NULLVAL = -1;
 

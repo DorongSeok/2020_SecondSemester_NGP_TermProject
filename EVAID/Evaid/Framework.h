@@ -1,5 +1,5 @@
 #pragma once
-#include "Global.h"
+#include "stdafx.h"
 #include "Scene.h"
 
 class CFramework {
@@ -32,7 +32,12 @@ public:
 	int addrlen;
 
 	int m_WinnerNum;
+	ePlayer PlayerNum;
+	JPoint Player1Center;
+	JPoint Player2Center;
 
+	bool GameOver_1;
+	bool GameOver_2;
 private:
 	HWND m_hWnd{ NULL };
 	RECT m_rcClient{ NULL };

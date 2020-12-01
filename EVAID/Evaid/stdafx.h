@@ -50,9 +50,6 @@ constexpr auto HERO_SIZE = 40;
 constexpr auto FIRST_PLAYER = 0;
 constexpr auto SECOND_PLAYER = 1;
 
-// 라디안 값
-#define Radian (double)0.017453292519943295769236907684886
-
 // shadow
 #define shadowDelay (double)2
 
@@ -62,8 +59,6 @@ const int HeroStartPosY = 630;
 
 // 히어로 떨어지는 속도
 #define Gravity 9.8
-
-const auto UNSETVAL = -1234;
 
 // 스킬관련
 #define MaxSkillGauge 10
@@ -90,8 +85,8 @@ public:
 	int x;
 	int y;
 	JPoint() {
-		x = UNSETVAL;
-		y = UNSETVAL;
+		x = NULLVAL;
+		y = NULLVAL;
 	}
 	JPoint(int _x, int _y) : x(_x), y(_y) {};
 	~JPoint() {};
@@ -100,16 +95,6 @@ public:
 //-----------------------------------------------
 //떨어지는 블록종류
 #define Block_Type_Count 5
-enum class BLOCK_TYPE : BYTE{
-	A = 0 
-	, B = 1 
-	, C = 2
-	, D = 3
-	, E = 4
-	, NONE = 5
-	, STACK	= 6			//쌓여진 블록
-	, SHADOW = 7		//그림자
-};
 
 // 상태
 enum class STATE {
@@ -124,12 +109,6 @@ enum class HERO {
 	Hero2,
 };
 
-enum class eSCENE : BYTE {
-	SCENE_LOGGO = 0,
-	SCENE_LOBBY = 1,
-	SCENE_GAME = 2,
-	SCENE_RESULT = 3,
-};
 //---------------------------------------------
 
 ///0~MAX-1
@@ -145,41 +124,5 @@ inline bool SafeRelease(gdiobj& target) {
 	return true;
 }
 
-class Global {
-private:
-	static Global* inst;
-	Global();
-	~Global() {};
-public:
-	//Global::getInstance()-> 객체이름
-	static Global* getInstance() {
-		if (inst == nullptr) inst = new Global();
-		return inst;
-	}
-
-
-	float ShadowTick_1;
-	float ShadowTick_2;
-
-	int tick_spawn;
-
-	int iMyPlayerNum = 0;            // 내가 몇번째 플레이어인지
-
-	bool Gameover_1 = false;
-	bool Gameover_2 = false;
-
-	JPoint Player1Center;
-	JPoint Player2Center;
-
-	bool isStart;
-
-	HERO	Player1HeroKind;
-	HERO	Player2HeroKind;
-	
-	char* ServerIP;
-};
-
 static int GetPosInValX(int x) { return ((x - PTStartX) / BLOCK_SIZE); }
 static int GetPosInValY(int y) { return ((y - PTStartY) / BLOCK_SIZE); }
-
-void err_display(const char* msg);

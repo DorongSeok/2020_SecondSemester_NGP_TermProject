@@ -1,4 +1,4 @@
-#include "Global.h"
+#include "stdafx.h"
 #include "ResorceTable.h"
 #include "Framework.h"
 #include "logoScene.h"
