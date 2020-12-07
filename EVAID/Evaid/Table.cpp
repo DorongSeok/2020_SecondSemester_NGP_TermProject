@@ -130,11 +130,6 @@ void CTable::draw(HDC hDC) {
 }
 
 void CTable::init() {
-	//for (int i = 0; i < 10; ++i) {
-	//	for (int j = 0; j < (int)TABLE_HEIGHT; ++j) {
-	//		Val[i][j] = eBlock::BLOCK_STACK;
-	//	}
-	//}
 	Val[0][table_HEIGHT - 1] = eBlock::BLOCK_STACK;
 	Val[1][table_HEIGHT - 1] = eBlock::BLOCK_STACK;
 	Val[2][table_HEIGHT - 1] = eBlock::BLOCK_STACK;

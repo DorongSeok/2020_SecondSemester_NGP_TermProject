@@ -4,7 +4,7 @@
 
 CResultScene::CResultScene()
 {
-	m_Closing_Counter = 300;
+	m_Closing_Counter = 150;
 }
 
 CResultScene::~CResultScene()

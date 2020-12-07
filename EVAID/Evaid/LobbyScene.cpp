@@ -10,7 +10,6 @@ CLobbyScene::CLobbyScene(bool FirstConnect)
         for (int i = 0; i < (int)ePlayer::PLAYER_MAX; ++i) bPlayerReady[i] = false;
         bConnected = true;
         bReady = false;
-        //input[0] = '\0';
     }
     else
     {
