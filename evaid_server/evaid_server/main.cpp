@@ -183,15 +183,6 @@ DWORD WINAPI SendThread(LPVOID arg) {
 			}
 			break;
 		}
-		case eSCENE::SCENE_DUMMY: {
-			switch (client->lastpacket) {
-			case cs_user: {
-
-				break;
-			}
-			}
-			break;
-		}
 		}
 		SetEvent(client->hEvent[(int)eTHREAD::THREAD_SEND]);
 	}
@@ -263,14 +254,6 @@ DWORD WINAPI RecvThread(LPVOID arg) {
 				c.scpu.state[client->id] = static_cast<BYTE>(client->state);
 				//~packet save for server
 				cout << "RECV: cs_user, ID: " << client->id << endl;
-				break;
-			}
-			}
-			break;
-		}
-		case eSCENE::SCENE_DUMMY: {
-			switch (buffer[1]) {
-			case cs_user: {
 				break;
 			}
 			}
