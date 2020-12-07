@@ -3,6 +3,7 @@
 //#define SERVERIP "127.0.0.1"
 //#define SERVERIP "59.14.252.78"
 //#define SERVERIP "14.35.11.46" //동석
+#define SERVERIP "192.168.0.2" //동석
 #define SERVERPORT 9000
 #define MAXBUFFER 512
 
